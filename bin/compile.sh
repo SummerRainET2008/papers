@@ -1,2 +1,2 @@
-pdflatex $1 
-open $1.pdf
+pdflatex paper 
+open paper.pdf

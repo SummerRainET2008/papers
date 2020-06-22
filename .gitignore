@@ -1,6 +1,7 @@
 /* for latex temporary files.*/
 *.aux 
 *.blg 
+*.bbl 
 *.brf
 *.idx
 *.loa
