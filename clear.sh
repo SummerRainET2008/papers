@@ -1,0 +1,11 @@
+find . -iregex ".*\.aux" -exec rm -v {} \;
+find . -iregex ".*\.blg" -exec rm -v {} \;
+find . -iregex ".*\.brf" -exec rm -v {} \;
+find . -iregex ".*\.idx" -exec rm -v {} \;
+find . -iregex ".*\.loa" -exec rm -v {} \;
+find . -iregex ".*\.lof" -exec rm -v {} \;
+find . -iregex ".*\.log" -exec rm -v {} \;
+find . -iregex ".*\.lot" -exec rm -v {} \;
+find . -iregex ".*\.out" -exec rm -v {} \;
+find . -iregex ".*\.toc" -exec rm -v {} \;
+find . -iregex ".*\.pdfsync" -exec rm -v {} \;
