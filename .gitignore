@@ -1,4 +1,5 @@
 /* for latex temporary files.*/
+paper.pdf
 *.aux 
 *.blg 
 *.bbl 
