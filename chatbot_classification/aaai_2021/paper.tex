@@ -31,11 +31,13 @@
 \def\x{{\mathbf x}}
 \def\L{{\cal L}}
 
-\makeatother
+\makeatother 
 
 \begin{document}
 \title{     
-  SFC: Few-Shot Text Classification via Similarity Fused with Classification System
+  %SFC: Few-Shot Text Classification via Similarity Fused with Classification System
+  Joint training of classification model and similarity model for low-resource
+  text classification in chatbot
 }
 \name{Jingwen Huang}   
 \address{     
@@ -44,22 +46,24 @@
 \maketitle 
 
 \begin{abstract}
-  Building  conversational chatbot system has become a popular solution to sharing
-  the  work  of customer service under various business scenarios. A conversational chatbot needs to detect user's intent given a few words, which essentially equals to short-text classification problem
-  in  the  field  of  Natural  Language  Processing.  However, each time for a new
-  service,  the  task-specific chatbot system often needs to perform well in few-shot setups due
-  to  lack  of  domain-specific  data,  which  is  still quite hard even if we use
-  powerful  pretrained  model  like  Roberta. Therefore, in this paper, we propose
-  SFC,  a  system  fusion  of  both  similarity  model and classification model to
-  overcome  this  challenge.  Our main contributions are: 1) transfer learning and
-  negative  sampling  based  on  sentence-pair  are utilized as remedy for lack of
-  data;  2)  multi-task  learning is involved to achieve faster training speed and
-  better  performance;  3) model ensembling of classification and similarity model
-  guarantees  inference  speed  while keeping high accuracy. Additionally, we also
-  conduct  extensive  experiments on four public datasets in few-shot setup (i.e.,
-  with  only  5 to 20 training data per class). The experimental results show that
-  our system can steadily outperform several competitive baselines by 2 percent in
-  average accuracy.
+  Building  conversational  chatbot  system  has  become  a  popular solution to
+  sharing  the  work  of  customer  service  under various business scenarios. A
+  conversational  chatbot needs to detect user's intent given a few words, which
+  essentially  equals  to  short-text  classification  problem  in  the field of
+  Natural  Language  Processing.  However,  each  time  for  a  new service, the
+  task-specific  chatbot  system  often needs to perform well in few-shot setups
+  due  to lack of domain-specific data, which is still quite hard even if we use
+  powerful  pretrained  model like Roberta. Therefore, in this paper, we propose
+  SFC,  a  system  fusion  of  both similarity model and classification model to
+  overcome  this challenge. Our main contributions are: 1) transfer learning and
+  negative  sampling  based  on sentence-pair are utilized as remedy for lack of
+  data;  2) multi-task learning is involved to achieve faster training speed and
+  better performance; 3) model ensembling of classification and similarity model
+  guarantees  inference speed while keeping high accuracy. Additionally, we also
+  conduct extensive experiments on four public datasets in few-shot setup (i.e.,
+  with only 5 to 20 training data per class). The experimental results show that
+  our  system can steadily outperform several competitive baselines by 2 percent
+  in average accuracy.
 \end{abstract}
 %\keywords{}
 
@@ -71,19 +75,26 @@ that  rely  on human agents, such as classifying customers' questions or queries
 to  find  the  corresponding  answer,  into an automatic process based on intent
 classification   model.  Since  user  queries  are  usually  much  shorter  than
 paragraphs  or  documents,  the chatbot can actually be turned into a short-text
-Classification\cite{phan2008learning,yan2009dynamic,hua2015short} task  in  Natural  Language Processing. Moreover, at the initial
-stage  of  building  chatbots, it's usually extremely hard to collect sufficient
-data  for each class. In this way, building a single-turn conversational chatbot
-become  a  short-text  classification\cite{sriram2010short} problem under few-shot setting\cite{yu2018diverse}.
+Classification\cite{phan2008learning,yan2009dynamic,hua2015short}     task    in
+Natural  Language  Processing.  Moreover,  at  the  initial  stage  of  building
+chatbots, it's usually extremely hard to collect sufficient data for each class.
+In  this  way, building a single-turn conversational chatbot become a short-text
+classification\cite{sriram2010short}        problem        under        few-shot
+setting\cite{yu2018diverse}.
 
-Short  texts\cite{song2014short} are usually more ambiguous in comparison with long texts since they
-don't contain enough contextual information, which poses a great challenge for
-classification\cite{chen2019deep}. In addition, the few-shot scenario\cite{yu2018diverse} adds  even more difficulties to the classification task since there is no
-enough  information  for  the  model  to  learn  for  each  class.  Comparing to
-non-pre-trained neural network such as convolutional neural networks (CNNs)\cite{kim2014convolutional,zhang2015character,conneau2016very} and long short term memory networks (LSTMs)\cite{mousa2017contextual,liu2016recurrent}, the
-recently introduced pre-trained language models on large corpus like BERT\cite{devlin2018bert}  and  RoBERTa\cite{liu2019roberta} has been proven more powerful in
-solving  many  NLP  tasks  including  short-text  classification  for  deficient
-data\cite{madabushi2020cost}.  Especially  for  few-shot  scenarios, transfer
+Short  texts\cite{song2014short}  are  usually more ambiguous in comparison with
+long texts since they don't contain enough contextual information, which poses a
+great challenge for classification\cite{chen2019deep}. In addition, the few-shot
+scenario\cite{yu2018diverse}  adds  even more difficulties to the classification
+task since there is no enough information for the model to learn for each class.
+Comparing  to  non-pre-trained  neural  network  such  as  convolutional  neural
+networks    (CNNs)\cite{kim2014convolutional,zhang2015character,conneau2016very}
+and          long          short          term          memory          networks
+(LSTMs)\cite{mousa2017contextual,liu2016recurrent},   the   recently  introduced
+pre-trained  language  models on large corpus like BERT\cite{devlin2018bert} and
+RoBERTa\cite{liu2019roberta}  has  been proven more powerful in solving many NLP
+tasks      including      short-text      classification      for      deficient
+data\cite{madabushi2020cost}.   Especially   for  few-shot  scenarios,  transfer
 learning  based  on  pre-trained  model  tends  to  do more help to the negative
 effects brought by scarcity of training data. Due to the fact that RoBERTa is an
 improved  version  of  BERT,  we  build  our SFC chatbot system using RoBERTa as
@@ -96,16 +107,18 @@ under few-shot setting.
 
 Therefore,  in  this  paper  we  propose  to  involve  similarity  model  (i.e.,
 sentence-pair  classifier)  based  on  RoBERTa,  which  can  score  the semantic
-similarity between two sentences by multiple cross-attention mechanism\cite{barkan2020scalable}.  A natural idea to enhance model performance in few-shot setting is
-to  further  pre-train RoBERTa with target domain data for transfer learning\cite{sun2019fine}.  However, it's always not easy to find domain-specific data for
-certain  service/product  if  we  try  to further pre-train a RoBERTa classifier
-directly.  In  comparison,  it's  relatively  feasible  to  obtain  dataset  for
-semantically duplicate sentence pair identification task. That is to say, we can
-obtain a further pre-trained similarity model to identify the class with highest
-semantic  similarity  level to each user query. Afterwards, we can fine-tune the
-similarity  model using sentence pairs sampled from target task dataset based on
-negative  sampling  strategy\cite{bamler2020extreme}, which can provide us with
-more features to learn from limited amount of data.
+similarity     between     two    sentences    by    multiple    cross-attention
+mechanism\cite{barkan2020scalable}.  A natural idea to enhance model performance
+in  few-shot setting is to further pre-train RoBERTa with target domain data for
+transfer  learning\cite{sun2019fine}.  However,  it's  always  not  easy to find
+domain-specific  data for certain service/product if we try to further pre-train
+a RoBERTa classifier directly. In comparison, it's relatively feasible to obtain
+dataset for semantically duplicate sentence pair identification task. That is to
+say,  we can obtain a further pre-trained similarity model to identify the class
+with  highest  semantic  similarity level to each user query. Afterwards, we can
+fine-tune  the  similarity  model  using sentence pairs sampled from target task
+dataset  based  on negative sampling strategy\cite{bamler2020extreme}, which can
+provide us with more features to learn from limited amount of data.
 
 We  also apply multi-task learning\cite{caruana1993multitask,collobert2008unified} in
 training  process  to  enhance the training speed and performance. We set up two
@@ -118,13 +131,14 @@ a faster training speed and higher accuracy.
 
 Another  contribution of this work is that we ensemble the similarity model with
 classification  model  at  the  inference  step.  In  contrast with common model
-ensembling  methods\cite{breiman1996stacked,schapire1998boosting},  the classification model are used as an auxiliary model in
-our  system  to  select promising sentence-pair candidates for similarity model.
-The  experiment  results  on  4  short-text  classification  datasets in various
-few-shot  settings  show that our system can outperform single model baseline by
-at  least  2 percent on average. Besides, we can also control the inference time
-for one single query to be within 0.5 seconds, which makes the system applicable
-in real-life single-turn chatbot scenario.
+ensembling       methods\cite{breiman1996stacked,schapire1998boosting},      the
+classification  model  are  used  as  an auxiliary model in our system to select
+promising  sentence-pair candidates for similarity model. The experiment results
+on  4  short-text classification datasets in various few-shot settings show that
+our  system  can  outperform  single  model  baseline  by  at least 2 percent on
+average. Besides, we can also control the inference time for one single query to
+be   within  0.5  seconds,  which  makes  the  system  applicable  in  real-life
+single-turn chatbot scenario.
 
 %\section{Attention based neural network}
 
