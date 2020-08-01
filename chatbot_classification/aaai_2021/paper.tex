@@ -160,6 +160,76 @@ As for stage 2, we also choose RoBERTa as the encoder for sentence pairs, as sho
 Before we start to fine-tune our sentence-pair model on task-specific dataset, we first fine-tune RoBERTa on Quora dataset\cite{iyer2017first}, which contains 404,290 potential duplicate question pairs, for transfer learning. Then we continue to do multi-task training on sentence-pair dataset $\mathcal{D'}$ sampled from the top-K candidate classes provided by stage 1.
 
 The 2 tasks for stage 2 training process are listed below.
+
+$\bullet$ \textbf{Task 1: Regular sentence-pair similarity task}
+
+For sentence pair semantic similarity task, given a data point $(x, x')_{i}$ with similarity label $l_{i}$ from data set $\mathcal{D'}=\{[(x,x')_{i},l_{i}]\}_{i=1}^{M}$, Roberta takes the final hidden state $h_{i}$ of the first token [CLS] as the representation for the sequence of packed sentence pair $(x, x')_{i}$. Let's suppose we have a linear layer as ${\Phi}^S_{i}=W^Sh_{i}+b^S$, where $W^S$ and $b^S$ are trainable parameters, and the probability score for $(x, x')_{i}$ can be calculated as $p^S_{i}=softmax({\Phi}^S_{i})$. 
+
+Due to the fact that sentence pairs within the same class is much less than sentence pairs from different classes, the data set $\mathcal{D'}$ is imbalanced. Therefore, we will accommodate a weight variable $w^S = [K-1, 1]$ to the loss to eliminate the bias brought by imbalanced data, shown in Equ. \ref{eq:similarity loss}. 
+
+\begin{equation}
+\begin{aligned}
+\mathcal{L}^{S}&=\frac{1}{M}\sum_{i=1}^{M}-w^S_{l_i}\cdot log(\frac{exp(\varPhi_{i,l_{i}}^S)}{\sum_{j=0}^{1}exp(\varPhi_{i,j}^S)}) \\&=\frac{1}{M}\sum_{i=1}^{M}-w^S_{l_i}\cdot \varPhi_{i,l_{i}}^S+w^S_{l_i}\cdot log(\sum_{j=0}^{1}exp(\varPhi_{i,j}^S))
+\label{eq:similarity loss}
+\end{aligned}
+\end{equation}
+
+$\bullet$ \textbf{Task 2: Classification task on top-K classes based on sentence-pair model}
+
+As for top-K classification task, we share the same sentence-pair similarity model structure with task 1. The only difference is that we add a task-specific average pooling layer, shown in Fig. \ref{fig:ver.1.3} to implement the classification task based on sentence-pair model. 
+
+We already know that the size of ${\Phi}^S$ in task 1 is $M\times 2=(N\cdot K\cdot P)\times 2$, where $N$ is the total number of data points in original training data $\mathcal{D}$, $K$ is a hyperparameter that controls the number of candidate classes provided by stage 1, and $P$ is also a hyperparameter that controls the number of sentences we should randomly sample from each candidate class. Now, for the average pooling layer, we first reshape ${\Phi}^S$ into the size of $N\times K\times P\times 2$, and then split it into ${\Phi}^{K,pos}$ and ${\Phi}^{K,neg}$, and both of them will have the size of $N\times K\times P$. In this way, ${\Phi}^{K,pos}$ can represent the level of similarity for each sentence pair, and in the mean time, ${\Phi}^{K,neg}$ can represent the level of dissimilarity for each sentence pair. Then, we can do average pooling for each candidate class among the top-K classes as shown in Equ. \ref{eq:average pooling:1} and Equ. \ref{eq:average pooling:2}. 
+
+\begin{align}
+{\xi}_{i,j}^{K,pos} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,pos} \label{eq:average pooling:1}\\
+{\xi}_{i,j}^{K,neg} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,neg}
+\label{eq:average pooling:2}
+\end{align}
+
+With the average pooling result ${\xi}^{K,pos}$ and ${\xi}^{K,neg}$, we also generate a top-K class label $l^{K}_i\in [1,\dots,K]$ for each ${\xi}^{K,pos}_{i}$ and  ${\xi}^{K,neg}_{i}$. The loss for top-K classification task is shown in Equ. \ref{eq:top-k classification loss}. In Equ. \ref{eq: pos top-k loss} and Equ. \ref{eq: neg top-k loss}, the first term $\xi_{i,l^{K}_{i}}^{K,pos}$ and $\xi_{i,l^{K}_{i}}^{K,neg}$ encourage high level of similarity and low level of dissimilarity for prediction of the correct label $l^{K}_i$ within the top-K candidate classes.
+
+\begin{align}
+\mathcal{L}^{K} = \frac{1}{N}\sum_{i=1}^{N}(\mathcal{L}^{K,pos}_{i} - \mathcal{L}^{K,neg}_{i})
+\label{eq:top-k classification loss}
+\end{align}
+where,
+
+\begin{equation}
+\begin{aligned}
+\mathcal{L}^{K,pos}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,pos})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,pos})}) \\
+&= -\xi_{i,l^{K}_{i}}^{K,pos} + log(\sum_{j=1}^{K}exp(\xi_{i,j}^{K,pos}))
+\label{eq: pos top-k loss}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\mathcal{L}^{K,neg}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,neg})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,neg})}) \\
+&= -\xi_{i,l^{K}_{i}}^{K,neg} + log(\sum_{j=1}^{K}exp(\xi_{i,j}^{K,neg}))
+\label{eq: neg top-k loss}
+\end{aligned}
+\end{equation}
+
+Therefore, the overall loss function for multi-task learning in stage 2 is shown in Equ. \ref{eq: 2-stage SFC loss}. The training objective of stage 2 is to minimize the weighted sum of task-specific losses. Here $\alpha_S$ and $\alpha_K$ are weights of task 1 and task 2 respectively, which are $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting.
+
+\begin{align}
+\mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K
+\label{eq: 2-stage SFC loss}
+\end{align}
+
+\subsection{hierarchical SFC with joint model structure}
+Despite the outstanding experimental result of 2-stage SFC on various tasks, we still find a limitation brought by the 2-stage system structure. In 2-stage SFC, Stage 1 and stage 2 are separate, so they do not interact with each other during training. In this case, the performance of stage 1 can limit the potential of stage 2, meanwhile, stage 2 also cannot give training feedback back to stage 1 for fine-tuning. 
+
+Therefore, to further improve the overall performance of SFC, we proposed a hierarchical SFC joint model structure, shown in Fig. \ref{fig:framework}. In hierarchical SFC, classification model is being placed in lower level to dynamically provide top-K candidate classes for the sentence-pair similarity model placed in higher level through a top-K pooling layer. In this way, classification model and similarity model can be merged into one single joint-model for multi-task training, thus avoiding the limitation brought by 2 separate stage structure. 
+
+There are 3 tasks in total during the training process of hierarchical SFC, shown in Fig. \ref{fig:framework}, and the overall loss is also the weighted sum of all the task-specific losses, shown in Equ. \ref{eq: hierachical SFC loss}. Here, $\alpha_S$, $\alpha_K$ and $\alpha_C$ are the weights for task 1: sentence-pair similarity, task 2: top-K classification and task 3: general single sentence classification respectively, which are $\alpha_S=0.25$,  $\alpha_K=0.25$ and $\alpha_C=0.5$ in our setting.
+
+\begin{align}
+\mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K + \alpha_C \mathcal{L}^C
+\label{eq: hierachical SFC loss}
+\end{align}
+
+Finally, when doing inference, for each user input query $x$, we will choose the class label that contains the sentence $x'$ with highest similarity score $\varPhi$, after being packed into a sentence pair $(x, x')$ with query $x$, as our final result for prediction.
 % latest version end
 
 %\section{Attention based neural network}
