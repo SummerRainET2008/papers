@@ -230,6 +230,47 @@ There are 3 tasks in total during the training process of hierarchical SFC, show
 \end{align}
 
 Finally, when doing inference, for each user input query $x$, we will choose the class label that contains the sentence $x'$ with highest similarity score $\varPhi$, after being packed into a sentence pair $(x, x')$ with query $x$, as our final result for prediction.
+
+\section{Experiments}
+In this section, we conduct extensive experiments over 5 task-specific dataset to evaluate the performance of our proposed SFC system and the effectiveness of the methodology of multi-task learning and hierachical joint-model structure under low-data settings.
+
+\subsection{Datasets}
+The dataset used in our experiments aims to help us study low-resource text classification problem under task-specific conversational chatbot scenario. Therefore, we keep all the dataset under low-resource chatbot corpus setting, which is a large number of class labels (50-250) with a few examples(5-20) in short text for each class, by sampling smaller subsets from the full scale when the raw datasets are oversized, see Table \ref{tbe:dataset statistic}.
+
+According to the task and domain, we categorize our experimental datasets into the following 3 categories:
+
+$\bullet$ \textbf{full-scale real-world task-specific faq chatbot dataset}
+
+\textbf{ITG} is a real-world FAQ chatbot dataset composed of question and answer pairs about online English teaching. It contains 3,938 sample questions for 228 class labels, where each class label corresponds to an unique answer for a bunch of similar sample questions. 
+
+We divide the whole dataset into 3 folds randomly with approximately the same amount of data within each fold, and then choose 2 folds as the training set, the remaing 1 fold as the test set for our experiments. We can obtain 3 different combinations among the 3 folds, and we will use the average experimental results of these 3 combinations as the final evaluation result for this dataset.
+
+$\bullet$ \textbf{subset of customer review dataset for extreme classification}
+
+\begin{table*}
+\begin{centering}
+
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline 
+Dataset & Domain & \#Class & \#Samples & \#Samples/Class & Experimental Settings\tabularnewline
+\hline 
+ITG & FAQ chatbot & 228 & 3938 & 17 & 3-fold\tabularnewline
+\hline 
+Amazon-670k & Product review & 250 & 1942 & 8 & class sampling\tabularnewline
+\hline 
+HWU64 & Intent detection & 64 & [320, 640, 960, 1280] & [5, 10, 15, 20] & data sampling\tabularnewline
+\hline 
+CLINC150 & Intent detection & 150 & [750, 1500, 2250] & [5, 10, 15] & data sampling\tabularnewline
+\hline 
+BANKING77 & Intent detection & 77 & [385, 770, 1155, 1540] & [5, 10, 15, 20] & data sampling\tabularnewline
+\hline 
+\end{tabular}
+\par\end{centering}
+\caption{Key statistics for experimental datasets and few shot settings}
+
+\label{tbe:dataset statistic}
+\end{table*}
+
 % latest version end
 
 %\section{Attention based neural network}
