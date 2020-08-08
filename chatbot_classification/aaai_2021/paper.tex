@@ -295,7 +295,7 @@ From our point of view, task-specific chatbot usually starts with small amount o
 BERT-large & \multirow{2}*{$0.8080$} & \multirow{2}*{$0.8904$} & \multirow{2}*{$0.9265$} & \multirow{2}*{$0.578$} & \multirow{2}*{$0.8004$} & \multirow{2}*{$0.8518$} & \multirow{2}*{$0.8827$} & \multirow{2}*{$0.4711$} & \multirow{2}*{$0.5963$} & \multirow{2}*{$0.6342$} & \multirow{2}*{$0.7010$} & \multirow{2}*{$0.7485$} & \multirow{2}*{$0.6658$}\tabularnewline
 (classification) & & & & & & & & & & & & &\tabularnewline
 \hline
-ALBERT-xxlarge & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-}\tabularnewline
+ALBERT-xxlarge & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{$0.1422$} & \multirow{2}*{$0.2057$} & \multirow{2}*{$0.5723$} & \multirow{2}*{$0.5912$} & \multirow{2}*{$0.6601$} & \multirow{2}*{$0.6893$}\tabularnewline
 (classification) & & & & & & & & & & & & &\tabularnewline
 \hline
 RoBERTa-base & \multirow{2}*{$0.8732$} & \multirow{2}*{$0.9254$} & \multirow{2}*{$0.9363$} & \multirow{2}*{$0.7305$} & \multirow{2}*{$0.8654$} & \multirow{2}*{$0.8808$} & \multirow{2}*{$0.9080$} & \multirow{2}*{$0.5831$} & \multirow{2}*{$0.6790$} & \multirow{2}*{$0.7064$} & \multirow{2}*{$0.7100$} & \multirow{2}*{$0.7734$} & \multirow{2}*{$0.6708$}\tabularnewline
@@ -304,7 +304,7 @@ RoBERTa-base & \multirow{2}*{$0.8732$} & \multirow{2}*{$0.9254$} & \multirow{2}*
 RoBERTa-large & \multirow{2}*{$0.8974$} & \multirow{2}*{$0.9372$} & \multirow{2}*{$0.9508$} & \multirow{2}*{$0.7690$} & \multirow{2}*{$0.8728$} & \multirow{2}*{$0.8966$} & \multirow{2}*{$0.9099$} & \multirow{2}*{$0.6044$} & \multirow{2}*{$0.7002$} & \multirow{2}*{$0.7129$} & \multirow{2}*{$0.7436$} & \multirow{2}*{$0.7990$} & \multirow{2}*{$0.7156$}\tabularnewline
 (classification) & & & & & & & & & & & & &\tabularnewline
 \hline
-RoBERTa-large & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-}\tabularnewline
+RoBERTa-large & \multirow{2}*{$0.8266$} & \multirow{2}*{$0.8861$} & \multirow{2}*{$0.9023$} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{$0.5425$} & \multirow{2}*{$0.6164$} & \multirow{2}*{$0.6503$} & \multirow{2}*{$0.6729$} & \multirow{2}*{$0.7418$} & \multirow{2}*{$0.6362$}\tabularnewline
 (similarity) & & & & & & & & & & & & &\tabularnewline
 \hline
 2-stage SFC & \multirow{2}*{$0.8979$} & \multirow{2}*{$0.9457$} & \multirow{2}*{$0.9517$} & \multirow{2}*{$0.7975$} & \multirow{2}*{$0.8818$} & \multirow{2}*{$0.8962$} & \multirow{2}*{$0.9109$} & \multirow{2}*{$0.6477$} & \multirow{2}*{$0.7055$} & \multirow{2}*{$0.7200$} & \multirow{2}*{$0.7232$} & \multirow{2}*{$0.7972$} & \multirow{2}*{$0.7189$}\tabularnewline
@@ -342,10 +342,6 @@ For our SFC system, we use RoBERTa-large as the pretrained model for both classi
 
 For the experiments in Table \ref{tbe:table2}, we empirically set the hyperparameter to be $K=5$ and $P=10$ for all SFC variants. In Table \ref{tbe:table3}, we conduct extensive experiments to see the performance of SFC system under various hyperparameter settings.
 
-\subsection{Result Analysis}
-
-Table \ref{tbe:table2} presents the results for each experimental data and model set-up in detail. The performance of each model is measured in F-score on the fixed test set for each data set. The overall performance of SFC system is better than all the competitive single-model baseline models on five experimental datasets. This observation gives us a general idea that classification model and similarity model can actually provide each other with complementary information, and combining them together into a joint system can effectively enhance the overall capability based on richer extracted semantic information. However the relative performance among all the variants of SFC also seems to depend on some specific charateristic of each data set. Therefore, we did the following more detailed analysis from several different aspect. 
-
 \begin{table*}
 \begin{centering}
 
@@ -354,13 +350,13 @@ Table \ref{tbe:table2} presents the results for each experimental data and model
 \multicolumn{1}{|c|}{\multirow{2}*{Dataset}}&\multicolumn{1}{c|}{\multirow{2}*{Model}}& $K=3$ & $K=5$ & $K=10$ & $K=15$ & $K=20$\tabularnewline
 \multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & $P=20$ & $P=10$ & $P=5$ & $P=4$ & $P=3$\tabularnewline
 \hline
-\multicolumn{1}{|c|}{\multirow{2}*{ITG}}& 2-stage SFC & 0.05 & 0.05 & 0.05 & 0.05 & 0.05\tabularnewline
+\multicolumn{1}{|c|}{\multirow{2}*{ITG}}& 2-stage SFC & 0.05 & $0.8124$ & 0.05 & 0.05 & 0.05\tabularnewline
 \cline{2-7}
-\multicolumn{1}{|c|}{} & Hierarchical SFC & 0.05 & 0.05 & 0.05 & 0.05 & 0.05\tabularnewline
+\multicolumn{1}{|c|}{} & Hierarchical SFC & 0.05 & $0.8114$ & 0.05 & 0.05 & 0.05\tabularnewline
 \hline
-\multicolumn{1}{|c|}{\multirow{2}*{Amazon-670k}}& 2-stage SFC & 0.05 & 0.05 & 0.05 & 0.05 & 0.05\tabularnewline
+\multicolumn{1}{|c|}{\multirow{2}*{Amazon-670k}}& 2-stage SFC & 0.05 & $0.7364$ & 0.05 & 0.05 & 0.05\tabularnewline
 \cline{2-7}
-\multicolumn{1}{|c|}{} & Hierarchical SFC & 0.05 & 0.05 & 0.05 & 0.05 & 0.05\tabularnewline
+\multicolumn{1}{|c|}{} & Hierarchical SFC & 0.05 & $0.7445$ & 0.05 & 0.05 & 0.05\tabularnewline
 \hline
 \end{tabular}
 \par\end{centering}
@@ -368,6 +364,25 @@ Table \ref{tbe:table2} presents the results for each experimental data and model
 
 \label{tbe:table3}
 \end{table*}
+
+\subsection{Result Analysis}
+
+Table \ref{tbe:table2} presents the results for each experimental data and model set-up in detail. The performance of each model is measured in F-score on the fixed test set for each data set. The overall performance of SFC system is better than all the competitive single-model baseline models on five experimental datasets. This observation gives us a general idea that classification model and similarity model can actually provide each other with complementary information, and combining them together into a joint system can effectively enhance the overall capability based on richer extracted semantic information. However the relative performance among all the variants of SFC also seems to depend on some specific charateristic of each data set. Therefore, we did the following more detailed analysis from several different aspect. 
+
+First, we turn to compare among the four SFC variants. We conduct ablation experiments to study the benefits brought by multi-task training by comparing multi-task 2-stage SFC with single-task 2-stage SFC. We can see from Table \ref{tbe:table2} that 2-stage SFC with only task 1 (sentence-pair similarity task) degrades by 0.65 percent on average and 2-stage SFC with only task 2 (top-K classification task) degrades by 0.3 percent on average. The degradation indicates that training with these 2 tasks together in SFC can effectively help the sentence-pair model extract more knowledge from the limited amount of data. Besides, task 2 degrades 0.35 percent less than task 1. This observation suggests that task 2 may play a relatively more important role in multi-task learning, which leads us to put larger weight $\alpha_{K}$ to the loss $\mathcal{L}^{K}$ of task 2 when calculating the total loss $\mathcal{L}$. Also, we can see that the hierachical SFC steadily outperforms 2-stage SFC on 5 diverse datasets by 2 percents on average. This observation supports the idea that the hierachical joint model structure can alleviate the limitation brought by the lack of interaction between similarity model and classification model in 2-stage SFC. Therefore, for the following analysis, we will focus on the comparison between hierachical SFC and the other baseline models.
+
+Next, we analyze the overall improvement trend of SFC under various few-shot settings. Our main focus is to study chatbot building in common situation during real-world application where only a few sample sentences are available for each class. The experimental results for the 3 diverse intent detection datasets under few-shot settings indicate that our proposed SFC can achieve +2.47 percents average improvement over one of the most powerful baseline models, which is RoBERTa-large classification model, on all these few-shot settings. Moreover, the improvement in F-score becomes more and more prominent with the decrease of data sample number per class. Our hierarchical SFC can achieve +4.97 percents average improvements over RoBERTa-large classification model in the most extreme few-shot setting with only 5 training samples per class.
+
+Then, we begin to compare the general performance of SFC with classification model and similarity model baselines. As for the classification model, hierarchical SFC outperforms BERT-large by +9.81 percents, ALBERT-xxlarge by 4 percents, RoBERTa-large by +2.47 percents, RoBERTa-base by +4.52 percents on average F-score for 5 datasets. In this way, we can see that RoBERTa is the best pre-trained model for the low-resource text classification task we are studying. As for the similarity model, we only choose the strongest pretrained model RoBERTa-large as our baseline, and hierarchical SFC achieves the improvement of 3 percents on average. Moreover, hierarchical SFC's result on 2 datasets without few-shot settings, which are ITG and Amazon-670k, are also 1.24 percents and 2.89 percents higher than Roberta-large classification model. These improvements illustrate that putting classification model and similarity model at different network layers to cooperate with each other is a successful design of hierarchical network structure for joint model, which enables these two models assist each other for better overall results. 
+
+Finally, we analyze the effect brought by different settings of hyperparameters, see Table \ref{tbe:table3}. We conduct experiments on 5 different settings of hyperparameters, which are the number of candidate class number $K$ and the number of sentence pairs $P$ for each class, on ITG and Amazon-670K datasets to find the most suitable setting of these 2 hyperparameters. We control the total number of sentence pairs sampled for each user query into about the same level of amount(50-60). Through analyzing the experimenal results shown in Table \ref{tbe:table3}, we find that the best setting of hyperparameters might be slightly different for datasets of different data size. The class label number of ITG and Amazon-670k are similar in our experimental setting, which is around 250. However the total amount of data points of ITG is approximately 2 times larger than Amazon-670k. Therefore, the setting of $K=5$ and $P=10$ is good enough for ITG since most of the classes contains over 10 data points. However, for Amazon-670k, the amount of data sample for each class is scarce, thus, we may need more candidate classes to sample enough effective sentence pairs for sentence-pair model layer of SFC. In this way, the setting of $K=10$ and $P=5$ becomes a good choice.
+
+In conclusion, to the best of our knowledge, these results place SFC as the best performing model on 5 diverse experimental datasets for text classification task under low-resource task-specific conversational chatbot scenario.
+
+
+
+\section{Conclusion}
+In this work, we successfully proposed SFC, a joint system of classification model and sentence-pair similarity model with multi-task learning, which can effectively alleviate the limitation of classification model and similarity model for low-resource text classification tasks. Experimental results illustrate that our proposed system can achieve great improvement on 5 diverse datasets for task-specific chatbot system over several competitive single-task baseline models. Furthermore, we especially analyze the excellent performance of SFC when facing the challenge brought by few-shot scenarios, which is quite common in real-world application of chatbot system.
 
 % latest version end
 
