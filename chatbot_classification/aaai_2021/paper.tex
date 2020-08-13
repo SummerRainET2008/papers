@@ -277,11 +277,6 @@ $\bullet$ \textbf{Subset of recently-released intent detection datasets}.
 
 From our point of view, task-specific chatbot usually starts with small amount of data at the initial stage. As more and more customers start to communicate with the chatbot, more data can be extracted from conversation log. Base on these assumptions, we do experiments on the following 3 intent detection dataset under sampling method similar to the approach in \cite{casanueva2020efficient} but in more sophisticated few-shot settings, while keeping the same test sets for each experiment to see the change of the improvement scale with decreasing data amount. 
 
-\textbf{HWU64} is a intent detection dataset designed for home robot scenario\cite{liu2019benchmarking}. It aims at the specific task of capturing the intent for different user requests to home robot and finding the corresponding answer. The raw dataset contains 25,716 data points for 64 class labels through crowdsourcing, which raises much more data than common real-world circumstances. Therefore, we experiment with the setups where only 5, 10, 15 and 20 training data points are available for each class label by random sampling.
-
-\textbf{CLINC150} is a dataset designed for task-oriented systems with 23,700 queries that are short and unstructured for 150 intents, in the same style made by real users through crowdsourcing\cite{larson2019evaluation}. Here, we sample 5, 10 and 15 training data points for each intent class label by random sampling for our experimental setup.
-
-\textbf{BANKING77} is a intent detection dataset for bank customer services. The raw dataset contains 13,084 data points for 77 class labels\cite{casanueva2020efficient}. Here, we sample 5, 10, 15, 20 training data points for each class label by random sampling for our experimental setup.
 
 \begin{table*}
 \begin{centering}
@@ -329,6 +324,13 @@ RoBERTa-large & \multirow{2}*{$0.8266$} & \multirow{2}*{$0.8861$} & \multirow{2}
 
 \label{tbe:table2}
 \end{table*}
+
+\textbf{HWU64} is a intent detection dataset designed for home robot scenario\cite{liu2019benchmarking}. It aims at the specific task of capturing the intent for different user requests to home robot and finding the corresponding answer. The raw dataset contains 25,716 data points for 64 class labels through crowdsourcing, which raises much more data than common real-world circumstances. Therefore, we experiment with the setups where only 5, 10, 15 and 20 training data points are available for each class label by random sampling.
+
+\textbf{CLINC150} is a dataset designed for task-oriented systems with 23,700 queries that are short and unstructured for 150 intents, in the same style made by real users through crowdsourcing\cite{larson2019evaluation}. Here, we sample 5, 10 and 15 training data points for each intent class label by random sampling for our experimental setup.
+
+\textbf{BANKING77} is a intent detection dataset for bank customer services. The raw dataset contains 13,084 data points for 77 class labels\cite{casanueva2020efficient}. Here, we sample 5, 10, 15, 20 training data points for each class label by random sampling for our experimental setup.
+
 
 \subsection{Baselines}
 We choose 3 groups of representative baselines:
