@@ -81,7 +81,7 @@ Although task-specific conversational chatbot already has a wide application in 
 
 One of the most popular approach among existing work was text classification model based on neural network. Since the length of the text is quite short, many previous work\cite{wen2016network} choose neural network such as convolutional neural networks (CNNs)\cite{kim2014convolutional,zhang2015character,conneau2016very}
 or long short term memory networks
-(LSTMs)\cite{mousa2017contextual,liu2016recurrent} to accomplish the task of extracting semantic feature from limited amount of words. A common model structure is adding a softmax classifier to the top of the neural network. Afterwards, pre-trained language models on large corpus like BERT\cite{devlin2018bert} and
+(LSTMs)\cite{mousa2017contextual,liu2016recurrent} to accomplish the task of extracting semantic feature from limited amount of words. A common model structure is adding a softmax classifier to the top of the neural network. Another common approach is text classification neural network based on label-word joint embedding, such as LEAM\cite{wang2018joint}. This approach involves label embedding when constructing the text-sequence representation, which poses requirements on label information. In our cases, since we have large amount of class labels without being well-defined, this approach can do only a few help to the low-resource chatbot scenario. Afterwards, pre-trained language models on large corpus like BERT\cite{devlin2018bert} and
 RoBERTa\cite{liu2019roberta} has  been proven more powerful in solving many NLP
 tasks      including      short-text      classification\cite{madabushi2020cost}.   Especially   for  few-shot  scenarios\cite{yu2018diverse}, pre-trained  model  based on transformers\cite{vaswani2017attention}, shown in Fig. \ref{Fig.1.sub.1}, tends  to  do more help to reducing the negative effects brought by scarcity of training data. 
 
@@ -287,10 +287,10 @@ From our point of view, task-specific chatbot usually starts with small amount o
 \cline{2-14}
 \multicolumn{1}{|c|}{} & $\textbf{5}$ & $\textbf{10}$ & $\textbf{15}$ & $\textbf{5}$ & $\textbf{10}$ & $\textbf{15}$ & $\textbf{20}$ & $\textbf{5}$ & $\textbf{10}$ & $\textbf{15}$ & $\textbf{20}$ & \textbf{Full} & \textbf{Full}\tabularnewline
 \hline
-TextCNN & \multirow{2}*{$0.3539$} & \multirow{2}*{$0.5497$} & \multirow{2}*{$0.6246$} & \multirow{2}*{$0.2882$} & \multirow{2}*{$0.5187$} & \multirow{2}*{$0.6129$} & \multirow{2}*{$0.6554$} & \multirow{2}*{$0.2105$} & \multirow{2}*{$0.3202$} & \multirow{2}*{$0.4154$} & \multirow{2}*{$0.4529$} & \multirow{2}*{$0.5563$} & \multirow{2}*{$0.3333$}\tabularnewline
+TextCNN & \multirow{2}*{$0.5318$} & \multirow{2}*{$0.6963$} & \multirow{2}*{$0.7609$} & \multirow{2}*{$0.4408$} & \multirow{2}*{$0.6436$} & \multirow{2}*{$0.7366$} & \multirow{2}*{$0.7918$} & \multirow{2}*{$0.3112$} & \multirow{2}*{$0.4007$} & \multirow{2}*{$0.4823$} & \multirow{2}*{$0.5272$} & \multirow{2}*{$0.6624$} & \multirow{2}*{$0.4401$}\tabularnewline
 (classification) & & & & & & & & & & & & &\tabularnewline
 \hline
-LEAM & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-}\tabularnewline
+LEAM & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{-} & \multirow{2}*{$0.4545$} & \multirow{2}*{$0.5554$} & \multirow{2}*{$0.5936$} & \multirow{2}*{$0.6599$} & \multirow{2}*{$0.7086$} & \multirow{2}*{$0.6091$}\tabularnewline
 (classification) & & & & & & & & & & & & &\tabularnewline
 \hline
 BERT-large & \multirow{2}*{$0.8080$} & \multirow{2}*{$0.8904$} & \multirow{2}*{$0.9265$} & \multirow{2}*{$0.578$} & \multirow{2}*{$0.8004$} & \multirow{2}*{$0.8518$} & \multirow{2}*{$0.8827$} & \multirow{2}*{$0.4711$} & \multirow{2}*{$0.5963$} & \multirow{2}*{$0.6342$} & \multirow{2}*{$0.7010$} & \multirow{2}*{$0.7485$} & \multirow{2}*{$0.6658$}\tabularnewline
@@ -358,13 +358,13 @@ For the experiments in Table \ref{tbe:table2}, we empirically set the hyperparam
 \multicolumn{1}{|c|}{\multirow{2}*{Dataset}}&\multicolumn{1}{c|}{\multirow{2}*{Model}}& $K=3$ & $K=5$ & $K=10$ & $K=15$ & $K=20$\tabularnewline
 \multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{} & $P=20$ & $P=10$ & $P=5$ & $P=4$ & $P=3$\tabularnewline
 \hline
-\multicolumn{1}{|c|}{\multirow{2}*{ITG}}& 2-stage SFC & - & $0.8124$ & $0.8008$ & $0.7967$ & $0.7934$\tabularnewline
+\multicolumn{1}{|c|}{\multirow{2}*{ITG}}& 2-stage SFC & $0.8034$ & $0.8124$ & $0.8008$ & $0.7967$ & $0.7934$\tabularnewline
 \cline{2-7}
-\multicolumn{1}{|c|}{} & Hierarchical SFC & - & $0.8114$ & - & - & $0.7826$\tabularnewline
+\multicolumn{1}{|c|}{} & Hierarchical SFC & $0.7882$ & $0.8114$ & $0.8010$ & $0.7972$ & $0.7826$\tabularnewline
 \hline
-\multicolumn{1}{|c|}{\multirow{2}*{Amazon-670k}}& 2-stage SFC & - & $0.7364$ & - & - & -\tabularnewline
+\multicolumn{1}{|c|}{\multirow{2}*{Amazon-670k}}& 2-stage SFC & $0.7278$ & $0.7364$ & $0.7366$ & $0.7328$ & $0.7204$\tabularnewline
 \cline{2-7}
-\multicolumn{1}{|c|}{} & Hierarchical SFC & - & $0.7445$ & - & - & -\tabularnewline
+\multicolumn{1}{|c|}{} & Hierarchical SFC & $0.7334$ & $0.7445$ & $0.7516$ & - & -\tabularnewline
 \hline
 \end{tabular}
 \par\end{centering}
