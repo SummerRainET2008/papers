@@ -90,30 +90,35 @@
   \maketitle
 
   \begin{abstract}
-    Building  conversational  chatbot  system  has  become a popular solution to
-    customer services under various business scenarios. A conversational chatbot
-    needs to detect user's intent given a few words, which essentially equals to
-    short-text   classification   problem  in  the  field  of  Natural  Language
-    Processing. Moreover, each time for a new service, the task-specific chatbot
-    system  often  needs  to  perform  well  in  few-shot  setups due to lack of
-    domain-specific  data,  which  is  quite a challenge for single-model system
-    such   as   text  classification  model  system  or  sentence-pair  semantic
-    similarity  model  system under such a low-resource condition. Therefore, in
-    this  paper, we propose SFC, a 2-stage joint system with multi-task training
-    technique  for  both  text  classification  task  and sentence-pair semantic
-    similarity  task  to  overcome  this challenge. Furthermore, we additionally
-    propose  an  improved  version of SFC to allow text classification model and
-    sentence-pair model be combined into a joint model organized in hierarchical
-    structure.  We  also conduct extensive experiments on 4 public and 1 private
-    datasets  in  few-shot  setup  (i.e.,  with  only  5 to 20 training data per
-    class).   The  experimental  results  show  that  our  system  can  steadily
-    outperform  several  competitive  single-model  baselines  by  2  percent in
-    average accuracy.
+    Task-specific  chatbot  systems has gained many important applications, such
+    as  Siri, Google home, customer service systems to allievaite human's labor.
+    In  this  kind  of  systems, one of the core problems is the accurate detection of
+    intention  of  a  user's input. It is then mapped into a predefined chatting
+    logic  graph,  and the chatbot can return reasonable answers easily. This is
+    the  main  difference from a free chatbot. The intention detection, assuming
+    only  one  intention  in  a  sentence,  can  be  modeled  as  a  short  text
+    classification  problem.  In  practice,  the  number  of  intentions  can be
+    hundreads of thousands, as opposed to quite limited in the tradiational text
+    classification  problem,  and  the  labeled  data  is not trivial to acquire
+    plenty,  generally  10  to 20 per intention. Then, how to train an efficient
+    model  in such a resource-intensive practical application in a new domain is
+    critical.  In  this  work, we propose a novel model, called similairty model
+    fused with classification Model (SFC), which combines a classification model
+    and  a  similairty  model,  and  borrows the power of multi-task training as
+    well.  We  conduct extensive experiments on 4 public and 1 private datasets.
+    The  experimental  results  show  that our new model outperforms very strong
+    baselines, BERT, RoBERTa and ALBERT based pretrained models by 2 percentages
+    in average accuracy.
+
   \end{abstract}
 
   \section{Introduction}
   \label{sec:intro}
-  Task-specific  conversational  chatbot\cite{wen2016network}  are  designed  to
+
+
+  todo: joint training of intention and NER.
+
+  Task-specific  conversational  chatbot  \cite{wen2016network}  are  designed  to
   share   the  working  pressure  of  human  customer  service  agents  who  are
   responsible for solving customers' questions or queries about certain products
   or  services.  Regardless  of  whether  the  conversation  is  single-turn  or
@@ -125,10 +130,10 @@
   in various business and industries, it's still a quite challenging task due to
   its  natural  properties of low-resource. First, customers' utterance within a
   conversation  is  usually  quite  short  and  completed  in a few words. Short
-  text\cite{song2014short}  are generally more ambiguous in comparison with long
+  text \cite{song2014short}  are generally more ambiguous in comparison with long
   texts  such  as  paragraphs  or  documents  since  they  don't  contain enough
-  contextual  information,  which poses a great challenge\cite{chen2019deep} for
-  classification        task\cite{phan2008learning,yan2009dynamic,hua2015short}.
+  contextual  information,  which poses a great challenge \cite{chen2019deep} for
+  classification        task \cite{phan2008learning,yan2009dynamic,hua2015short}.
   Second,  at  the  initial  stage  of  building  a chatbot for specific task or
   service, it's often extremely hard to collect sufficient data samples for each
   class.  The  reason  is  that it's usually too expensive and time consuming to
@@ -136,8 +141,8 @@
   from  history  conversation  log  or  even  manually  compose  the corpus from
   nothing.  Therefore,  the  key  to  building a task-specific chatbot with high
   performance     becomes     solving     the     challenge     of    short-text
-  classification\cite{sriram2010short}        problem       under       few-shot
-  setting\cite{yu2018diverse}.
+  classification \cite{sriram2010short}        problem       under       few-shot
+  setting \cite{yu2018diverse}.
 
   \begin{figure}[htbp]
     \centering 
@@ -155,46 +160,46 @@
 
   One  of  the most popular approach among existing work was text classification
   model  based  on  neural network. Since the length of the text is quite short,
-  many   previous   work\cite{wen2016network}  choose  neural  network  such  as
+  many   previous   work \cite{wen2016network}  choose  neural  network  such  as
   convolutional                          neural                         networks
-  (CNNs)\cite{kim2014convolutional,zhang2015character,conneau2016very}  or  long
-  short  term memory networks (LSTMs)\cite{mousa2017contextual,liu2016recurrent}
+  (CNNs) \cite{kim2014convolutional,zhang2015character,conneau2016very}  or  long
+  short  term memory networks (LSTMs) \cite{mousa2017contextual,liu2016recurrent}
   to  accomplish  the task of extracting semantic feature from limited amount of
   words.  A  common model structure is adding a softmax classifier to the top of
   the  neural  network.  Afterwards, pre-trained language models on large corpus
-  like   BERT\cite{devlin2018bert}  and  RoBERTa\cite{liu2019roberta}  has  been
+  like   BERT \cite{devlin2018bert}  and  RoBERTa \cite{liu2019roberta}  has  been
   proven   more   powerful  in  solving  many  NLP  tasks  including  short-text
-  classification\cite{madabushi2020cost}.      Especially      for      few-shot
-  scenarios\cite{yu2018diverse},       pre-trained      model      based      on
-  transformers\cite{vaswani2017attention},   shown  in  Fig.  \ref{Fig.1.sub.1},
+  classification \cite{madabushi2020cost}.      Especially      for      few-shot
+  scenarios \cite{yu2018diverse},       pre-trained      model      based      on
+  transformers \cite{vaswani2017attention},   shown  in  Fig.  \ref{Fig.1.sub.1},
   tends  to do more help to reducing the negative effects brought by scarcity of
   training data.
 
   Another  common  approach  is  text  classification  neural  network  based on
-  label-word     joint     embedding,    such    as    LEAM\cite{wang2018joint},
-  MTLE\cite{zhang2017multi}   and   EXAM\cite{du2019explicit}.   This   approach
+  label-word     joint     embedding,    such    as    LEAM \cite{wang2018joint},
+  MTLE \cite{zhang2017multi}   and   EXAM \cite{du2019explicit}.   This   approach
   involves  label  embedding when constructing the text-sequence representation.
   Take  LEAM  as  an  example,  the  text classification model is implemented by
   jointly    embedding    the    word    and    label   in   the   same   latent
-  space\cite{wang2018joint}. Afterwards, the text representation are constructed
+  space \cite{wang2018joint}. Afterwards, the text representation are constructed
   based  on  text-label  compatibility through attention mechanism. In this way,
   additional  sources  of  semantic  information  from class labels can be fully
   leveraged, which is quite helpful especially under few-shot scenario.
 
   The  third  popular  approach  among  previous work was based on sentence-pair
   model.  The  motivation  of  this  approach  was  started  from  the  idea  of
-  Information     Retrival    (IR)    based    chatbot\cite{jafarpour2010filter,
+  Information     Retrival    (IR)    based    chatbot \cite{jafarpour2010filter,
   leuski2011npceditor}.  Having  a  Q-A (Question-Answer) pairs dataset and user
   query  Q,  the  IR based conversational system will look up in the Q-A dataset
   for  the pair (Q', A') that best matches query Q through semantic analysis and
-  returns   A'   as   the  answer  to  Q\cite{mnasri2019recent}.  In  this  way,
+  returns   A'   as   the  answer  to  Q \cite{mnasri2019recent}.  In  this  way,
   sentence-pair  model  pre-trained  on  large  corpus  of  semantic  similarity
   identification  task  can  be applied for being used as a tool to identify the
   class  with  highest  semantic  similarity to customer's query. A common model
-  structure  of pre-trained\cite{devlin2018bert} sentence-pair model is based on
-  multiple  cross-attention  mechanism\cite{barkan2020scalable},  shown  in Fig.
+  structure  of pre-trained \cite{devlin2018bert} sentence-pair model is based on
+  multiple  cross-attention  mechanism \cite{barkan2020scalable},  shown  in Fig.
   \ref{Fig.1.sub.2}.  Due  to  the  fact that many experiment results have shown
-  that  RoBERTa\cite{liu2019roberta}  is  an  improved  version of BERT, and has
+  that  RoBERTa \cite{liu2019roberta}  is  an  improved  version of BERT, and has
   achieved  amazing  results  on  both  text  classification  and sentence-pairs
   semantic similarity tasks, we choose RoBERTa as an important baseline approach
   in this paper.
@@ -212,7 +217,7 @@
   prolix  but  also  biased,  which  will  bring  some  negative effect to label
   embedding.  With  respect  to  the sentence-pair model approach, though we can
   obtain   large   amount  of  data  in  semantically  duplicate  sentence  pair
-  identification  domain  for  transfer  learning\cite{sun2019fine},  it's still
+  identification  domain  for  transfer  learning \cite{sun2019fine},  it's still
   quite  hard  to  perform  well  on  task-specific dataset because the training
   objective  of  sentence-pair  model  is semantic similarity, which is slightly
   different from the target of classification task. That is to say, there always
@@ -244,22 +249,22 @@
   the  feasibility  of  transfer learning based on semantic similarity, while in
   the  mean time, add the classification task's target into the training process
   of            sentence-pair           model           for           multi-task
-  learning\cite{caruana1993multitask,collobert2008unified}.  To  obtain  such  a
+  learning \cite{caruana1993multitask,collobert2008unified}.  To  obtain  such  a
   joint  system,  we  first start with preparation work, which is pre-training a
   sentence-pair   model   on  external  corpus  for  sentence  pair  duplication
   identification,  and  then  find  an auxiliary model or tool which can help us
   sample out top-K most related intent classes. This auxiliary model or tool can
-  either  be searching engine such as elasticsearch\cite{divya2013elasticsearch}
+  either  be searching engine such as elasticsearch \cite{divya2013elasticsearch}
   or  a  text  classification  model  trained  on  task-specific  chatbot  data.
   Afterwards,  we  further  fine-tune  the  sentence-pair  model with 2 training
   tasks:  1)  the  regular  sentence pair similarity tasks. Here we use the text
   classification  model  as  an auxiliary model in this paper to sample sentence
   pairs       for       training       based      on      negative      sampling
-  strategy\cite{bamler2020extreme}.  The  reason is that a task-specific chatbot
+  strategy \cite{bamler2020extreme}.  The  reason is that a task-specific chatbot
   often  has hundreds of intent classes, which forms too many sentence pairs for
   training  since  any  two  sentences  from  two  different  classes can form a
   sentence-pair     of     negative     sample.     Besides,     according    to
-  Bamler\cite{bamler2020extreme},   training   on  negative  samples  from  most
+  Bamler \cite{bamler2020extreme},   training   on  negative  samples  from  most
   confusing  wrong  label  can  help  model  converge  faster  and obtain better
   performance.  2) the classification task on top-K (here K is a hyperparameter)
   candidate  classes  provided  by  our auxiliary model or tool. Here we use the
@@ -267,8 +272,8 @@
   sentence pairs formed by the user input query and the corpus sentences in each
   class  as  the  feature.  We  stack the task-specific layers on the top of the
   shared-parameter  sentence-pair  model structure, which is a classic parameter
-  sharing                                   mechanism\cite{collobert2008unified,
-  subramanian2018learning,liu2019multi}   for  multi-task\cite{sun2019fine}.  In
+  sharing                                   mechanism \cite{collobert2008unified,
+  subramanian2018learning,liu2019multi}   for  multi-task \cite{sun2019fine}.  In
   this  way, specific knowledge contained in these 2 tasks can be fully explored
   and deeply interact with each other to obtain better overall performance.
 
@@ -279,7 +284,7 @@
   training  process. This observation motivates us to further improve SFC into a
   joint  model  of  sentence-pair  model  and  text  classification  model  in a
   hierarchical  architecture  by  putting  different  tasks at different network
-  layers\cite{sogaard2016deep,   hashimoto2016joint}   and  then  training  them
+  layers \cite{sogaard2016deep,   hashimoto2016joint}   and  then  training  them
   together,  shown  in  Fig  \ref{fig:framework}.  Here, the text classification
   model  involved in joint training process replace the role of auxiliary tools.
   In  this  way, the sentence pairs selected from top-K classes becomes dynamic,
@@ -352,7 +357,7 @@
   quite a big number.
 
   Therefore,  we adopt the idea of adversarial negative sampling strategy raised
-  by  \cite{bamler2020extreme}.  The  key  idea  of this sampling strategy is to
+  by   \cite{bamler2020extreme}.  The  key  idea  of this sampling strategy is to
   train  with  negative  samples that are hard to be distinguished from positive
   samples. Now suppose we have a user input query $x_{i}$ and top-K most related
   class   labels   set  $\mathcal{C'}=\{c'_{1},  \dots,  c'_{K}\}$  provided  by
@@ -444,7 +449,7 @@
   is placed on top of the last hidden representation of the [CLS] token.
 
   Before we start to fine-tune our sentence-pair model on task-specific dataset,
-  we   first  fine-tune  RoBERTa  on  Quora  dataset\cite{iyer2017first},  which
+  we   first  fine-tune  RoBERTa  on  Quora  dataset \cite{iyer2017first},  which
   contains  404,290  potential  duplicate question pairs, for transfer learning.
   Then   we   continue  to  do  multi-task  training  on  sentence-pair  dataset
   $\mathcal{D'}$ sampled from the top-K candidate class labels provided by stage
@@ -643,7 +648,7 @@
   \textbf{Amazon-670K}   is   a   customer   product  review  dataset  for  text
   classification  task from the extreme classification repository with full data
   containing  670,091  class  labels,  285,176  training samples and 150875 test
-  samples\cite{bhatia2016extreme}.  As  the  data  set  contains  multiple class
+  samples \cite{bhatia2016extreme}.  As  the  data  set  contains  multiple class
   labels  per  training sample, we keep only the first class label for each data
   point. Besides, we also randomly sampled 250 class labels from all the classes
   that  contain only 5-15 data points. In this way, we simulate the low-resource
@@ -657,7 +662,7 @@
   with  the  chatbot,  more data can be extracted from conversation log. Base on
   these  assumptions,  we  do  experiments  on  the following 3 intent detection
   dataset    under    sampling    method    similar    to    the   approach   in
-  \cite{casanueva2020efficient}  but  in  more  sophisticated few-shot settings,
+   \cite{casanueva2020efficient}  but  in  more  sophisticated few-shot settings,
   while  keeping the same test sets for each experiment to see the change of the
   improvement scale with decreasing data amount.
 
@@ -722,7 +727,7 @@
   \end{table*}
 
   \textbf{HWU64}   is  a  intent  detection  dataset  designed  for  home  robot
-  scenario\cite{liu2019benchmarking}.  It aims at the specific task of capturing
+  scenario \cite{liu2019benchmarking}.  It aims at the specific task of capturing
   the  intent  for  different  user  requests  to  home  robot  and  finding the
   corresponding answer. The raw dataset contains 25,716 data points for 64 class
   labels  through  crowdsourcing,  which  raises  much  more  data  than  common
@@ -732,13 +737,13 @@
 
   \textbf{CLINC150}  is a dataset designed for task-oriented systems with 23,700
   queries  that  are  short  and unstructured for 150 intents, in the same style
-  made  by real users through crowdsourcing\cite{larson2019evaluation}. Here, we
+  made  by real users through crowdsourcing \cite{larson2019evaluation}. Here, we
   sample 5, 10 and 15 training data points for each intent class label by random
   sampling for our experimental setup.
 
   \textbf{BANKING77}  is  a intent detection dataset for bank customer services.
   The    raw    dataset    contains    13,084   data   points   for   77   class
-  labels\cite{casanueva2020efficient}.  Here,  we  sample 5, 10, 15, 20 training
+  labels \cite{casanueva2020efficient}.  Here,  we  sample 5, 10, 15, 20 training
   data  points  for  each  class  label  by random sampling for our experimental
   setup.
 
@@ -749,15 +754,15 @@
   \textbf{Group  1:  single-task  classification  model.} This group of baseline
   models  are  based  on the network structure for classification model shown in
   \ref{Fig.1.sub.1}.   As   for   non-pretrained   neural   network,  we  choose
-  TextCNN\cite{kim2014convolutional}  as  a  representative baseline. As for the
+  TextCNN \cite{kim2014convolutional}  as  a  representative baseline. As for the
   pretrained  model,  we choose RoBERTa, BERT and ALBERT, all of which are among
   the  most  powerful pretrained models that achieve outstanding results in many
   NLP  tasks,  in  our  experimental  setting. Since we apply RoBERTa in our SFC
   system,   we   naturally  adopt  single-task  classification  model  based  on
   RoBERTa-large  and RoBERTa-base as our baseline models. Besides, we also adopt
   the       recently       released       baseline       pre-trained       model
-  ALBERT-xxlarge\cite{lan2019albert}  for  comparison.  Since  we  use different
-  few-shot   settings   from   \cite{casanueva2020efficient}  for  those  intent
+  ALBERT-xxlarge \cite{lan2019albert}  for  comparison.  Since  we  use different
+  few-shot   settings   from    \cite{casanueva2020efficient}  for  those  intent
   detection  datasets,  we also use BERT-large tuned on our few-shot settings as
   an essential reference for experimental results.
 
