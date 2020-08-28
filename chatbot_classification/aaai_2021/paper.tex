@@ -658,7 +658,7 @@
           BERT-large & \multirow{2}*{$0.8080$} & \multirow{2}*{$0.8904$} & \multirow{2}*{$0.9265$} & \multirow{2}*{$0.578$} & \multirow{2}*{$0.8004$} & \multirow{2}*{$0.8518$} & \multirow{2}*{$0.8827$} & \multirow{2}*{$0.4711$} & \multirow{2}*{$0.5963$} & \multirow{2}*{$0.6342$} & \multirow{2}*{$0.7010$} & \multirow{2}*{$0.7485$} & \multirow{2}*{$0.6658$}\tabularnewline
           (classification) & & & & & & & & & & & & &\tabularnewline
           \hline
-          ALBERT-xxlarge & \multirow{2}*{$0.6500$} & \multirow{2}*{$0.9008$} & \multirow{2}*{$0.9296$} & \multirow{2}*{$0.3608$} & \multirow{2}*{$0.6345$} & \multirow{2}*{$0.8090$} & \multirow{2}*{$0.8530$} & \multirow{2}*{$0.3549$} & \multirow{2}*{$0.3876$} & \multirow{2}*{$0.5808$} & \multirow{2}*{$0.6320$} & \multirow{2}*{$0.7253$} & \multirow{2}*{$0.6893$}\tabularnewline
+          ALBERT-xxlarge & \multirow{2}*{$0.8497$} & \multirow{2}*{$0.9008$} & \multirow{2}*{$0.9296$} & \multirow{2}*{$0.5549$} & \multirow{2}*{$0.7981$} & \multirow{2}*{$0.8231$} & \multirow{2}*{$0.8530$} & \multirow{2}*{$0.4879$} & \multirow{2}*{$0.6116$} & \multirow{2}*{$0.6135$} & \multirow{2}*{$0.6996$} & \multirow{2}*{$0.7253$} & \multirow{2}*{$0.6893$}\tabularnewline
           (classification) & & & & & & & & & & & & &\tabularnewline
           \hline
           RoBERTa-base & \multirow{2}*{$0.8732$} & \multirow{2}*{$0.9254$} & \multirow{2}*{$0.9363$} & \multirow{2}*{$0.7305$} & \multirow{2}*{$0.8654$} & \multirow{2}*{$0.8808$} & \multirow{2}*{$0.9080$} & \multirow{2}*{$0.5831$} & \multirow{2}*{$0.6790$} & \multirow{2}*{$0.7064$} & \multirow{2}*{$0.7100$} & \multirow{2}*{$0.7734$} & \multirow{2}*{$0.6708$}\tabularnewline
@@ -779,7 +779,7 @@
         \hline
         \multicolumn{1}{|c|}{\multirow{2}*{ITG}}& two-stage SFC & $0.8034$ & $0.8124$ & $0.8008$ & $0.7967$ & $0.7934$\tabularnewline
         \cline{2-7}
-        \multicolumn{1}{|c|}{} & joint SFC & $0.7882$ & $0.8114$ & $0.8010$ & $0.7972$ & $0.7826$\tabularnewline
+        \multicolumn{1}{|c|}{} & joint SFC & $0.7986$ & $0.8114$ & $0.8010$ & $0.7972$ & $0.7918$\tabularnewline
         \hline
         \multicolumn{1}{|c|}{\multirow{2}*{Amazon-670k}}& two-stage SFC & $0.7278$ & $0.7364$ & $0.7366$ & $0.7328$ & $0.7204$\tabularnewline
         \cline{2-7}
@@ -819,19 +819,19 @@
   comparing multi-task two-stage SFC with single-task two-stage SFC. We can see from
   Table  \ref{tbe:table2}  that  two-stage  SFC  with  only  task 1 (sentence-pair
   similarity task) degrades by 0.65 percent on average and two-stage SFC with only
-  task  2  (top-K  classification  task) degrades by 0.3 percent on average. The
+  task  2  (top-K  classification  task) degrades by 0.32 percent on average. The
   degradation  indicates  that  training  with these 2 tasks together in SFC can
   effectively  help  the  sentence-pair  model  extract  more knowledge from the
-  limited  amount  of data. Besides, task 2 degrades 0.35 percent less than task
+  limited  amount  of data. Besides, task 2 degrades 0.33 percent less than task
   1.  This observation suggests that task 2 may play a relatively more important
   role  in multi-task learning, which leads us to put larger weight $\alpha_{K}$
   to  the  loss  $\mathcal{L}^{K}$  of  task  2  when calculating the total loss
-  $\mathcal{L}$.  Also, we can see that the hierachical SFC steadily outperforms
+  $\mathcal{L}$.  Also, we can see that the joint SFC steadily outperforms
   two-stage  SFC  on  5  diverse  datasets  by  1.17  percents  on  average.  This
-  observation  supports  the idea that the hierachical joint model structure can
+  observation  supports  the idea that the joint model structure can
   alleviate the limitation brought by the lack of interaction between similarity
   model  and  classification  model in two-stage SFC. Therefore, for the following
-  analysis,  we  will  focus  on  the comparison between hierachical SFC and the
+  analysis,  we  will  focus  on  the comparison between joint SFC and the
   other baseline models.
 
   \textbf{Analysis  under  few-shot  scenarios.}  Next,  we  analyze the overall
@@ -870,7 +870,7 @@
   \textbf{Fusion  of  classification  and  similarity  model.} Then, we begin to
   compare  the  general  performance  of SFC with single-task classification and
   similarity  baselines.  As  for  the  classification  model,  joint SFC
-  outperforms    TextCNN    by   26.19   percents,   ALBERT-xxlarge   by   17.87
+  outperforms    TextCNN    by   26.19   percents,   ALBERT-xxlarge   by   9.95
   percents\footnote{We found that the performance of ALBERT.xxlarge is extremely
   unstable  for  classification  task.  Here, we did multiple run with different
   settings  of parameters such as learning rate and batch size for each dataset,
@@ -907,9 +907,9 @@
   Amazon-670k,  the amount of data sample for each class is scarce, thus, we may
   need  more  candidate  classes  to  sample enough effective sentence pairs for
   sentence-pair model layer of SFC. In this way, the setting of $K=10$ and $P=5$
-  becomes a good choice.
+  becomes a good choice. However, in spite of the effect on evaluation performance brought by different settings of hyperparameters, joint SFC still steadily outperforms two-stage SFC by 0.41 percents in overall average F-score on ITG and Amazon-670k datasets. 
 
-  In  conclusion,  to  the best of our knowledge, these results place SFC as the
+  In  conclusion,  to  the best of our knowledge, these experimental results place joint SFC as the
   best   performing   model   on   5  diverse  experimental  datasets  for  text
   classification  task  under  low-resource task-specific conversational chatbot
   scenario.
