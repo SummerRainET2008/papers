@@ -115,13 +115,16 @@
   \section{Introduction}
   \label{sec:intro}
 
-  Task-specific  conversational  chatbot  \cite{wen2016network}  are  designed  to
-  share   the  working  pressure  of  human  customer  service  agents  who  are
-  responsible for solving customers' questions or queries about certain products
-  or  services.  Regardless  of  whether  the  conversation  is  single-turn  or
-  multi-turn,  the  essential  technical  solution  behind the chatbot is intent
-  classification model which can identify the correct intent behind user's input
-  text and find the corresponding answer.
+  Task-specific  conversational  chatbots  \cite{wen2016network}  can be applied
+  into  many practical products. For example, it can share the working burden of
+  human  customer  service  agents  responsible  for  customers' questions about
+  certain  products  or services. Another example is the speech-based control in
+  devices  like  intelligent  speakers, such as Siri, Google home, Baidu Xiaodu,
+  and smart home equipments. Regardless of whether these conversations belong to
+  single-turn or multi-turn, an essential technique underlying the chatbot is to
+  identify  the  real  intention  behind  a  user's  question or reply. Then the
+  chatbot  is caple of conducting expected action, text reply or accomplish some
+  operations.
 
   Although  task-specific  conversational chatbot already has a wide application
   in various business and industries, it's still a quite challenging task due to
@@ -134,7 +137,7 @@
   Second,  at  the  initial  stage  of  building  a chatbot for specific task or
   service, it's often extremely hard to collect sufficient data samples for each
   class.  The  reason  is  that it's usually too expensive and time consuming to
-  extract  different  ways  of natural language expression for each intent class
+  extract  different  ways  of natural language expression for each intention class
   from  history  conversation  log  or  even  manually  compose  the corpus from
   nothing.  Therefore,  the  key  to  building a task-specific chatbot with high
   performance     becomes     solving     the     challenge     of    short-text
@@ -204,12 +207,12 @@
   quite  hard  to  perform  well  on  task-specific dataset because the training
   objective  of  sentence-pair  model  is semantic similarity, which is slightly
   different from the target of classification task. That is to say, there always
-  exists  some intent classes which cannot be distinguished by each other merely
+  exists  some intention classes which cannot be distinguished by each other merely
   depending on semantic similarity. For example, we have 2 user query saying, A:
   What  should I do if I want to change my password? B: What is the modification
   rule if I want to change my password? In this case, sentence A is semantically
   similar  to  B,  since  they  both  express  the desire for changing password.
-  However, it's still reasonable to classify them into 2 intent classes, since A
+  However, it's still reasonable to classify them into 2 intention classes, since A
   is asking for the method for changing password, while B is asking for the rule
   to follow when creating a new password.
 
@@ -223,7 +226,7 @@
   joint  system,  we  first start with preparation work, which is pre-training a
   sentence-pair   model   on  external  corpus  for  sentence  pair  duplication
   identification,  and  then  find  an auxiliary model or tool which can help us
-  sample out top-K most related intent classes. This auxiliary model or tool can
+  sample out top-K most related intention classes. This auxiliary model or tool can
   either  be searching engine such as elasticsearch \cite{divya2013elasticsearch}
   or  a  text  classification  model  trained  on  task-specific  chatbot  data.
   Afterwards,  we  further  fine-tune  the  sentence-pair  model with 2 training
@@ -231,7 +234,7 @@
   classification  model  as  an auxiliary model in this paper to sample sentence
   pairs       for       training       based      on      negative      sampling
   strategy \cite{bamler2020extreme}.  The  reason is that a task-specific chatbot
-  often  has hundreds of intent classes, which forms too many sentence pairs for
+  often  has hundreds of intention classes, which forms too many sentence pairs for
   training  since  any  two  sentences  from  two  different  classes can form a
   sentence-pair     of     negative     sample.     Besides,     according    to
   Bamler \cite{bamler2020extreme},   training   on  negative  samples  from  most
@@ -273,7 +276,7 @@
   sentence-pair model are fused into one single model for joint training.
 
   3)  Experiment  results  on  4  public and 1 private short-text classification
-  datasets with respect to intent recognition tasks under conversational chatbot
+  datasets with respect to intention recognition tasks under conversational chatbot
   scenario  all demonstrated that our proposed SFC joint system with multi-task,
   as  well  as  the  improved  version  of  SFC,  can  both  achieve  remarkable
   improvement comparing to some powerful single-task and single-model baselines,
@@ -532,11 +535,11 @@
         \hline 
         Amazon-670k & Product review & 250 & 1942 & 8 & class sampling\tabularnewline
         \hline 
-        HWU64 & Intent detection & 64 & [320, 640, 960, 1280] & [5, 10, 15, 20] & data sampling\tabularnewline
+        HWU64 & intention detection & 64 & [320, 640, 960, 1280] & [5, 10, 15, 20] & data sampling\tabularnewline
         \hline 
-        CLINC150 & Intent detection & 150 & [750, 1500, 2250] & [5, 10, 15] & data sampling\tabularnewline
+        CLINC150 & intention detection & 150 & [750, 1500, 2250] & [5, 10, 15] & data sampling\tabularnewline
         \hline 
-        BANKING77 & Intent detection & 77 & [385, 770, 1155, 1540] & [5, 10, 15, 20] & data sampling\tabularnewline
+        BANKING77 & intention detection & 77 & [385, 770, 1155, 1540] & [5, 10, 15, 20] & data sampling\tabularnewline
         \hline 
       \end{tabular}
       \par
@@ -625,12 +628,12 @@
   chatbot  corpus setting with the subset of 1,942 training samples and 716 test
   samples for 250 class labels.
 
-  $\bullet$ \textbf{Subset of recently-released intent detection datasets}.
+  $\bullet$ \textbf{Subset of recently-released intention detection datasets}.
 
   From our point of view, task-specific chatbot usually starts with small amount
   of  data at the initial stage. As more and more customers start to communicate
   with  the  chatbot,  more data can be extracted from conversation log. Base on
-  these  assumptions,  we  do  experiments  on  the following 3 intent detection
+  these  assumptions,  we  do  experiments  on  the following 3 intention detection
   dataset    under    sampling    method    similar    to    the   approach   in
    \cite{casanueva2020efficient}  but  in  more  sophisticated few-shot settings,
   while  keeping the same test sets for each experiment to see the change of the
@@ -696,9 +699,9 @@
     \label{tbe:table2}
   \end{table*}
 
-  \textbf{HWU64}   is  a  intent  detection  dataset  designed  for  home  robot
+  \textbf{HWU64}   is  a  intention  detection  dataset  designed  for  home  robot
   scenario \cite{liu2019benchmarking}.  It aims at the specific task of capturing
-  the  intent  for  different  user  requests  to  home  robot  and  finding the
+  the  intention  for  different  user  requests  to  home  robot  and  finding the
   corresponding answer. The raw dataset contains 25,716 data points for 64 class
   labels  through  crowdsourcing,  which  raises  much  more  data  than  common
   real-world  circumstances. Therefore, we experiment with the setups where only
@@ -708,10 +711,10 @@
   \textbf{CLINC150}  is a dataset designed for task-oriented systems with 23,700
   queries  that  are  short  and unstructured for 150 intents, in the same style
   made  by real users through crowdsourcing \cite{larson2019evaluation}. Here, we
-  sample 5, 10 and 15 training data points for each intent class label by random
+  sample 5, 10 and 15 training data points for each intention class label by random
   sampling for our experimental setup.
 
-  \textbf{BANKING77}  is  a intent detection dataset for bank customer services.
+  \textbf{BANKING77}  is  a intention detection dataset for bank customer services.
   The    raw    dataset    contains    13,084   data   points   for   77   class
   labels \cite{casanueva2020efficient}.  Here,  we  sample 5, 10, 15, 20 training
   data  points  for  each  class  label  by random sampling for our experimental
@@ -732,7 +735,8 @@
   RoBERTa-large  and RoBERTa-base as our baseline models. Besides, we also adopt
   the       recently       released       baseline       pre-trained       model
   ALBERT-xxlarge \cite{lan2019albert}  for  comparison.  Since  we  use different
-  few-shot   settings   from    \cite{casanueva2020efficient}  for  those  intent
+  few-shot   settings   from    \cite{casanueva2020efficient}  for  those
+  intention
   detection  datasets,  we also use BERT-large tuned on our few-shot settings as
   an essential reference for experimental results.
 
@@ -834,7 +838,7 @@
   improvement trend of SFC under various few-shot settings. Our main focus is to
   study chatbot building in common situation during real-world application where
   only  a  few  sample  sentences are available for each class. The experimental
-  results  for  the  3  diverse  intent detection datasets (ClINC150, BANKING77,
+  results  for  the  3  diverse  intention detection datasets (ClINC150, BANKING77,
   HWU64) under few-shot settings indicate that our proposed joint SFC can
   achieve  2.47  percents  average  improvement  over  one  of the most powerful
   baseline  models,  which  is  RoBERTa-large classification model, on all these
@@ -851,9 +855,9 @@
   Afterwards,  we  start  to  compare the performance of SFC with the text-label
   joint  embedding  baseline  named as LEAM. As shown in Table \ref{tbe:table2},
   joint  SFC outperforms LEAM by 14.25 percents on average F-score over 5
-  datasets.  Besides,  although the labels within the 3 diverse intent detection
+  datasets.  Besides,  although the labels within the 3 diverse intention detection
   datasets  (CLINC150,  BANKING77,  HWU64)  are  all  being  well-defined as the
-  semantic  summary  of  each intent, joint SFC still outperforms LEAM by
+  semantic  summary  of  each intention, joint SFC still outperforms LEAM by
   14.69  percents  on  average  F-score.  This  observation  indicates that it's
   usually  quite  hard  to  use  a  fixed  label  with  only  a few words as the
   representative  of  all  the  sentences  within a class since there are always
