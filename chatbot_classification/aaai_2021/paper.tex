@@ -90,25 +90,26 @@
   \maketitle
 
   \begin{abstract}
-    Task-specific  chatbot  systems has gained many important applications, such
-    as  Siri, Google home, customer service systems to allievaite human's labor.
-    In  this  kind  of  systems, one of the core problems is the accurate detection of
-    intention  of  a  user's input. It is then mapped into a predefined chatting
-    logic  graph,  and the chatbot can return reasonable answers easily. This is
-    the  main  difference from a free chatbot. The intention detection, assuming
-    only  one  intention  in  a  sentence,  can  be  modeled  as  a  short  text
-    classification  problem.  In  practice,  the  number  of  intentions  can be
-    hundreads of thousands, as opposed to quite limited in the tradiational text
-    classification  problem,  and  the  labeled  data  is not trivial to acquire
-    plenty,  generally  10  to 20 per intention. Then, how to train an efficient
-    model  in such a resource-intensive practical application in a new domain is
-    critical.  In  this  work, we propose a novel model, called similairty model
-    fused with classification Model (SFC), which combines a classification model
-    and  a  similairty  model,  and  borrows the power of multi-task training as
-    well.  We  conduct extensive experiments on 4 public and 1 private datasets.
-    The  experimental  results  show  that our new model outperforms very strong
-    baselines, BERT, RoBERTa and ALBERT based pretrained models by 2 percentages
-    in average accuracy.
+    Task-specific  chatbot systems have gained many important applications, such
+    as  Siri,  Google home, and customer service systems. In these applications,
+    one  of  the  core  problems is the intention detection from a user's input.
+    Then,  the  intention  with  its  associated  information  is  mapped into a
+    predefined dialog logic graph, and the chatbot returns corresponding answer.
+    This  is  the  main  difference  from  a  free chatbot system. The intention
+    detection,  assuming  only  one  intention  in  a  user's input here, can be
+    modeled  as  a  short  text  classification.  In  practice,  the  number  of
+    intentions  can  be hundreds of thousands, as opposed to a few number in the
+    traditional text classification problem; enough training data is not trivial
+    to be filtered out and labeled from tons of raw user logs with miscellaneous
+    information, and generally only 10 to 20 samples per intention are available
+    in  the  early  stage.  Then,  how  to  train  an  efficient model in such a
+    practical  and important application is critical. In this work, we propose a
+    novel  model, called similarity model fused with classification Model (SFC),
+    which  combines  a  classification  model  and  a similarity model, and also
+    borrows  the  power  of  multi-task  training  as well. We conduct extensive
+    experiments  on  4  public  and 1 private datasets. The experimental results
+    show that our new model outperforms very strong baselines, BERT, RoBERTa and
+    ALBERT based pretrained models by 2 percentages in average accuracy.
 
   \end{abstract}
 
