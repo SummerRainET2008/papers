@@ -236,10 +236,9 @@
       \par
     \end{centering}
     \caption{
-      \textbf{Network   Structure   of  joint  SFC:}  a  joint  model  of
-      sentence-pair   model   and   text   classification   model  organized  in
-      joint  structure by completing different tasks at different network
-      layers.
+      \textbf{Network Structure of SFC:} two-stage SFC and joint-SFC are sharing
+      the  same  network  from  stage  1  and  stage 2, with the only difference
+      whether two stages being jointly trained.
     }
     \label{fig:framework}
   \end{figure*}
@@ -623,34 +622,28 @@
           \hline
           TextCNN & \multirow{2}*{$0.5318$} & \multirow{2}*{$0.6963$} & \multirow{2}*{$0.7609$} & \multirow{2}*{$0.8142$} & \multirow{2}*{$0.8526$} & \multirow{2}*{$0.8867$} & \multirow{2}*{$0.4408$} & \multirow{2}*{$0.6436$} & \multirow{2}*{$0.7366$} & \multirow{2}*{$0.7918$} & \multirow{2}*{$0.8228$} & \multirow{2}*{$0.8619$} & \multirow{2}*{$0.3112$} & \multirow{2}*{$0.4007$} & \multirow{2}*{$0.4823$} & \multirow{2}*{$0.5272$} & \multirow{2}*{$0.5782$} & \multirow{2}*{$0.6262$} & \multirow{2}*{$0.6624$} & \multirow{2}*{$0.4401$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
           LEAM & \multirow{2}*{$0.7514$} & \multirow{2}*{$0.8203$} & \multirow{2}*{$0.8612$} & \multirow{2}*{$0.8802$} & \multirow{2}*{$0.9010$} & \multirow{2}*{$0.9180$} & \multirow{2}*{$0.5422$} & \multirow{2}*{$0.7812$} & \multirow{2}*{$0.8129$} & \multirow{2}*{$0.8280$} & \multirow{2}*{$0.8610$} & \multirow{2}*{$0.8727$} & \multirow{2}*{$0.4545$} & \multirow{2}*{$0.5554$} & \multirow{2}*{$0.5936$} & \multirow{2}*{$0.6599$} & \multirow{2}*{$0.6855$} & \multirow{2}*{$0.7046$} & \multirow{2}*{$0.7086$} & \multirow{2}*{$0.6091$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
           \hline
+          \hline
           BERT-large & \multirow{2}*{$0.8080$} & \multirow{2}*{$0.8904$} & \multirow{2}*{$0.9265$} & \multirow{2}*{$0.9334$} & \multirow{2}*{$0.9497$} & \multirow{2}*{$0.9595$} & \multirow{2}*{$0.5780$} & \multirow{2}*{$0.8004$} & \multirow{2}*{$0.8518$} & \multirow{2}*{$0.8827$} & \multirow{2}*{$0.8858$} & \multirow{2}*{$0.8982$} & \multirow{2}*{$0.4711$} & \multirow{2}*{$0.5963$} & \multirow{2}*{$0.6342$} & \multirow{2}*{$0.7010$} & \multirow{2}*{$0.7117$} & \multirow{2}*{$0.7424$} & \multirow{2}*{$0.7485$} & \multirow{2}*{$0.6658$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
           ALBERT-xxlarge & \multirow{2}*{$0.8497$} & \multirow{2}*{$0.9008$} & \multirow{2}*{$0.9296$} & \multirow{2}*{$0.9297$} & \multirow{2}*{$0.9466$} & \multirow{2}*{$0.9578$} & \multirow{2}*{$0.5549$} & \multirow{2}*{$0.7981$} & \multirow{2}*{$0.8231$} & \multirow{2}*{$0.8530$} & \multirow{2}*{$0.8571$} & \multirow{2}*{$0.9096$} & \multirow{2}*{$0.4879$} & \multirow{2}*{$0.6116$} & \multirow{2}*{$0.6135$} & \multirow{2}*{$0.6996$} & \multirow{2}*{$0.7094$} & \multirow{2}*{$0.7376$} & \multirow{2}*{$0.7253$} & \multirow{2}*{$0.6893$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
           RoBERTa-base & \multirow{2}*{$0.8732$} & \multirow{2}*{$0.9254$} & \multirow{2}*{$0.9363$} & \multirow{2}*{$0.9482$} & \multirow{2}*{$0.9558$} & \multirow{2}*{$0.9637$} & \multirow{2}*{$0.7305$} & \multirow{2}*{$0.8654$} & \multirow{2}*{$0.8808$} & \multirow{2}*{$0.9080$} & \multirow{2}*{$0.9061$} & \multirow{2}*{$0.9293$} & \multirow{2}*{$0.5831$} & \multirow{2}*{$0.6790$} & \multirow{2}*{$0.7064$} & \multirow{2}*{$0.7100$} & \multirow{2}*{$0.7320$} & \multirow{2}*{$0.7472$} & \multirow{2}*{$0.7734$} & \multirow{2}*{$0.6708$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
           RoBERTa-large & \multirow{2}*{$0.8974$} & \multirow{2}*{$0.9372$} & \multirow{2}*{$0.9508$} & \multirow{2}*{$0.9584$} & \multirow{2}*{$0.9621$} & \multirow{2}*{$0.9733$} & \multirow{2}*{$0.7690$} & \multirow{2}*{$0.8728$} & \multirow{2}*{$0.8966$} & \multirow{2}*{$0.9099$} & \multirow{2}*{$0.9227$} & \multirow{2}*{$0.9313$} & \multirow{2}*{$0.6044$} & \multirow{2}*{$0.7002$} & \multirow{2}*{$0.7129$} & \multirow{2}*{$0.7436$} & \multirow{2}*{$0.7493$} & \multirow{2}*{$0.7678$} & \multirow{2}*{$0.7990$} & \multirow{2}*{$0.7156$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
           RoBERTa-large & \multirow{2}*{$0.8266$} & \multirow{2}*{$0.8861$} & \multirow{2}*{$0.9023$} & \multirow{2}*{$0.9084$} & \multirow{2}*{$0.9090$} & \multirow{2}*{$0.9407$} & \multirow{2}*{$0.757$} & \multirow{2}*{$0.8476$} & \multirow{2}*{$0.8614$} & \multirow{2}*{$0.8743$} & \multirow{2}*{$0.8749$} & \multirow{2}*{$0.8980$} & \multirow{2}*{$0.5425$} & \multirow{2}*{$0.6164$} & \multirow{2}*{$0.6503$} & \multirow{2}*{$0.6729$} & \multirow{2}*{$0.6947$} & \multirow{2}*{$0.7231$} & \multirow{2}*{$0.7418$} & \multirow{2}*{$0.6362$}\tabularnewline
           (similarity) & & & & & & & & & & & & & & & & & & & &\tabularnewline
           \hline
+          \hline
           2-stage SFC & \multirow{2}*{$0.8979$} & \multirow{2}*{$0.9457$} & \multirow{2}*{$0.9517$} & \multirow{2}*{$0.9591$} & \multirow{2}*{$0.9610$} & \multirow{2}*{$0.9664$} & \multirow{2}*{$0.7975$} & \multirow{2}*{$0.8818$} & \multirow{2}*{$0.8962$} & \multirow{2}*{$0.9109$} & \multirow{2}*{$0.9187$} & \multirow{2}*{$0.9198$} & \multirow{2}*{$0.6477$} & \multirow{2}*{$0.7055$} & \multirow{2}*{$0.7200$} & \multirow{2}*{$0.7232$} & \multirow{2}*{$0.7484$} & \multirow{2}*{$0.7653$} & \multirow{2}*{$0.7972$} & \multirow{2}*{$0.7189$}\tabularnewline
-          (task1 only) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
+          (task1) & & & & & & & & & & & & & & & & & & & &\tabularnewline
           2-stage SFC & \multirow{2}*{$0.9162$} & \multirow{2}*{$0.9424$} & \multirow{2}*{$0.9530$} & \multirow{2}*{$0.9617$} & \multirow{2}*{$0.9633$} & \multirow{2}*{$0.9690$} & \multirow{2}*{$0.7997$} & \multirow{2}*{$0.8823$} & \multirow{2}*{$0.8945$} & \multirow{2}*{$0.9123$} & \multirow{2}*{$0.9236$} & \multirow{2}*{$0.9317$} & \multirow{2}*{$0.6498$} & \multirow{2}*{$0.6980$} & \multirow{2}*{$0.7202$} & \multirow{2}*{$0.7358$} & \multirow{2}*{$0.7498$} & \multirow{2}*{$0.7657$} & \multirow{2}*{$0.8020$} & \multirow{2}*{$0.7311$}\tabularnewline
-          (task2 only) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
+          (task2) & & & & & & & & & & & & & & & & & & & &\tabularnewline
           2-stage SFC & \multirow{2}*{$0.9167$} & \multirow{2}*{$0.9456$} & \multirow{2}*{$0.9571$} & \multirow{2}*{$0.9638$} & \multirow{2}*{$0.9658$} & \multirow{2}*{$0.9753$} & \multirow{2}*{$0.8135$} & \multirow{2}*{$0.8854$} & \multirow{2}*{$0.8931$} & \multirow{2}*{$0.9192$} & \multirow{2}*{$0.9257$} & \multirow{2}*{$0.9339$} & \multirow{2}*{$0.6525$} & \multirow{2}*{$0.7092$} & \multirow{2}*{$0.7168$} & \multirow{2}*{$0.7476$} & \multirow{2}*{$0.7519$} & \multirow{2}*{$0.7696$} & \multirow{2}*{$\textbf{0.8124}$} & \multirow{2}*{$0.7364$}\tabularnewline
           (task1 + task2) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
           \multirow{2}*{Joint SFC} & \multirow{2}*{$\textbf{0.9231}$} & \multirow{2}*{$\textbf{0.9560}$} & \multirow{2}*{$\textbf{0.9644}$} & \multirow{2}*{$\textbf{0.9669}$} & \multirow{2}*{$\textbf{0.9712}$} & \multirow{2}*{$\textbf{0.9821}$} & \multirow{2}*{$\textbf{0.8270}$} & \multirow{2}*{$\textbf{0.9069}$} & \multirow{2}*{$\textbf{0.9103}$} & \multirow{2}*{$\textbf{0.9209}$} & \multirow{2}*{$\textbf{0.9323}$} & \multirow{2}*{$\textbf{0.9463}$} & \multirow{2}*{$\textbf{0.6697}$} & \multirow{2}*{$\textbf{0.7211}$} & \multirow{2}*{$\textbf{0.7254}$} & \multirow{2}*{$\textbf{0.7497}$} & \multirow{2}*{$\textbf{0.7593}$} & \multirow{2}*{$\textbf{0.7772}$} & \multirow{2}*{$0.8114$} & \multirow{2}*{$\textbf{0.7445}$}\tabularnewline
           & & & & & & & & & & & & & & & & & & & &\tabularnewline
           \hline
