@@ -1,6 +1,5 @@
 \def\year{2021}\relax
 %File: formatting-instructions-latex-2021.tex
-%release 2021.1
 \documentclass[letterpaper]{article} % DO NOT CHANGE THIS
 \usepackage{aaai21}  % DO NOT CHANGE THIS
 \usepackage{times}  % DO NOT CHANGE THIS
@@ -8,23 +7,6 @@
 \usepackage{courier}  % DO NOT CHANGE THIS
 \usepackage[hyphens]{url}  % DO NOT CHANGE THIS
 \usepackage{graphicx} % DO NOT CHANGE THIS
-\urlstyle{rm} % DO NOT CHANGE THIS
-\def\UrlFont{\rm}  % DO NOT CHANGE THIS
-\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
-\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
-\frenchspacing  % DO NOT CHANGE THIS
-\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
-\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
-%\nocopyright
-%PDF Info Is REQUIRED.
-% For /Author, add all authors within the parentheses, separated by commas. No accents or commands.
-% For /Title, add Title in Mixed Case. No accents or commands. Retain the parentheses.
-\pdfinfo{
-  /Title (AAAI Press Formatting Instructions for Authors Using LaTeX -- A Guide)
-  /Author (AAAI Press Staff, Pater Patel Schneider, Sunil Issar, J. Scott Penberthy, George Ferguson, Hans Guesgen, Francisco Cruz, Marc Pujol-Gonzalez)
-  /TemplateVersion (2021.1)
-} 
-
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{amsmath}
@@ -32,12 +14,15 @@
 \usepackage{float}
 \usepackage{subfigure}
 \usepackage{spconf}
+\usepackage{natbib}  % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
+\usepackage{caption} % DO NOT CHANGE THIS AND DO NOT ADD ANY OPTIONS TO IT
 
-\setcounter{secnumdepth}{0} %May be changed to 1 or 2 if section numbers are desired.
+\urlstyle{rm} % DO NOT CHANGE THIS
+\def\UrlFont{\rm}  % DO NOT CHANGE THIS
+\frenchspacing  % DO NOT CHANGE THIS
+\setlength{\pdfpagewidth}{8.5in}  % DO NOT CHANGE THIS
+\setlength{\pdfpageheight}{11in}  % DO NOT CHANGE THIS
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
-%% Because html converters don't know tabularnewline
 \providecommand{\tabularnewline}{\\}
 %% A simple dot to overcome graphicx limitations
 \newcommand{\lyxdot}{.}
@@ -45,45 +30,25 @@
 \def\x{{\mathbf x}}
 \def\L{{\cal L}}
 
+%\nocopyright
+%PDF Info Is REQUIRED.
+% For /Author, add all authors within the parentheses, separated by commas. No accents or commands.
+% For /Title, add Title in Mixed Case. No accents or commands. Retain the parentheses.
+\pdfinfo{
+  /title (Joint training of classification model and similarity model for
+  low-resource text classification in chatbot)
+  /Author (no author informmation)
+  /TemplateVersion (2021.1)
+} 
+
+\setcounter{secnumdepth}{0} %May be changed to 1 or 2 if section numbers are desired.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
 \title{     
   %SFC: Few-Shot Text Classification via Similarity Fused with Classification System
   Joint training of classification model and similarity model for low-resource
   text classification in chatbot
-}
-
-\author{
-  %Authors
-  % All authors must be in the same font size and format.
-  Written by AAAI Press Staff\textsuperscript{\rm 1}\thanks{With help from the AAAI Publications Committee.}\\
-  AAAI Style Contributions by Pater Patel Schneider,
-  Sunil Issar,  \\
-  J. Scott Penberthy,
-  George Ferguson,
-  Hans Guesgen,
-  Francisco Cruz,
-  Marc Pujol-Gonzalez
-  \\
-}
-\affiliations{
-  %Afiliations
-
-  \textsuperscript{\rm 1}Association for the Advancement of Artificial Intelligence\\
-  %If you have multiple authors and multiple affiliations
-  % use superscripts in text and roman font to identify them.
-  %For example,
-
-  % Sunil Issar, \textsuperscript{\rm 2}
-  % J. Scott Penberthy, \textsuperscript{\rm 3}
-  % George Ferguson,\textsuperscript{\rm 4}
-  % Hans Guesgen, \textsuperscript{\rm 5}.
-  % Note that the comma should be placed BEFORE the superscript for optimum readability
-
-  2275 East Bayshore Road, Suite 160\\
-  Palo Alto, California 94303\\
-  % email address must be in roman text type, not monospace or sans serif
-  publications21@aaai.org
-
-  % See more examples next
 }
 
 \begin{document}
