@@ -233,101 +233,31 @@
 
   {Add joint NER and classification problem here.}
 
-
   \section{Methodology}
-  In  this  section,  we  will  describe our proposed system of similarity model
-  fused  with  classification  model,  named  as  SFC, in detail. We propose two
-  approaches  to  implement  the  SFC idea, two-stageg SFC, and its more compact
-  version called joint-SFC.
+  In  this section, we describe our proposed system, similarity model fused with
+  classification  model (SFC). We propose two approaches to implement this idea,
+  two-stageg SFC, and its more unified version joint-SFC.
 
   \subsection{Two-stage SFC}
 
-  The network   structure   of   two-stage   SFC  is  composed  with  2  separate  stages  in  charge of
-  different  jobs. In stage 1, we can use any auxiliary text classification model or tool to provide
-  top-K  most  related class labels. These selected class labels will later be used to sample sentence pairs of both positive
-  samples  and negative samples for stage 2. Then, in stage 2, we will use sentence pair similarity model to identify the class label with strongest semantic similarity to the user input sentence. Suppose we have a training dataset
-  $\mathcal{D}=\{x_{i},y_{i}\}_{i=1}^{N}$  of  $N$ data points, in which $x_{i}$
-  is the user input query and $y_{i}$ is a single class label from a class label
-  set  of  $C$  classes  in total. If we want to generate sentence pair dataset
-  $\mathcal{D'}=\{[(x,x')_{j},l_{j}]\}_{j=1}^{M}$,   where   $(x,   x')_{j}$  is
-  sentence  pair  grouped  by  2  user  input  queries and $l_{j}\in\{0, 1\}$ is
-  similarity class label, see Equ. \ref{eq:similarity label},
-  \begin{align}
-    l_{j}=
-    \begin{cases} \label{eq:similarity label}
-      0 & y_{x}\neq y_{x'}\\
-      1 & y_{x}=y_{x'}
-    \end{cases}
-  \end{align}
-  directly  from  original dataset $\mathcal{D}$ without any sampling strategy,
-  then  $\mathcal{D'}$  will  have  $M=N^2$ data points of sentence pairs, which
-  might be too time-consuming for the training process of stage 2 since we often
-  have  hundreds  of class labels under task-specific chatbot scenario. Although
-  we  may  only  have  a  few data points for a single class label, $M$ is still
-  quite a big number.
-
-  Therefore,  we adopt the idea of adversarial negative sampling strategy raised
-  by   \cite{bamler2020extreme}.  The  key  idea  of this sampling strategy is to
-  train  with  negative  samples that are hard to be distinguished from positive
-  samples. Now suppose we have a user input query $x_{i}$ and top-K most related
-  class   labels   set  $\mathcal{C'}=\{c'_{1},  \dots,  c'_{K}\}$  provided  by
-  auxiliary  model  or  tool in stage 1, where $K$ is a hyperparameter set by us
-  that  controls  candidate  class  number,  we  apply  the adversarial negative
-  sampling  strategy  into our sentence pair sampling process by the following 2
-  steps:
-
-  The  first step is \emph{positive sentence pair sampling}. During the training
-  process,  we have to first make sure that the ground truth class label $y_{i}$
-  for  $x_{i}$  is  within  the  candidate  class  label  set $\mathcal{C'}$. If
-  $y_{i}\notin  \mathcal{C'}$,  we will manually add $y_{i}$ into $\mathcal{C'}$
-  by  replacing  $c'_{K}$  with  $y_{i}$,  since $c'_{K}$ is the least promising
-  candidate  label  according  to the auxiliary model in stage 1. Afterwards, we
-  will randomly sample $P$ sentences $\{x'_{0},x'_{1}, \dots, x'_{P}\}$ with the
-  same  class  label  as  $y_{i}$  from dataset $\mathcal{D}$ to form the set of
-  sentence  pairs  with positive label $\mathcal{P'}_{i}=\{[(x_{i}, x'_{0}), 1],
-  [(x_{i},  x'_{1}),  1],  \dots,  [(x_{i},  x'_{P}), 1]\}$, where $P$ is also a
-  hyperparameter  set  by  us  that  controls  the number of sentences we should
-  sample from each class.
-
-  The  second  step  is  \emph{negative sentence pair sampling}: As for negative
-  sentence  pairs,  we will also randomly sample $P$ sentences for each class in
-  the negative candidate class label set $\mathcal{C'}\backslash \{y_{i}\}$. The
-  class  labels  in  $\mathcal{C'}\backslash  \{y_{i}\}$  are  the  set  of most
-  confusing  class  labels comparing to the ground truth ${y_{i}}$, so we assume
-  that  the  sentence  pairs  with  negative  label  grouped by user input query
-  $x_{i}$  and sentences with class labels in $\mathcal{C'}\backslash \{y_{i}\}$
-  are  strong  adversarial  negative  samples for sentence-pair similarity model
-  that  can  help  enhance  the training speed and performance. According to the
-  same  method  as  positive  sentence  pair  sampling, we can obtain the set of
-  sentence  pairs  with  negative label as $\mathcal{N'}_{i}=\{[(x_{i}, x'_{0}),
-  0], [(x_{i}, x'_{1}), 0], ..., [(x_{i}, x'_{P\cdot (K-1)}), 0]\}$
-
-  In  this  way,  we  can generate the sentence pair dataset $\mathcal{D'}$ for
-  stage  2 based on the top-K class label set $\mathcal{C'}$ provided by stage 1
-  as   $\mathcal{D'}=\{\mathcal{P'}_{i}\cup   \mathcal{N'}_{i}\}_{i=1}^{N}$,  in
-  which we will have $M=N\cdot K\cdot P$ data points of sentence pairs in total.
-
-  After  explaining the data sampling principle for sentence pairs and how the 2
-  stages  in  SFC  system  connect  with  each other, let's go deeper into model
-  structure within these two stages respectively to see how it works.
+  Two-stage   SFC  is  composed  with  two  independent stages  in  charge of
+  different  jobs. 
 
   \subsubsection*{
     Stage 1: classification model for providing top-K candidate class labels
   }
 
-  As for  stage  1,  our  two-stage SFC  system  can adapt to any auxiliary model or even
-  searching  tool  based  on  Term Frequency-Inverse Document Frequency (TF-IDF)
-  retrieval.  In  this  paper,  however,  we  choose to fine-tune pretrained model such as RoBERTa on our
-  task-specific  dataset $\mathcal{D}$ by adding a softmax classifier on top of
-  it for better
-  overall  performance.  According  to  our  experimental  result,  RoBERTa  can
-  guarantee  that  approximately  95\%  ground  truth labels be included in top-5
-  candidate  class  labels  with  highest  probability if it has been fine-tuned on
-  task-specific  dataset and can obtain a well performance measured by F-score over
-  0.75 on this dataset.  So  we use RoBERTa as the encoder of classification model in our setting at
-  stage 1 to ensure low limitation for the performance of stage 2.
+  In  stage  1,  we  can  use any auxiliary text classification model or tool,
+  such as Term Frequency-Inverse Document Frequency (TF-IDF)retrieval, to
+  provide  top-K  most  related  class  labels. These selected class labels will
+  later  be  used to sample sentence pairs of both positive samples and negative
+  samples  for  stage  2. 
 
-  For single-sentence text classification tasks, given a data point $x_{i}$ with
+  In  this  work,  we  choose pretrained models to fine tune on our data $\mathcal{D}$.
+  Due to the excellent performance of RoBERTa in this task, compared to other pretrained
+  models, we use RoBERTa as the encoder of classification model in our setting.
+
+  In this stage, given a data point $x_{i}$ with
   class  label  $y_{i}$  from  dataset  $\mathcal{D}$, RoBERTa takes the final
   hidden  state  $h_{i}$  of the first token [CLS] as the representation for the
   whole   sequence  of  $x_{i}$.  Let's  suppose  we  have  a  linear  layer  as
@@ -347,26 +277,85 @@
 
   \subsubsection*{Stage 2: sentence-pair model for multi-task learning}
 
-  As for  stage 2, we also choose RoBERTa as the encoder for the sentence pair similarity model. Before sending sentence pairs to Roberta, we
-  pack  sentence  pairs  into a single sequence and separate them with a special
-  token  [SEP].  Roberta  will  also  add  a  learned  embedding  to every token
-  indicating  whether  it belongs to the first sentence or the second one. Then,
-  we  utilize  the  cross-attention  mechanism  inside RoBERTa, and then extract
-  semantic relationship between 2 sentences from the output softmax layer, which
-  is placed on top of the last hidden representation of the [CLS] token.
+  We continue choosing RoBERTa as the main module in the sentence pair
+  similarity  model.  
 
-  Before we start to fine-tune our sentence-pair model on task-specific dataset,
+  
+  Then, in stage 2, we will use sentence pair similarity
+  model  to  identify  the class label with strongest semantic similarity to the
+  user    input    sentence.    Suppose    we    have    a    training   dataset
+  $\mathcal{D}=\{x_{i},y_{i}\}_{i=1}^{N}$  of  $N$ data points, in which $x_{i}$
+  is the user input query and $y_{i}$ is a single class label from a class label
+  set  of  $C$  classes  in  total. If we want to generate sentence pair dataset
+  $\mathcal{D'}=\{[(x,x')_{j},l_{j}]\}_{j=1}^{M}$,   where   $(x,   x')_{j}$  is
+  sentence  pair  grouped  by  2  user  input  queries and $l_{j}\in\{0, 1\}$
+  denotes the similarity label, see Equ. \ref{eq:similarity label},
+  \begin{align}
+    l_{j}=
+    \begin{cases} \label{eq:similarity label}
+      0 & y_{x}\neq y_{x'}\\
+      1 & y_{x}=y_{x'}
+    \end{cases}
+  \end{align}
+  directly  from  original dataset $\mathcal{D}$ without any sampling strategy,
+  then  $\mathcal{D'}$  will  have  $M=N^2$ data points of sentence pairs, which
+  might be too time-consuming for the training process of stage 2 since we often
+  have  hundreds  of class labels under task-specific chatbot scenario. Although
+  we  may  only  have  a  few data points for a single class label, $M$ is still
+  prohibitively large.
+
+  Therefore,  we adopt the idea of adversarial negative sampling strategy from
+  the work \cite{bamler2020extreme}.  The  key  idea  is to
+  train  with  negative  samples that are hard to be distinguished from positive
+  samples. Now suppose we have a user input query $x_{i}$ and top-K most related
+  class   labels   set  $\mathcal{C'}=\{c'_{1},  \dots,  c'_{K}\}$  provided  by
+  auxiliary  model  or  tool in stage 1, where $K$ is a hyperparameter 
+  to control  candidate  class  number,  we  apply  the adversarial negative
+  sampling  strategy  into our sentence pair sampling process by the following 2
+  steps:
+
+  The  first step is \emph{positive sentence pair sampling}. During the training
+  process,  we first make sure the ground truth class label $y_{i}$
+  for  $x_{i}$  is  within  the  candidate  class  label  set $\mathcal{C'}$. If
+  $y_{i}\notin  \mathcal{C'}$,  we manually add $y_{i}$ into $\mathcal{C'}$
+  by  replacing  $c'_{K}$  with  $y_{i}$,  since $c'_{K}$ is the least promising
+  candidate  label  according  to the auxiliary model in stage 1. Afterwards, we
+  will randomly sample $P$ sentences $\{x'_{0},x'_{1}, \dots, x'_{P}\}$ with the
+  same  class  label  as  $y_{i}$  from dataset $\mathcal{D}$ to form the set of
+  sentence  pairs  with positive label $\mathcal{P'}_{i}=\{[(x_{i}, x'_{0}), 1],
+  [(x_{i},  x'_{1}),  1],  \dots,  [(x_{i},  x'_{P}), 1]\}$, where $P$ is also a
+  hyperparameter  set  to control  the number of sentences we should
+  sample from each class.
+
+  The  second  step  is  \emph{negative sentence pair sampling}: As for negative
+  sentence  pairs,  we will also randomly sample $P$ sentences for each class in
+  the negative candidate class label set $\mathcal{C'}\backslash \{y_{i}\}$. The
+  class  labels  in  $\mathcal{C'}\backslash  \{y_{i}\}$  are  the  set  of most
+  confusing  class  labels comparing to the ground truth ${y_{i}}$, so we assume
+  that  the  sentence  pairs  with  negative  label  grouped by user input query
+  $x_{i}$  and sentences with class labels in $\mathcal{C'}\backslash \{y_{i}\}$
+  are  strong  adversarial  negative  samples for sentence-pair similarity model
+  that  can  help  enhance  the training speed and performance. According to the
+  same  method  as  positive  sentence  pair  sampling, we can obtain the set of
+  sentence  pairs  with  negative label as $\mathcal{N'}_{i}=\{[(x_{i}, x'_{0}),
+  0], [(x_{i}, x'_{1}), 0], ..., [(x_{i}, x'_{P\cdot (K-1)}), 0]\}$
+
+  In  this  way,  we  generate the sentence pair dataset $\mathcal{D'}$ for
+  stage  2 based on the top-K class label set $\mathcal{C'}$ provided by stage 1
+  as   $\mathcal{D'}=\{\mathcal{P'}_{i}\cup   \mathcal{N'}_{i}\}_{i=1}^{N}$,  in
+  which we have $M=N\cdot K\cdot P$ data points of sentence pairs in total.
+
+  Before starting to fine-tune our sentence-pair model on task-specific dataset,
   we   first  fine-tune  RoBERTa  on  Quora  dataset \cite{iyer2017first},  which
   contains  404,290  potential  duplicate question pairs, for transfer learning.
   Then   we   continue  to  do  multi-task  training  on  sentence-pair  dataset
   $\mathcal{D'}$ sampled from the top-K candidate class labels provided by stage
   1.
 
-  \subsection{Multitask based training}
+  \subsubsection*{Multi-task based training}
   The 2 tasks for stage 2 training process are listed below.
 
-  \subsubsection*{Task 1: Regular sentence-pair similarity task}
-
+  The first task is \emph{regular sentence-pair similarity task}.
   For  sentence  pair semantic similarity task, given a data point $(x, x')_{i}$
   with       similarity       label       $l_{i}$       from       data      set
   $\mathcal{D'}=\{[(x,x')_{i},l_{i}]\}_{i=1}^{M}$,   Roberta   takes  the  final
@@ -389,8 +378,8 @@
     \end{aligned}
   \end{equation}
 
-  \subsubsection*{Task   2:  Classification  task  on  top-K  classes  based  on
-  sentence-pair model}
+  The second task is \emph{classification  task  on  top-K  classes  based  on
+  sentence-pair model}.
 
   As  for top-K classification task, it shares the same sentence pair similarity
   model   structure  with  task  1.  The  only  difference  is  that  we  add  a
@@ -488,8 +477,9 @@
     \label{tbe:dataset statistic}
   \end{table*}
 
-  \subsection{Joint SFC with joint model structure}
-  In  two-stage  SFC,  Stage 1 and stage 2 are separate, so they do not interact
+  \subsection{Joint SFC}
+  In  two-stage  SFC,  Stage 1 and stage 2 are separate that there is no deep
+  interaction
   with  each other during training. In this case, the performance of stage 1 can
   limit  the  potential of stage 2, meanwhile, stage 2 also cannot give training
   feedback back to stage 1 for fine-tuning.
@@ -507,18 +497,13 @@
   There  are 3 tasks in total during the training process of joint SFC, shown in
   Fig. \ref{fig:framework}, and the overall loss is also the weighted sum of all
   the   task-specific  losses,  shown  in  Equ.  \ref{eq:joint_SFC_loss}.  Here,
-  $\alpha_S$,   $\alpha_K$   and   $\alpha_C$   are  the  weights  for  task  1:
-  sentence-pair  similarity,  task  2:  top-K classification and task 3: general
+  $\alpha_S$,   $\alpha_K$   and   $\alpha_C$   represent the  weights  for  task  1,
+  sentence-pair  similarity,  task  2,  top-K classification and task 3, general
   single sentence classification respectively.
   \begin{align}
     \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K + \alpha_C \mathcal{L}^C
     \label{eq:joint_SFC_loss}
   \end{align}
-
-  Finally,  when  doing inference, for each user input query $x$, we will choose
-  the  class label that contains the sentence $x'$ with highest similarity score
-  $\varPhi$,  after  being packed into a sentence pair $(x, x')$ with query $x$,
-  as our final result for prediction.
 
   \section{Experiments}
   \label{sec:exp}
