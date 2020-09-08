@@ -611,7 +611,8 @@
 
     \item   \emph{Non-pretrained   model  based  classification  system},  which
     consists  of  a popular CNN based TextCNN \cite{kim2014convolutional}, and a
-    recently  proposed label-embedding based LEAM (todo: reference). Empircally,
+    recently  proposed label-embedding based LEAM (todo: reference and its label
+    setting). Empircally,
     a  non-pretrained  model  based  system  are  not  performing  as  well as a
     pretrained  models  based,  if  both is applicable in some task. Our listing
     these  non-pretrained model based systems here is to provide a comprehensive
@@ -682,117 +683,143 @@
 
   \subsection{Result Analysis}
 
-  Table  \ref{tbe:table2}  presents  all results on the five datasets 
-  model  set-up  in detail. The performance of each model is measured in F-score
-  on the fixed test set for each dataset. 
-  Overall,  two-stage SFC systems show moderate improvements over all  baseline
-  systems.  This  observation  gives  us  a  general  idea  that
-  classification model and similarity model can actually provide complementary information
-  to each other, and combining them together can enhance the overall capability 
-  based on richer extracted semantic information.  
-  Furthermore, we also studied  the  performance among all the variants of SFCs on  
-  different data settings to explore the benefits brought by multi-task training 
+  Table  \ref{tbe:table2} presents all results on the five datasets model set-up
+  in  detail.  The performance of each model is measured in F-score on the fixed
+  test  set  for  each  dataset.  Overall,  two-stage  SFC systems show moderate
+  improvements  over  all  baseline systems. This observation gives us a general
+  idea  that  classification  model  and  similarity  model can actually provide
+  complementary  information  to  each  other,  and  combining them together can
+  enhance the overall capability based on richer extracted semantic information.
+  Furthermore, we also studied the performance among all the variants of SFCs on
+  different data settings to explore the benefits brought by multi-task training
   and the joint-model structure.
 
-  \textbf{Comparison  among  SFC  variants.} First, we turn to compare among the
-  four  SFC  variants shown in Table \ref{tbe:table2} to analyze the improvement
-  brought  by  multi-task  and  joint-model  structure. We conduct
-  ablation  experiments  to study the benefits brought by multi-task training by
-  comparing multi-task two-stage SFC with single-task two-stage SFC. We can see from
-  Table  \ref{tbe:table2}  that  two-stage  SFC  with  only  task 1 (sentence-pair
-  similarity task) degrades by 0.80 percent on average and two-stage SFC with only
-  task  2  (top-K  classification  task) degrades by 0.45 percent on average. The
-  degradation  indicates  that  training  with these 2 tasks together in SFC can
-  effectively  help  the  sentence-pair  model  extract  more knowledge from the
-  limited  amount  of data. Besides, task 2 degrades 0.35 percent less than task
-  1.  This observation suggests that task 2 may play a relatively more important
-  role  in multi-task learning, which leads us to put larger weight $\alpha_{K}$
-  to  the  loss  $\mathcal{L}^{K}$  of  task  2  when calculating the total loss
-  $\mathcal{L}$.  Also, we can see that the joint SFC steadily outperforms
-  two-stage  SFC  on  5  diverse  datasets  by  0.95  percents  on  average.  This
-  observation  supports  the idea that the joint model structure can
-  alleviate the limitation brought by the lack of interaction between similarity
-  model  and  classification  model in two-stage SFC. Therefore, for the following
-  analysis,  we  will  focus  on  the comparison between joint SFC and the
-  other baseline models.
+  \subsubsection*{Which SFC variant performs best?} 
+  First, we compare the four  SFC  variants to analyze the improvement
+  brought  by  multi-task  and  joint-model  structure. 
 
-  \textbf{Analysis  under  few-shot  scenarios.}  Next,  we  analyze the overall
-  improvement trend of SFC under various few-shot settings. Our main focus is to
-  study chatbot building in common situation during real-world application where
-  only  a  few  sample  sentences are available for each class. The experimental
-  results  for  the  3  diverse  intention detection datasets (ClINC150, BANKING77,
-  HWU64) under few-shot settings(5-20 samples per class) indicate that our proposed joint SFC can
-  achieve  2.47  percents  average  improvement  over  one  of the most powerful
-  baseline  models,  which  is  RoBERTa-large classification model. Moreover, the improvement in F-score becomes more and more
-  prominent  with the decrease of data sample number per class. Our joint
-  SFC   can  achieve  4.97  percents  average  improvements  over  RoBERTa-large
-  classification model in the most extreme few-shot setting with only 5 training
-  samples  per class. This observation indicates that SFC is especially well-performed
-  when  being  applied during the initial stage of building task-specific chatbot
-  system,  where  the  amount  of  data sample for each class label is extremely scarce. Furthermore, our proposed joint SFC can also achieve 2.04 percents average improvement over RoBERTa-large classification model on all the data settings including the ones with large scale (30-50 samples per class). This experimental result indicates that joint SFC can still steadily outperforms single-task pretrained model baseline even if the data size grows bigger. But the improvement is still more prominent when the data is scarce, which makes SFC an excellent model for low-resource chatbot scenario.
+  Comparing with training two-stage SFC with multi-task, training with only task
+  1,  corresponding  to  sentence pair similarity model, degrades by 0.8 percent
+  point  on average, and training with only task 2, corresponding to top-K based
+  classification  task,  degrades  by  0.45  percent  point  on  average.  These
+  degradation  indicates  multi-task training in two-stage SFC is helpful for the
+  system  performance.  Besides, task 2 play a relatively more important role in
+  multi-task learning, and this aligns with their optimal weight settings.
 
-  \textbf{Comparison  between  label  embedding  and  sentence  pair embedding.}
-  Afterwards,  we  start  to  compare the performance of SFC with the text-label
-  joint  embedding  baseline  named as LEAM. As shown in Table \ref{tbe:table2},
-  joint  SFC outperforms LEAM by 11.90 percents on average F-score over 5
-  datasets.  Besides,  although the labels within the 3 diverse intention detection
-  datasets  (CLINC150,  BANKING77,  HWU64)  are  all  being  well-defined as the
-  semantic  summary  of  each intention, joint SFC still outperforms LEAM by
-  10.71  percents  on  average  F-score.  This  observation  indicates that it is
-  usually  quite  hard  to  use  a  fixed  label  with  only  a few words as the
-  representative  of  all  the  sentences  within a class since there are always
-  plenty of ways for people to express questions or queries about the same topic
-  during   a   conversation  with  chatbot.  Therefore,  learning  the  semantic
-  similarity  between  user  query  and  sample  sentences through sentence pair
-  embedding  can be more reliable than making decision according to the semantic
-  relationship between user query and class labels through label embedding.
+  Joint SFC consistently outperforms two-stage SFC on 5 diverse datasets by 0.95
+  percents  on  average. This observation supports the idea that the joint model
+  structure  can  alleviate  the  limitation  brought by the lack of interaction
+  between  two  stages.  In  following analysis, we will focus on the comparison
+  between joint SFC and the other baseline models.
 
-  \textbf{Fusion  of  classification  and  similarity  model.} Then, we begin to
-  compare  the  general  performance  of SFC with single-task classification and
-  similarity  baselines.  As  for  the  classification  model,  joint SFC
-  outperforms    TextCNN    by   21.52   percents,   ALBERT-xxlarge   by   7.99
-  percents\footnote{We found that the performance of ALBERT.xxlarge is extremely
-  unstable  for  classification  task.  Here, we did multiple run with different
-  settings  of parameters such as learning rate and batch size for each dataset,
-  and  record  the  best  result  we  can  obtain  in  Table \ref{tbe:table2}.},
-  BERT-large  by  7.73 percents, RoBERTa-base by 3.79 percents, RoBERTa-large by
-  2.04 percents on average F-score over 5 datasets. In this way, we can see that
-  RoBERTa  is  the  best  baseline  pre-trained  model for the low-resource text
-  classification  task  we  are  studying.  As for the similarity model, we only
-  choose  the  strongest  pretrained  model  RoBERTa-large  as our baseline, and
-  joint  SFC  achieves  the  improvement  of  7.09  percents  on average.
-  Moreover,  joint  SFC's  result on 2 datasets without data sampling for
-  few-shot  settings,  which  are  ITG  and  Amazon-670k, are also 1.24 and 2.89
-  percents  higher  than  Roberta-large  classification  model, and are 6.96 and
-  10.77  percents higher than Roberta-large similarity model. These improvements
-  illustrate that putting classification model and similarity model at different
-  network  layers  to  cooperate  with  each  other  is  a  successful design of
-  joint network structure for joint model, which enables these two models
-  assist each other for better overall results.
+  \subsubsection*{Is  the  fusion of a classification model and similarity model
+  helpful?}  We  compare  the performance of joint SFC with classification based
+  and similarity based baselines.
 
-  \textbf{Settings  of  hyperparameters.} Finally, we analyze the effect brought
-  by  different  settings  of  hyperparameters,  see  Table \ref{tbe:table3}. We
-  conduct  experiments on 5 different settings of hyperparameters, which are the
-  number  of candidate class number $K$ and the number of sentence pairs $P$ for
-  each  class, on ITG and Amazon-670K datasets to find the most suitable setting
-  of  these  2  hyperparameters.  We  control the total number of sentence pairs
-  sampled  for  each  user  query  into  about  the same level of amount(50-60).
+  Regarding the  classification  models,  joint SFC
+  outperforms    TextCNN    by   21.52   percent points,   ALBERT-xxlarge   by   7.99
+  percent points, BERT-large  by  7.73 percent points, RoBERTa-base by 3.79 
+  percent points, RoBERTa-large by 2.04 percents on average F-score over 5 datasets.  
+  Especially, ALBERT.xxlarge based is much more  unstable  in our senario. Thus, 
+  we did multiple run with different settings, e.g.,  learning rate and batch size 
+  for each dataset, and  report the  best  result  here. Comparatively,  
+  RoBERTa  based is  the  most stable and has the best performance among
+  all baselines and all experiment settings.
+
+  Regarding  the  similarity  model,  as  analyzed  above,  we  only  choose the
+  RoBERTa-large based as our baseline. Our joint SFC achieves the improvement of
+  7.09  percents  on average. Moreover, joint SFC's result on 2 datasets without
+  data  sampling  for few-shot settings, which are ITG and Amazon-670k, are also
+  1.24 and 2.89 percents higher than Roberta-large classification model, and are
+  6.96 and 10.77 percents higher than Roberta-large similarity model (todo:
+  meaning?).
+
+  The above analysises illustrate that suitable fusing the classification model and the 
+  similarity model to make them cooperate with each other is helpful to better
+  performance.  
+
+  \subsubsection*{How does joint SFC interact with the classfication in stage
+  1?}
+  {todo: content}
+
+  \subsubsection*{How does SFC perform with different  training  data  size} 
+  We analyze the
+  overall  improvement  trend  of  SFC under various few-shot settings. 
+
+  Our main
+  focus  is  to  study  chatbot  building  in common situation during real-world
+  application  where  only  a few sample sentences are available for each class.
+  The  experimental  results  for  the  3  diverse  intention detection datasets
+  (ClINC150,  BANKING77,  HWU64)  under  few-shot  settings, 5 to 20 samples per
+  class,  indicate that our proposed joint SFC can achieve 2.47 percents average
+  improvement   over  one  of  the  most  powerful  baseline  models,  which  is
+  RoBERTa-large  classification  model.  Moreover,  the  improvement  in F-score
+  becomes  more  and  more prominent with the decrease of data sample number per
+  class.
+
+  Especially,  in the most extreme few-shot setting with only 5 training samples
+  per  class  our joint SFC achieves 4.97 percent points improvements on average
+  over  RoBERTa-large classification model . This observation indicates that SFC
+  is  especially  well-performed  when being applied during the initial stage of
+  building  task-specific  chatbot  system,  where the amount of data sample for
+  each class label is extremely scarce.
+
+  Furthermore,  our  proposed  joint  SFC can also achieve 2.04 percents average
+  improvement  over  RoBERTa-large classification model on all the data settings
+  including  the  ones  with  large  scale,  30  to  50  samples per class. This
+  indicates that joint SFC can still steadily outperforms pretrained model based
+  baseline even if the data size grows bigger. However, the improvement is still
+  more prominent when the data is scarce, which makes SFC an excellent model for
+  low-resource chatbot scenario.
+
+  \subsubsection*{How is joint SFC related to the label  embedding based  LEAM?}
+  LEAM performs consistently better than TextCNN by a large margin in all
+  datasets. TextCNN is practically efficiently in task-specific chat
+  applications, and LEAM shows its power in modeling labeling information.
+
+  LEAM  does not perform as well as SFCs, since the first intuitive reason is it
+  does  not use pretrained model as encoding module; and another critical reason
+  is  in  task-specific  chat applications, it is common to have many intentions
+  that are close to some others with a minor difference, and it is hard and even
+  impossible  to  name  each  intention  with  a short clear name. One candidate
+  solution  is  setting  a most standard sample as the label of that class. When
+  using  non-pretrained  models  base  LEAM,  this is applicable. Yet when using
+  pretrained  model  based, as the all labels can be hundreds of thousands, then
+  this  can not be accommodated in a poplar 32 G Tesla V100 GPU. Actually, joint
+  SFC  can  be  kind  of  understood  as  a  generalization form of LEAM. In the
+  scenario when there is no clear class label, the relationship between a sample
+  and  a class lable is implicatily encoded as that between a sample and another
+  sample  from  the  same  class, and this turns into a sentence pair similarity
+  model.
+
+  \subsubsection*{Settings  of  hyperparameters} 
+  Finally, we analyze the effect brought
+  by  different  settings  of  hyperparameters,  see  Table \ref{tbe:table3}. 
+
+  We  conduct  experiments on 5 different settings of hyperparameters, which are
+  the  number of candidate class number $K$ and the number of sentence pairs $P$
+  for  each  class,  on  ITG  and Amazon-670K datasets to find the most suitable
+  setting  of  these  2 hyperparameters. We control the total number of sentence
+  pairs  sampled for each user query into about the same level of amount(50-60).
   Through  analyzing the experimenal results shown in Table \ref{tbe:table3}, we
-  find  that the best setting of hyperparameters might be different for
-  datasets of different data size. The class label number of ITG and Amazon-670k
-  are  similar  in  our  experimental  setting, which is around 250. However the
-  total  amount  of  data  points  of  ITG  is approximately 2 times larger than
-  Amazon-670k. Therefore, the setting of $K=5$ and $P=10$ is good enough for ITG
-  since  most  of  the  classes  contains  over  10  data  points.  However, for
-  Amazon-670k,  the amount of data sample for each class is scarce, thus, we may
-  need  more  candidate  classes  to  sample enough effective sentence pairs for
-  sentence-pair model layer of SFC. In this way, the setting of $K=10$ and $P=5$
-  becomes a good choice. However, in spite of the effect on evaluation performance brought by different settings of hyperparameters, joint SFC still steadily outperforms two-stage SFC by 0.41 percents in overall average F-score on ITG and Amazon-670k datasets. 
+  find  that the best setting of hyperparameters might be different for datasets
+  of  different  data  size.  The  class label number of ITG and Amazon-670k are
+  similar  in  our  experimental setting, which is around 250. However the total
+  amount of data points of ITG is approximately 2 times larger than Amazon-670k.
+  Therefore,  the  setting of $K=5$ and $P=10$ is good enough for ITG since most
+  of  the  classes  contains  over 10 data points. However, for Amazon-670k, the
+  amount  of  data  sample  for  each  class  is  scarce, thus, we may need more
+  candidate  classes to sample enough effective sentence pairs for sentence-pair
+  model  layer  of  SFC.  In this way, the setting of $K=10$ and $P=5$ becomes a
+  good choice. However, in spite of the effect on evaluation performance brought
+  by different settings of hyperparameters, joint SFC still steadily outperforms
+  two-stage  SFC  by  0.41  percents  in  overall  average  F-score  on  ITG and
+  Amazon-670k datasets.
 
-  In  conclusion,  to  the best of our knowledge, these experimental results place joint SFC as the
-  best   performing   model   on   5  diverse  experimental  datasets  for  text
-  classification  task, especially when it's under  low-resource task-specific conversational chatbot
-  scenario.
+  In  conclusion, to the best of our knowledge, these experimental results place
+  joint  SFC as the best performing model on 5 diverse experimental datasets for
+  text   classification   task,   especially   when   it's   under  low-resource
+  task-specific conversational chatbot scenario.
 
   \section{Conclusion}
   In  this  work, we successfully proposed SFC, a joint system of classification
