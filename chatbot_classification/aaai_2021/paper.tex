@@ -230,7 +230,11 @@
   prolix  but  also  biased,  which  will  bring  some  negative effect to label
   embedding.  
 
-  {todo: Add joint NER and classification problem here.}
+  Another   line   of  interesting  work  is  the  joint  training  of  sentence
+  classification   and  NER  (todo:  reference).  If  both  the  city  and  date
+  information  are  recognized,  then  they  are good indicators that this query
+  might  be  booking  an  ticket. This work can also be combined in our proposed
+  framework.
 
   \section{Methodology}
   In  this section, we describe our proposed system, similarity model fused with
@@ -262,6 +266,7 @@
   labels,  $softmax(W^Ch_{i}+b^C)=softmax({\Phi}^C_{i})$,  where $W^C$ and $b^C$
   are  trainable  parameters.  Then, the loss in stage 1 classification model is
   shown in Equ. \ref{eq:classification_loss},
+
 
   \begin{equation}
     \begin{aligned}
@@ -310,6 +315,35 @@
   positive  label  $\mathcal{P'}_{i}=\{[(x_{i},  x'_{1}),  1],  \dots,  [(x_{i},
   x'_{P}),  1]\}$,  where $P$ is also a hyperparameter set to control the number
   of sentences we should sample from each class.
+
+\begin{table*}
+    \begin{centering}
+      \scalebox{0.9}{
+        \begin{tabular}{|c|c|c|c|c|c|}
+          \hline 
+          \textbf{Dataset} & \textbf{Domain} & \textbf{\#Class} &
+          \textbf{\#Training Samples} & \textbf{\#Samples/Class} & \textbf{Experimental Settings}\tabularnewline
+          \hline 
+          ITG & FAQ chatbot & 228 & 3938 & 17 & 3-fold\tabularnewline
+          \hline 
+          Amazon-670k & Product review & 250 & 1942 & 8 & 3-fold\tabularnewline
+          \hline 
+          HWU64 & intention detection & 64 & [320, 640, 960, 1280, 1920, 3200] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+          \hline 
+          CLINC150 & intention detection & 150 & [750, 1500, 2250, 3000, 4500, 7500] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+          \hline 
+          BANKING77 & intention detection & 77 & [385, 770, 1155, 1540, 2310, 3850] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+          \hline 
+        \end{tabular}
+      }
+      \par
+    \end{centering}
+    \caption{Statistics for all datasets and few shot settings\footnote{All
+    settings of four public datasets would be released to github soon}.}
+
+    \label{tbe:dataset statistic}
+  \end{table*}
+
 
   The  second  step  is  \emph{negative sentence pair sampling}: As for negative
   sentence  pairs,  we will also randomly sample $P$ sentences for each class in
@@ -431,34 +465,7 @@
     \label{eq:two-stage_SFC_loss}
   \end{align}
 
-  \begin{table*}
-    \begin{centering}
-      \scalebox{0.9}{
-        \begin{tabular}{|c|c|c|c|c|c|}
-          \hline 
-          \textbf{Dataset} & \textbf{Domain} & \textbf{\#Class} &
-          \textbf{\#Training Samples} & \textbf{\#Samples/Class} & \textbf{Experimental Settings}\tabularnewline
-          \hline 
-          ITG & FAQ chatbot & 228 & 3938 & 17 & 3-fold\tabularnewline
-          \hline 
-          Amazon-670k & Product review & 250 & 1942 & 8 & 3-fold\tabularnewline
-          \hline 
-          HWU64 & intention detection & 64 & [320, 640, 960, 1280, 1920, 3200] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
-          \hline 
-          CLINC150 & intention detection & 150 & [750, 1500, 2250, 3000, 4500, 7500] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
-          \hline 
-          BANKING77 & intention detection & 77 & [385, 770, 1155, 1540, 2310, 3850] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
-          \hline 
-        \end{tabular}
-      }
-      \par
-    \end{centering}
-    \caption{Statistics for all datasets and few shot settings\footnote{All
-    settings of four public datasets would be released to github soon}.}
-
-    \label{tbe:dataset statistic}
-  \end{table*}
-
+  
   \begin{table*}
     \begin{centering}
       \scalebox{0.55}{
@@ -515,7 +522,7 @@
       \par
     \end{centering}
     \caption{
-      F-scores  on  five  task-specific  datasets text classification in chatbot
+      F1 scores  on  five  task-specific  datasets text classification in chatbot
       under low resource. For ITG, we keep the full dataset. For Amazon-670k, we
       randomly  sampled  250  classes  with  training sample numbers within 5-15
       samples  per  class.  For  CLINC150,  BANKING77,  HWU64, we set up various
@@ -656,8 +663,8 @@
   learning  rate  of 1.5e-5 for RoBERTa-large pretrained model and learning rate
   of  5e-4  for  task-specific  layer  with polynomial decay and Adam optimizer.
   Besides,  we  set  the  max number of the epoch to 100 and save the best model on
-  validation  set based on testing result in weighted F-score (todo: reference). 
-  We report the F-score as the main evaluation measure for all experiments.
+  validation  set based on testing result in weighted F1 score (todo: reference). 
+  We report the F1 score as the main evaluation measure for all experiments.
 
   In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks
   are  set  as  $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting. The reason
@@ -674,35 +681,36 @@
   SFC system under various hyperparameter settings.
 
   \subsection{Result Analysis}
-  All results in F-score (todo: reference) on the five datasets with different models and configurations are
+  All results in F1 score (todo: reference) on the five datasets with different models and configurations are
   showed in Table  \ref{tbe:table2}.
 
-  The performance of each model is measured in F-score on the fixed
+  The performance of each model is measured in F1 score on the fixed
   test  set  for  each  dataset.  
   Overall,  two-stage  SFC systems in multi-task training deliver  moderate 
   improvements  over  corresponding baselines, and joint SFC deliver more
   significant and consistent improvements over the best baseline, RoBERTa based
   classification. In following content, we dive into more details.
 
-  \subsubsection*{Is multi-task and joint training working?} 
+  \subsubsection*{Are multi-task and joint training working?} 
   First, we compare the four  SFC  variants to analyze the improvement
   brought  by  multi-task  and  joint-model  structure. 
 
   Comparing with training two-stage SFC with multi-task, training with only task
-  1,  corresponding  to  sentence pair similarity model, degrades by 0.8 percent
-  point  on average, and training with only task 2, corresponding to top-K based
+  1,  namely the sentence pair similarity model, degrades by 0.8 percent
+  point  on average, and training with only task 2, namely the top-K based
   classification  task,  degrades  by  0.45  percent  point  on  average.  These
   degradation  indicates  multi-task training in two-stage SFC is helpful for the
-  system  performance.  Besides, task 2 play a relatively more important role in
+  system  performance.  Besides, task 2 plays a relatively more important role in
   multi-task learning, and this aligns with their optimal weight settings.
 
-  Joint SFC consistently outperforms two-stage SFC on 5 diverse datasets by 0.95
-  percents  on  average. This observation supports the idea that the joint model
+  Joint SFC consistently outperforms two-stage SFC with multi-task training  
+  on 5 diverse datasets by 0.95 percents  on  average. 
+  This observation supports the idea that the joint model
   structure  can  alleviate  the  limitation  brought by the lack of interaction
   between  two  stages.  In  following analysis, we will focus on the comparison
   between joint SFC and the other baseline models.
 
-  \subsubsection*{Is  the  fusion of a classification model and similarity model
+  \subsubsection*{Is  the  fusion of a classification model and a similarity model
   helpful?}  We  compare  the performance of joint SFC with classification based
   and similarity based baselines.
 
@@ -736,7 +744,7 @@
   Regarding the  classification  models,  joint SFC
   outperforms    TextCNN    by   21.52   percent points,   ALBERT-xxlarge   by   7.99
   percent points, BERT-large  by  7.73 percent points, RoBERTa-base by 3.79 
-  percent points, RoBERTa-large by 2.04 percents on average F-score over 5 datasets.  
+  percent points, RoBERTa-large by 2.04 percents on average F1 score over 5 datasets.  
   Especially, ALBERT.xxlarge based is much more  unstable  in our senario. Thus, 
   we did multiple run with different settings, e.g.,  learning rate and batch size 
   for each dataset, and  report the  best  result  here. Comparatively,  
@@ -756,7 +764,34 @@
   performance.  
 
   \subsubsection*{Does joint SFC improve the classfication in stage 1?}
-  {todo: content}
+  We  compare  the  top  1  predition and top 5 candidate labels in stage 1 from
+  two-stage SFC and joint SFC in Table \ref{tbe:top1_5_accuracy}. We should note
+  that  two-stage  SFC  does not optimize the stage 1 result, which is a RoBERTa
+  based classification model.
+
+  \begin{table}
+    \begin{centering}
+      \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        F1 score & Two-stage SFC & Joint SFC & Gap & \tabularnewline
+        \hline
+        top-1 accuracy  & \textbf{81.50} & 81.07 & -0.47 & \tabularnewline
+        top-5 accuracy & 94.01 & \textbf{94.30} & +0.29 & \tabularnewline
+        \hline
+      \end{tabular}
+      \par
+    \end{centering}
+    \caption{The average classification accuracy in stage 1 on all five dataset.}
+    \label{tbe:top1_5_accuracy}
+  \end{table}
+
+  The joint training does not improve the classification performance in stage 1,
+  measured  by  top  1  accuracy.  However,  it  improves  the  quality of top 5
+  candidate  class  labels.  It  can  be  explained that, a classification model
+  inherently optimizes the objective loss, 0-1 error of top 1 here; the sentence
+  pair similairity model in the joint SFC poses positive effect in optimizing the 
+  candidate labels.
+
 
   \subsubsection*{How does training sample size influence SFC?} 
   We analyze the
@@ -769,7 +804,7 @@
   (ClINC150,  BANKING77,  HWU64)  under  few-shot  settings, 5 to 20 samples per
   class,  indicate that our proposed joint SFC can achieve 2.47 percents average
   improvement   over  one  of  the  most  powerful  baseline  models,  which  is
-  RoBERTa-large  classification  model.  Moreover,  the  improvement  in F-score
+  RoBERTa-large  classification  model.  Moreover,  the  improvement  in F1 score
   becomes  more  and  more prominent with the decrease of data sample number per
   class.
 
@@ -829,7 +864,7 @@
   model  layer  of  SFC.  In this way, the setting of $K=10$ and $P=5$ becomes a
   good choice. However, in spite of the effect on evaluation performance brought
   by different settings of hyperparameters, joint SFC still steadily outperforms
-  two-stage  SFC  by  0.41  percents  in  overall  average  F-score  on  ITG and
+  two-stage  SFC  by  0.41  percents  in  overall  average  F1 score  on  ITG and
   Amazon-670k datasets.
 
   In  conclusion, to the best of our knowledge, these experimental results place
