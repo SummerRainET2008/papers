@@ -341,8 +341,7 @@
       }
       \par
     \end{centering}
-    \caption{Statistics for all datasets and few shot settings\footnote{All
-    settings of four public datasets would be released to github soon}.}
+    \caption{Statistics for all datasets and few shot settings.}
 
     \label{tbe:dataset statistic}
   \end{table*}
@@ -580,7 +579,8 @@
   comparatively  large  number  of  class labels, ranging from several dozens to
   hundreds,  and  each  class  label  is  associated  with  a handful of labeled
   queries with each  query  being usually  one  sentence. Table \ref{tbe:dataset
-  statistic} displays their statistics.
+  statistic} displays their statistics.  All settings of four public datasets would 
+  be released to github soon.
 
   \begin{enumerate}
     \item \emph{ITG},  is  a proprietory FAQ dataset from real-world
@@ -665,7 +665,9 @@
   learning  rate  of 1.5e-5 for RoBERTa-large pretrained model and learning rate
   of  5e-4  for  task-specific  layer  with polynomial decay and Adam optimizer.
   Besides,  we  set  the  max number of the epoch to 100 and save the best model on
-  validation  set based on testing result in weighted F1 score (todo: reference). 
+  validation  set based on testing result in weighted F1 score
+  \footnote{In the multi-class and multi-label case, this is the average of the
+  F1 score of each class with weighting depending on the numbers in each class.}.
   We report the F1 score as the main evaluation measure for all experiments.
 
   In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks
@@ -683,8 +685,8 @@
   SFC system under various hyperparameter settings.
 
   \subsection{Result Analysis}
-  All results in F1 score (todo: reference) on the five datasets with different models and configurations are
-  showed in Table  \ref{tbe:table2}.
+  All  results  in  F1  score  on  the  five  datasets with different models and
+  configurations are showed in Table \ref{tbe:table2}.
 
   The performance of each model is measured in F1 score on the fixed
   test  set  for  each  dataset.  
