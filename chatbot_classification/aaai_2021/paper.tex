@@ -89,14 +89,14 @@
   and smart home equipments. Regardless of whether these conversations belong to
   single-turn or multi-turn, an essential technique underlying the chatbot is to
   identify  the  real  intention  behind  a  user's  question or reply. Then the
-  chatbot  is caple of conducting expected actions, text reply or accomplish some
+  chatbot  is capable of conducting expected actions, text reply or accomplish some
   operations.
 
   It  is  a  challenging task due to some inherent properties. First,
   a customer's  utterance  within  a conversation is usually quite short. Since it
   does  not  contain  enough  information,  short  text \cite{song2014short} are
   thought  to  be  more  ambiguous  compared to long texts such as paragraphs or
-  documents,  poseing  a  great challenge \cite{chen2019deep} for classification
+  documents,  posing  a  great challenge \cite{chen2019deep} for classification
   task   \cite{phan2008learning,yan2009dynamic,hua2015short}.   Second,  in  the
   initial  stage  of  building  a  chatbot  , it is often rather hard to collect
   sufficient  labeled  data  to  train  a good model. Because developers have to
@@ -133,7 +133,7 @@
   help to reducing the negative effects brought by scarcity of training data.
 
   The  second  one,  \emph{similarity model} is also called sentence-pair model.
-  Its  motivation  originates  from  the idea of Information Retrival (IR) based
+  Its  motivation  originates  from  the idea of Information Retrieval (IR) based
   chatbot   \cite{jafarpour2010filter,   leuski2011npceditor}.   Having   a  Q-A
   (Question-Answer)  pairs dataset and user query Q, the IR based conversational
   system will look up in the Q-A dataset for the pair (Q', A') that best matches
@@ -158,12 +158,12 @@
   learning  \cite{sun2019fine},  it  is  still  quite  hard  to  perform well on
   a new task-specific dataset,  since their objective losses are totally different. 
 
-  The  above limitation motivates us to propose a joint system that is capble of
-  taking  advantagges  from  both  classification model and similarity model. We
-  calle  it  SFC,  short  for  similairty model fused with classification Model,
+  The  above limitation motivates us to propose a joint system that is capable of
+  taking  advantages  from  both  classification model and similarity model. We
+  call  it  SFC,  short  for  similairty model fused with classification Model,
   shown  in  Fig.  \ref{fig:framework}.  To  better train SFC, we further bring in
   multi-task   learning   \cite{caruana1993multitask,collobert2008unified, liu2019multi}.  Our
-  basic  idea  cames  from  two  stages. In the first stage, we use an auxiliary
+  basic  idea  came  from  two  stages. In the first stage, we use an auxiliary
   model  to  select top-K most possible labels for a input. This model can be an
   elastic search  \cite{divya2013elasticsearch}  or  a  text classification model
   trained on current task-specific chatbot data. In the second stage, we build a
@@ -238,7 +238,7 @@
   \section{Methodology}
   In  this section, we describe our proposed system, similarity model fused with
   classification  model (SFC). We propose two approaches to implement this idea,
-  two-stageg SFC, and its more unified version joint-SFC.
+  two-stage SFC, and its more unified version joint-SFC.
 
   \subsection{Two-stage SFC}
 
@@ -286,7 +286,7 @@
   single  class label from a class label set of $C$ classes in total. We 
   generate            a sentence            pair            dataset
   $\mathcal{D'}=\{[(x,x')_{j},l_{j}]\}_{j=1}^{M}$ from $\mathcal{D}$,   where   $(x,   x')_{j}$  is
-  a pair of two history queries \footnote{For simplicty, we use query
+  a pair of two history queries \footnote{For simplicity, we use query
   to denote a user's question or a response.}, and $l_{j}\in\{0, 1\}$ denotes the
   similarity label that the ones from the same class label are considered
   similar. The size of $\mathcal{D'}$  would be up to $O(N^2)$ if no any
@@ -568,7 +568,7 @@
 
   \subsection{Datasets}
   Our experiments aim to study the short text classification in the low-resource
-  environment  popular  in  the  task-specific conversional chatbot application.
+  environment  popular  in  the  task-specific conversational chatbot application.
   Hence we choose and configure set datasets to serve this study. Different from
   the  datasets from other short text classification research, such as semantics
   classification  with  very  limited  semantics labels and relatively longer
@@ -609,7 +609,7 @@
     labels \cite{casanueva2020efficient}.
   \end{enumerate}
 
-  Regarding  the first two datasets, we conduct 3-fold cross validata experients
+  Regarding  the first two datasets, we conduct 3-fold cross validation experiments
   that   70   percent   as  training,  15  percent  as  validation  and  testing
   respectively,  and  report  the  averaged  testing results. Regarding the last
   three datasets, we conduct experiments using a sampling method similar to that
@@ -618,7 +618,7 @@
   using  5,  10,  15,  20,  30,  and 50 samples per class label respectively for
   training.  This  is important, as in practice, a task-specific chatbot usually
   starts  with  merely  a  handful of labeled data available in the early stage.
-  Besides,  in  the  active  learning framework, building an effective anxiliary
+  Besides,  in  the  active  learning framework, building an effective auxiliary
   system  with limited resource is also quite important to help developers label
   data more efficiently.
 
@@ -652,7 +652,7 @@
   \end{enumerate}
 
   Our SFC systems include two-stage SFC with ablation, trained with two tasks
-  sperately and both, and joint SFC with all three tasks.
+  separately and both, and joint SFC with all three tasks.
 
   \subsection{Implementation Details}
   For  our  SFC  systems,  we  use RoBERTa-large as the pretrained model for both
@@ -670,7 +670,7 @@
   experiments  we  did  in Section \ref{sec:exp}, task 2 contributes more to the
   overall  performance.  In  joint  SFC,  in  equ.  \ref{eq:joint_SFC_loss}, the
   weights  of  three  tasks  are  set  as  $\alpha_S=0.25$,  $\alpha_K=0.25$ and
-  $\alpha_C=0.5$  in  our setting. Overrall, the task weights are less sensitive
+  $\alpha_C=0.5$  in  our setting. Overall, the task weights are less sensitive
   in Joint SFC than in two-stage SFC.
 
   For  the  experiments  in  Table  \ref{tbe:table2},  we  empirically  set  the
@@ -773,12 +773,12 @@
   6.96 and 10.77 percents higher than Roberta-large similarity model (todo:
   meaning?).
 
-  The above analysises illustrate that suitable fusing the classification model and the 
+  The above analysis illustrate that suitable fusing the classification model and the 
   similarity model to make them cooperate with each other is helpful to better
   performance.  
 
-  \subsubsection*{Does joint SFC improve the classfication in stage 1?}
-  We  compare  the  top  1  predition and top 5 candidate labels in stage 1 from
+  \subsubsection*{Does joint SFC improve the classification in stage 1?}
+  We  compare  the  top  1  prediction and top 5 candidate labels in stage 1 from
   two-stage SFC and joint SFC in Table \ref{tbe:top1_5_accuracy}. We should note
   that  two-stage  SFC  does not optimize the stage 1 result, which is a RoBERTa
   based classification model.
@@ -847,7 +847,7 @@
   this  can not be accommodated in a poplar 32 G Tesla V100 GPU. Actually, joint
   SFC  can  be  kind  of  understood  as  a  generalization form of LEAM. In the
   scenario when there is no clear class label, the relationship between a sample
-  and  a class lable is implicatily encoded as that between a sample and another
+  and  a class label is implicitly encoded as that between a sample and another
   sample  from  the  same  class, and this turns into a sentence pair similarity
   model.
 
@@ -860,7 +860,7 @@
   for  each  class,  on  ITG  and Amazon-670K datasets to find the most suitable
   setting  of  these  2 hyperparameters. We control the total number of sentence
   pairs  sampled for each user query into about the same level of amount(50-60).
-  Through  analyzing the experimenal results shown in Table \ref{tbe:table3}, we
+  Through  analyzing the experimental results shown in Table \ref{tbe:table3}, we
   find  that the best setting of hyperparameters might be different for datasets
   of  different  data  size.  The  class label number of ITG and Amazon-670k are
   similar  in  our  experimental setting, which is around 250. However the total
