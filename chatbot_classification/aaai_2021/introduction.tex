@@ -1,0 +1,132 @@
+\section{Introduction}
+\label{sec:intro}
+
+Task-specific  conversational  chatbot  \cite{wen2016network}  has been applied
+into  many practical products. One typical example is the chatbot that shares the working burden of
+human  customer  service  agents  responsible  for  customers' questions about
+certain  products  or services. Another one is the speech-based control in
+devices  like  intelligent  speakers, such as Siri, Google home, Baidu Xiaodu,
+and smart home equipments, to name a few. Regardless of whether these conversations belong to
+single or  multi-round, an essential technique underlying this type of chatbot is to
+identify  the  real  intention  behind  a  user's  question or reply. 
+The detected intention  with  its  associated  information  is then mapped into a
+predefined dialog logic graph, from which a suitable response (e.g., conducting 
+expected actions, replying texts or accomplishing some operations, etc)  is returned.
+This  is  the  main  difference  from  a  free chatbot.  
+
+Intention detection in task-specific chatbot  is  a  challenging task due to some inherent properties. First,
+a customer's  utterance  within  a conversation is usually quite short. Since it
+does  not  contain  enough  information,  short  texts \cite{song2014short} are
+thought  to  be  more  ambiguous  compared to long texts such as paragraphs or
+documents,  posing  a  great challenge \cite{chen2019deep} for classification
+task   \cite{phan2008learning,yan2009dynamic,hua2015short}.   Second,  in  the
+initial  stage  of  building  a  chatbot  , it is often rather hard to collect
+sufficient  labeled  data  to  train  a good model. Because developers have to
+examine tons of real system logs for typical user's utterances, and then label
+them  with expected intentions. Therefore, to build a task-specific chatbot with
+high  performance, it is essential to solve the challenge of short-text
+classification   \cite{sriram2010short}   problem   under   few-shot   setting
+\cite{yu2018diverse}.
+
+
+Generally  there  are  two  kinds  of  approaches  to  address  this  problem,
+one is the classification model that directly maps an input into a most likely label, and
+the other one is the similarity  model  that searches a label whose associated data is most similar to
+an input.
+
+
+The   first  one,  \emph{text  classification},  includes  classic  long  text
+classification  and  short  text  classification  in  this  scenario.  Besides
+traditional  machine  learning  models  like  SVM \cite{suykens1999least},  
+boosting  tree \cite{tu2005probabilistic},  many work
+\cite{wen2016network}  choose  neural  network  such  as  convolutional neural
+networks (CNNs) \cite{kim2014convolutional,zhang2015character,conneau2016very}
+and       long       short       term       memory       networks      (LSTMs)
+\cite{mousa2017contextual,liu2016recurrent}   to   accomplish   the   task  of
+extracting  semantic  feature from limited amount of words. Their common model
+structure  is  adding  a  softmax classifier as the final layer and mapping to
+labels.  Another  two  interesting lines of work, label-word joint models, and
+joint  NER  and  classification  are  discussed  in  the related work section.
+Afterwards,   pre-trained   language   models   on   large  corpus  like  BERT
+\cite{devlin2018bert}  and  RoBERTa \cite{liu2019roberta} has been proven more
+powerful  in  solving  many  NLP  tasks  including  short-text  classification
+\cite{madabushi2020cost}.      Especially      for      few-shot     scenarios
+\cite{yu2018diverse},     pre-trained     model    based    on    transformers
+\cite{vaswani2017attention} tends to do more
+help to reducing the negative effects brought by scarcity of training data.
+
+The  second  one,  \emph{similarity model} is also called sentence-pair model.
+Its  motivation  originates  from  the idea of Information Retrieval (IR) based
+chatbot   \cite{jafarpour2010filter,   leuski2011npceditor}.   Having   a  Q-A
+(Question-Answer)  pairs dataset and user query Q, the IR based conversational
+system will look up in the Q-A dataset for the pair (Q', A') that best matches
+query  Q  through  semantic  analysis  and  returns  A'  as  the  answer  to Q
+\cite{mnasri2019recent}. In this way, sentence-pair model pre-trained on large
+corpus  of  semantic  similarity  identification task can be applied for being
+used  as  a  tool  to  identify  the class with highest semantic similarity to
+customer's    query.    A    common    model    structure    of    pre-trained 
+sentence-pair model is based on multiple cross-attention
+mechanism  \cite{barkan2020scalable}. Due to
+the   fact   that   many   experiment   results   have   shown   that  RoBERTa
+\cite{liu2019roberta} is an improved version of BERT \cite{devlin2018bert}, and has achieved amazing
+results  on  both  text  classification and sentence-pairs semantic similarity
+tasks, we choose RoBERTa as an important baseline approach in this paper.
+
+Despite  the  success  of  these two kinds of approaches, they still have some
+limitations   in   task-specific  chatbot  scenario.  As  for  the  \emph{text
+classification  model},  it  is  quite hard to use data augmentation method to
+solve  the  data insufficiency challenge since the it is usually unfeasible to
+get  large amount of domain-specific data when facing a new task. With respect
+to  the  \emph{similarity model}, though we can obtain a large amount of data
+from semantically  duplicate  sentence  pair identification domain for transfer
+learning  \cite{sun2019fine},  it  is  still  quite  hard  to  perform well on
+a new task-specific dataset,  since their objective losses are totally different. 
+
+The  above  limitation motivates us to propose a joint system that is capable of
+taking  advantages  from both classification model and similarity model. We call
+it  SFC,  short  for  similairty model fused with classification Model, shown in
+Fig.  \ref{fig:framework}.  To  better train SFC, we further bring in multi-task
+learning   \cite{caruana1993multitask,collobert2008unified,  liu2019multi}.  Our
+basic  idea  came from two stages. In the first stage, we use an auxiliary model
+to  select  top-K most possible labels for a input. This model can be an elastic
+search  \cite{divya2013elasticsearch}  or a text classification model trained on
+current   task-specific   chatbot   data.  In  the  second  stage,  we  build  a
+classification  model  whose  main  modules  are  similarity  models. Then, this
+structure  derives  two  goals to train towards, the classification loss for our
+application,  and  the similarity loss for the main modules. When the two stages
+are  independently optimized, we call \emph{two-stage SFC}. We further find, the
+the  quality of output from the first stage might limit the final performance of
+system,  since  the  candidate labels for each user query is always fixed in the
+whole  multi-task  training  process.  This  observation motivates us to further
+improve  the  two-stage  SFC  into a joint training, called \emph{joint SFC}. In
+this  way,  the  sentence  pairs  associated  with the top-K classes also become
+dynamic,  and  the  text  classification  model  in the first stage will also be
+further optimized to provide better top-K result by the final training loss.
+
+
+We summarize our contributions as follow:
+\begin{enumerate}
+  \item We propose a novel joint system to makes full utilization of
+  the advantages from both text classification model and similarity model.
+
+  \item To  better  train such a system, we bring in multi-task training to obtain
+  reasonable performance.
+
+  \item Experiment  results  from 4 public and 1 private short-text classification
+  datasets,  show  that  our  proposed  SFC joint system can achieve significant
+  and consistent improvements over strong baselines, especially in the low resource settings.
+\end{enumerate}
+
+\begin{figure*}[t]
+  \begin{centering}
+    \includegraphics[scale=0.72]{picture/picture4} 
+    \par
+  \end{centering}
+  \caption{
+    \textbf{Network Structure of SFC:} two-stage SFC and joint-SFC are sharing
+    the  same  network  from  stage  1  and  stage 2, with the only difference
+    whether two stages being jointly trained.
+  }
+  \label{fig:framework}
+\end{figure*}
+

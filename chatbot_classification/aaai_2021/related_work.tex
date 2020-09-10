@@ -1,0 +1,28 @@
+\section{Related work}
+
+Another  common  approach  is  text  classification  neural  network  based on
+label-word     joint     embedding,    such    as    LEAM \cite{wang2018joint},
+MTLE \cite{zhang2017multi}   and   EXAM \cite{du2019explicit}.   This   approach
+involves  label  embedding when constructing the text-sequence representation.
+Take  LEAM  as  an  example,  the  text classification model is implemented by
+jointly    embedding    the    word    and    label   in   the   same   latent
+space \cite{wang2018joint}. Afterwards, the text representation are constructed
+based  on  text-label  compatibility through attention mechanism. In this way,
+additional  sources  of  semantic  information  from class labels can be fully
+leveraged, which is quite helpful especially under few-shot scenario.
+
+As for \emph{label-word joint
+embedding  approach},  it  poses  noticeable requirements on label information.
+However,  in  our  cases,  since  we have large amount of class labels without
+being well-defined for question answering chatbot, the only thing we can do is
+to  choose  one  of the user utterance as the class label to represent the key
+information  of  the  whole class. In this way, the label will become not only
+prolix  but  also  biased,  which  will  bring  some  negative effect to label
+embedding.  
+
+Another   line   of  interesting  work  is  the  joint  training  of  sentence
+classification   and  NER  (todo:  reference).  If  both  the  city  and  date
+information  are  recognized,  then  they  are good indicators that this query
+might  be  booking  an  ticket. This work can also be combined in our proposed
+framework.
+
