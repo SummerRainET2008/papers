@@ -239,9 +239,9 @@
   framework.
 
   \section{Methodology}
-  In  this section, we describe our proposed system, similarity model fused with
-  classification  model (SFC). We propose two approaches to implement this idea,
-  two-stage SFC, and its more unified version joint-SFC.
+  In  this section, we describe our proposed system, a similarity model fused with
+  a classification  model (SFC). We propose two approaches to implement this idea,
+  two-stage SFC, and its more compact version joint SFC.
 
   \subsection{Two-stage SFC}
 
@@ -291,7 +291,7 @@
   $\mathcal{D'}=\{[(x,x')_{j},l_{j}]\}_{j=1}^{M}$ from $\mathcal{D}$,   where   $(x,   x')_{j}$  is
   a pair of two history queries \footnote{For simplicity, we use query
   to denote a user's question or a response.}, and $l_{j}\in\{0, 1\}$ denotes the
-  similarity label that the ones from the same class label are considered
+  similarity label that only the ones from the same class label are considered
   similar. The size of $\mathcal{D'}$  would be up to $O(N^2)$ if no any
   sampling strategy is used.  This is quite time-consuming  for the  training
   in stage 2 because $N$ can be several hundreds or thousands even under 
@@ -878,17 +878,6 @@
   joint  SFC as the best performing model on 5 diverse experimental datasets for
   text   classification   task,   especially   when   it's   under  low-resource
   task-specific conversational chatbot scenario.
-
-  \section{Conclusion}
-  In  this  work, we successfully proposed SFC, a joint system of classification
-  model  and  sentence-pair similarity model with multi-task learning, which can
-  effectively  alleviate  the  limitation of classification model and similarity
-  model   for  low-resource  text  classification  tasks.  Experimental  results
-  illustrate that our proposed system can achieve great improvement on 5 diverse
-  datasets for task-specific chatbot system over several competitive single-task
-  baseline  models. Furthermore, we especially analyze the excellent performance
-  of SFC when facing the challenge brought by few-shot scenarios, which is quite
-  common in real-world application of chatbot system.
 
   \bibliographystyle{aaai21}
   \bibliography{refs}
