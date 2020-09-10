@@ -695,6 +695,22 @@
   First, we compare the four  SFC  variants to analyze the improvement
   brought  by  multi-task  and  joint-model  structure. 
 
+  \begin{table}
+    \begin{centering}
+      \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        F1 score & Two-stage SFC & Joint SFC & Gap & \tabularnewline
+        \hline
+        top-1 accuracy  & \textbf{81.50} & 81.07 & -0.47 & \tabularnewline
+        top-5 accuracy & 94.01 & \textbf{94.30} & +0.29 & \tabularnewline
+        \hline
+      \end{tabular}
+      \par
+    \end{centering}
+    \caption{The average classification accuracy in stage 1 on all five dataset.}
+    \label{tbe:top1_5_accuracy}
+  \end{table}
+
   Comparing with training two-stage SFC with multi-task, training with only task
   1,  namely the sentence pair similarity model, degrades by 0.8 percent
   point  on average, and training with only task 2, namely the top-K based
@@ -769,22 +785,6 @@
   that  two-stage  SFC  does not optimize the stage 1 result, which is a RoBERTa
   based classification model.
 
-  \begin{table}
-    \begin{centering}
-      \begin{tabular}{|c|c|c|c|c|}
-        \hline
-        F1 score & Two-stage SFC & Joint SFC & Gap & \tabularnewline
-        \hline
-        top-1 accuracy  & \textbf{81.50} & 81.07 & -0.47 & \tabularnewline
-        top-5 accuracy & 94.01 & \textbf{94.30} & +0.29 & \tabularnewline
-        \hline
-      \end{tabular}
-      \par
-    \end{centering}
-    \caption{The average classification accuracy in stage 1 on all five dataset.}
-    \label{tbe:top1_5_accuracy}
-  \end{table}
-
   The joint training does not improve the classification performance in stage 1,
   measured  by  top  1  accuracy.  However,  it  improves  the  quality of top 5
   candidate  class  labels.  It  can  be  explained that, a classification model
@@ -794,19 +794,29 @@
 
 
   \subsubsection*{How does training sample size influence SFC?} 
-  We analyze the
-  overall  improvement  trend  of  SFC under various few-shot settings. 
+  We analyze the overall  improvement  trend  of  SFC under various few-shot
+  settings, and show results in Fig. \ref{fig:trend}.
 
-  Our main
-  focus  is  to  study  chatbot  building  in common situation during real-world
+  Our main focus  is  to  study  chatbot  building  in common situation during real-world
   application  where  only  a few sample sentences are available for each class.
   The  experimental  results  for  the  3  diverse  intention detection datasets
-  (ClINC150,  BANKING77,  HWU64)  under  few-shot  settings, 5 to 20 samples per
+  (ClINC150,  BANKING77,  HWU64)  under  few-shot  settings, 5 to 50 samples per
   class,  indicate that our proposed joint SFC can achieve 2.47 percents average
   improvement   over  one  of  the  most  powerful  baseline  models,  which  is
   RoBERTa-large  classification  model.  Moreover,  the  improvement  in F1 score
   becomes  more  and  more prominent with the decrease of data sample number per
   class.
+
+  \begin{figure}[t]
+    \begin{centering}
+      \includegraphics[scale=0.2]{picture/improvement_trend.jpg} 
+      \par
+    \end{centering}
+    \caption{
+      Improvements with different size of training data.
+    }
+    \label{fig:trend}
+  \end{figure}
 
   Especially,  in the most extreme few-shot setting with only 5 training samples
   per  class  our joint SFC achieves 4.97 percent points improvements on average
