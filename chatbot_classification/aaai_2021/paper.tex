@@ -82,40 +82,41 @@
   \label{sec:intro}
 
   Task-specific  conversational  chatbot  \cite{wen2016network}  has been applied
-  into  many practical products. For example, it can share the working burden of
+  into  many practical products. One typical example is to share the working burden of
   human  customer  service  agents  responsible  for  customers' questions about
-  certain  products  or services. Another example is the speech-based control in
+  certain  products  or services. Another one is the speech-based control in
   devices  like  intelligent  speakers, such as Siri, Google home, Baidu Xiaodu,
-  and smart home equipments. Regardless of whether these conversations belong to
-  single-turn or multi-turn, an essential technique underlying the chatbot is to
+  and smart home equipments, to name a few. Regardless of whether these conversations belong to
+  single or  multi-round, an essential technique underlying the chatbot is to
   identify  the  real  intention  behind  a  user's  question or reply. Then the
-  chatbot  is capable of conducting expected actions, text reply or accomplish some
+  chatbot  is capable of conducting expected actions, replying texts or accomplishing some
   operations.
 
-  It  is  a  challenging task due to some inherent properties. First,
+  Identifying intention  is  a  challenging task due to some inherent properties. First,
   a customer's  utterance  within  a conversation is usually quite short. Since it
-  does  not  contain  enough  information,  short  text \cite{song2014short} are
+  does  not  contain  enough  information,  short  texts \cite{song2014short} are
   thought  to  be  more  ambiguous  compared to long texts such as paragraphs or
   documents,  posing  a  great challenge \cite{chen2019deep} for classification
   task   \cite{phan2008learning,yan2009dynamic,hua2015short}.   Second,  in  the
   initial  stage  of  building  a  chatbot  , it is often rather hard to collect
   sufficient  labeled  data  to  train  a good model. Because developers have to
   examine tons of real system logs for typical user's utterances, and then label
-  them  with expected intentions. Therefore, the key to building a task-specific
-  chatbot  with  high  performance  becomes  solving the challenge of short-text
+  them  with expected intentions. Therefore, to build a task-specific chatbot with
+  high  performance, it is essential to solve the challenge of short-text
   classification   \cite{sriram2010short}   problem   under   few-shot   setting
   \cite{yu2018diverse}.
 
 
   Generally  there  are  two  kinds  of  approaches  to  address  this  problem,
-  classification model that directly maps an input into a most likely label, and
-  similarity  model  that searches a label whose associated data is most similar to
+  one is the classification model that directly maps an input into a most likely label, and
+  the other one is the similarity  model  that searches a label whose associated data is most similar to
   an input.
 
 
   The   first  one,  \emph{text  classification},  includes  classic  long  text
   classification  and  short  text  classification  in  this  scenario.  Besides
-  traditional  machine  learning  models  like  SVM \cite{suykens1999least},  boosting  tree \cite{tu2005probabilistic},  many work
+  traditional  machine  learning  models  like  SVM \cite{suykens1999least},  
+  boosting  tree \cite{tu2005probabilistic},  many work
   \cite{wen2016network}  choose  neural  network  such  as  convolutional neural
   networks (CNNs) \cite{kim2014convolutional,zhang2015character,conneau2016very}
   and       long       short       term       memory       networks      (LSTMs)
@@ -141,7 +142,8 @@
   \cite{mnasri2019recent}. In this way, sentence-pair model pre-trained on large
   corpus  of  semantic  similarity  identification task can be applied for being
   used  as  a  tool  to  identify  the class with highest semantic similarity to
-  customer's    query.    A    common    model    structure    of    pre-trained sentence-pair model is based on multiple cross-attention
+  customer's    query.    A    common    model    structure    of    pre-trained 
+  sentence-pair model is based on multiple cross-attention
   mechanism  \cite{barkan2020scalable}. Due to
   the   fact   that   many   experiment   results   have   shown   that  RoBERTa
   \cite{liu2019roberta} is an improved version of BERT \cite{devlin2018bert}, and has achieved amazing
@@ -355,7 +357,7 @@
   that  can  help  enhance  the training speed and performance. According to the
   same  method  as  positive  sentence  pair  sampling, we can obtain the set of
   sentence  pairs  with  negative label as $\mathcal{N'}_{i}=\{[(x_{i}, x'_{1}),
-  0], ..., [(x_{i}, x'_{P\cdot (K-1)}), 0]\}$
+  0], ..., [(x_{i}, x'_{P\cdot K}), 0]\}$
 
   In  this way, we generate the sentence pair dataset $\mathcal{D'}$ for stage 2
   based  on  the  top-K  class  label  set $\mathcal{C'}$ provided by stage 1 as
