@@ -1,6 +1,5 @@
 \section{Methodology}
-In  this section, we describe our proposed system, a similarity model fused with
-a classification  model (SFC). We propose two approaches to implement this idea,
+In  this section, we describe our proposed SFC. We propose two approaches to implement this idea,
 two-stage SFC, and its more compact version joint SFC.
 
 \subsection{Two-stage SFC}
@@ -14,7 +13,7 @@ different  jobs.
 We  can  use any auxiliary text classification model or tool,
 such as Term Frequency-Inverse Document Frequency (TF-IDF)retrieval, to
 provide  top-K  most  related  class  labels. These selected class labels will
-later  be  used to sample sentence pairs of both positive samples and negative
+later  be  used to sample sentence pairs of both positive and negative
 samples  for  stage  2. 
 
 In  this  work,  we  choose pretrained models to fine tune on our data.
@@ -86,9 +85,9 @@ of sentences we should sample from each class.
         \textbf{Dataset} & \textbf{Domain} & \textbf{\#Class} &
         \textbf{\#Training Samples} & \textbf{\#Samples/Class} & \textbf{Experimental Settings}\tabularnewline
         \hline 
-        ITG & FAQ chatbot & 228 & 3938 & 17 & 3-fold\tabularnewline
+        ITG & FAQ chatbot & 228 & 3938 * 0.7 & 17 & 3-fold\tabularnewline
         \hline 
-        Amazon-670k & Product review & 250 & 1942 & 8 & 3-fold\tabularnewline
+        Amazon-670k & Product review & 250 & 2658 * 0.7 & 8 & 3-fold\tabularnewline
         \hline 
         HWU64 & intention detection & 64 & [320, 640, 960, 1280, 1920, 3200] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
         \hline 
