@@ -319,7 +319,7 @@
   x'_{P}),  1]\}$,  where $P$ is also a hyperparameter set to control the number
   of sentences we should sample from each class.
 
-\begin{table*}
+  \begin{table*}
     \begin{centering}
       \scalebox{0.9}{
         \begin{tabular}{|c|c|c|c|c|c|}
@@ -492,7 +492,6 @@
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
           RoBERTa-base & \multirow{2}*{$0.8732$} & \multirow{2}*{$0.9254$} & \multirow{2}*{$0.9363$} & \multirow{2}*{$0.9482$} & \multirow{2}*{$0.9558$} & \multirow{2}*{$0.9637$} & \multirow{2}*{$0.7305$} & \multirow{2}*{$0.8654$} & \multirow{2}*{$0.8808$} & \multirow{2}*{$0.9080$} & \multirow{2}*{$0.9061$} & \multirow{2}*{$0.9293$} & \multirow{2}*{$0.5831$} & \multirow{2}*{$0.6790$} & \multirow{2}*{$0.7064$} & \multirow{2}*{$0.7100$} & \multirow{2}*{$0.7320$} & \multirow{2}*{$0.7472$} & \multirow{2}*{$0.7734$} & \multirow{2}*{$0.6708$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
-          \hline
           RoBERTa-large & \multirow{2}*{$\textbf{0.8974}$} &
           \multirow{2}*{$\textbf{0.9372}$} & \multirow{2}*{$\textbf{0.9508}$} &
           \multirow{2}*{$\textbf{0.9584}$} & \multirow{2}*{$\textbf{0.9621}$} & 
@@ -505,6 +504,7 @@
           \multirow{2}*{$\textbf{0.7678}$} & \multirow{2}*{$\textbf{0.7990}$} & 
           \multirow{2}*{$\textbf{0.7156}$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+          \hline
           RoBERTa-large & \multirow{2}*{$0.8266$} & \multirow{2}*{$0.8861$} & \multirow{2}*{$0.9023$} & \multirow{2}*{$0.9084$} & \multirow{2}*{$0.9090$} & \multirow{2}*{$0.9407$} & \multirow{2}*{$0.757$} & \multirow{2}*{$0.8476$} & \multirow{2}*{$0.8614$} & \multirow{2}*{$0.8743$} & \multirow{2}*{$0.8749$} & \multirow{2}*{$0.8980$} & \multirow{2}*{$0.5425$} & \multirow{2}*{$0.6164$} & \multirow{2}*{$0.6503$} & \multirow{2}*{$0.6729$} & \multirow{2}*{$0.6947$} & \multirow{2}*{$0.7231$} & \multirow{2}*{$0.7418$} & \multirow{2}*{$0.6362$}\tabularnewline
           (similarity) & & & & & & & & & & & & & & & & & & & &\tabularnewline
           \hline
@@ -711,7 +711,7 @@
       \end{tabular}
       \par
     \end{centering}
-    \caption{The average classification accuracy in stage 1 on all five dataset.}
+    \caption{The average classification accuracy in percentage in stage 1 on all five dataset.}
     \label{tbe:top1_5_accuracy}
   \end{table}
 
@@ -730,9 +730,9 @@
   between  two  stages.  In  following analysis, we will focus on the comparison
   between joint SFC and the other baseline models.
 
-  \subsubsection*{Is  the  fusion of a classification model and a similarity model
-  helpful?}  We  compare  the performance of joint SFC with classification based
-  and similarity based baselines.
+  \subsubsection*{Is  the  fusion of classification and similarity models
+  helpful?}  We  compare  joint SFC with classification and similarity based
+  baselines respectively.
 
   \begin{table*}
     \begin{centering}
@@ -762,43 +762,36 @@
   \end{table*}
 
   Regarding the  classification  models,  joint SFC
-  outperforms    TextCNN    by   21.52   percent points,   ALBERT-xxlarge   by   7.99
-  percent points, BERT-large  by  7.73 percent points, RoBERTa-base by 3.79 
-  percent points, RoBERTa-large by 2.04 percents on average F1 score over 5 datasets.  
-  Especially, ALBERT.xxlarge based is much more  unstable  in our senario. Thus, 
-  we did multiple run with different settings, e.g.,  learning rate and batch size 
-  for each dataset, and  report the  best  result  here. Comparatively,  
-  RoBERTa  based is  the  most stable and has the best performance among
-  all baselines and all experiment settings.
+  outperforms RoBERTa-large based, the strongest among all baselines, 
+  by 2.04 percent points on average F1 score over 5 datasets.  
+  Especially, ALBERT.xxlarge based is rather unstable  in this senario. Thus, 
+  we did multiple run with different settings and  report the  best  ones here. 
+  Comparatively,  RoBERTa  based is  the  most stable and has the best performance 
+  n almost all experiment settings.
 
   Regarding  the  similarity  model,  as  analyzed  above,  we  only  choose the
-  RoBERTa-large based as our baseline. Our joint SFC achieves the improvement of
-  7.09  percents  on average. Moreover, joint SFC's result on 2 datasets without
-  data  sampling  for few-shot settings, which are ITG and Amazon-670k, are also
-  1.24 and 2.89 percents higher than Roberta-large classification model, and are
-  6.96 and 10.77 percents higher than Roberta-large similarity model (todo:
-  meaning?).
+  RoBERTa-large based implementation as our baseline. Joint SFC achieves more improvement of
+  7.09  percent points  on average F1 score. 
 
-  The above analysis illustrate that suitable fusing the classification model and the 
-  similarity model to make them cooperate with each other is helpful to better
-  performance.  
+  The above analysis illustrates that suitable fusing the two kinds of models
+  can take their advantages.
 
   \subsubsection*{Does joint SFC improve the classification in stage 1?}
-  We  compare  the  top  1  prediction and top 5 candidate labels in stage 1 from
+  We  compare  the  top-1  prediction and top-5 candidate labels in stage 1 from
   two-stage SFC and joint SFC in Table \ref{tbe:top1_5_accuracy}. We should note
-  that  two-stage  SFC  does not optimize the stage 1 result, which is a RoBERTa
+  that  two-stage  SFC  does not optimize the stage 1 model, which is a RoBERTa
   based classification model.
 
   The joint training does not improve the classification performance in stage 1,
-  measured  by  top  1  accuracy.  However,  it  improves  the  quality of top 5
+  measured  by  top-1  accuracy.  However,  it  improves  the  quality of top-5
   candidate  class  labels.  It  can  be  explained that, a classification model
-  inherently optimizes the objective loss, 0-1 error of top 1 here; the sentence
-  pair similairity model in the joint SFC poses positive effect in optimizing the 
+  inherently optimizes the objective loss, 0-1 error of top-1 here; the sentence
+  pair similairity model in the joint SFC poses more positive effect in optimizing the 
   candidate labels.
 
 
   \subsubsection*{How does training sample size influence SFC?} 
-  We analyze the overall  improvement  trend  of  SFC under various few-shot
+  We analyze the overall  improvement  trend  of  joint SFC under various few-shot
   settings, and show results in Fig. \ref{fig:trend}.
 
   Our main focus  is  to  study  chatbot  building  in common situation during real-world
@@ -817,14 +810,15 @@
       \par
     \end{centering}
     \caption{
-      Improvements with different size of training data.
+      Improvements  from  Joint  SFC  over  RoBERTa  based  classification  with
+      different size of training data.
     }
     \label{fig:trend}
   \end{figure}
 
   Especially,  in the most extreme few-shot setting with only 5 training samples
   per  class  our joint SFC achieves 4.97 percent points improvements on average
-  over  RoBERTa-large classification model . This observation indicates that SFC
+  over  RoBERTa-large classification model. This observation indicates that SFC
   is  especially  well-performed  when being applied during the initial stage of
   building  task-specific  chatbot  system,  where the amount of data sample for
   each class label is extremely scarce.
