@@ -96,11 +96,6 @@ classification  task  and  sentence-pair similarity task. We fine-tune
 our  SFC  system  on  our datasets with max sequence length of 128,
 learning  rate  of 1.5e-5 for RoBERTa-large pretrained model and learning rate
 of  5e-4  for  task-specific  layer  with polynomial decay and Adam optimizer.
-Besides,  we  set  the  max number of the epoch to 100 and save the best model on
-validation  set based on testing result in weighted F1 score
-\footnote{In the multi-class and multi-label case, this is the average of the
-F1 score of each class with weighting depending on the numbers in each class.}.
-We report the F1 score as the main evaluation measure for all experiments.
 
 In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks
 are  set  as  $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting. The reason
@@ -117,8 +112,10 @@ hyperparameter  to  be  $K=5$  and  $P=10$  for  all  SFC  variants.  In Table
 SFC system under various hyperparameter settings.
 
 \subsection{Result Analysis}
-All  results  in  F1  score  on  the  five  datasets with different models and
-configurations are showed in Table \ref{tbe:table2}.
+We  report  the F1 score \footnote{In the multi-class and multi-label case, this
+is  the  average  of  the F1 score of each class with weighting depending on the
+numbers  in  each class.}. as the main evaluation measure for all experiments in
+Table \ref{tbe:table2}.
 
 The performance of each model is measured in F1 score on the fixed
 test  set  for  each  dataset.  
@@ -284,16 +281,13 @@ sample  from  the  same  class, and this turns into a sentence pair similarity
 model.
 
 \subsubsection*{Settings  of  hyperparameters} 
-Finally, we analyze the effect brought
-by  different  settings  of  hyperparameters,  see  Table \ref{tbe:table3}. 
+In  Table \ref{tbe:table3}, we explore the influence from hyperparameters, which
+are  the  number  of  candidate  class  labels $K$ in stage 1, and the number of
+sampled  sentence  pairs  for  each class $P$ in stage 2, on ITG and Amazon-670K
+datasets.  As we control the total number of sampled sentence pairs to about 50 to 60, we
+roughly obatin five combinations of hyperparameters.  
 
-We  conduct  experiments on 5 different settings of hyperparameters, which are
-the  number of candidate class number $K$ and the number of sentence pairs $P$
-for  each  class,  on  ITG  and Amazon-670K datasets to find the most suitable
-setting  of  these  2 hyperparameters. We control the total number of sentence
-pairs  sampled for each user query into about the same level of amount(50-60).
-Through  analyzing the experimental results shown in Table \ref{tbe:table3}, we
-find  that the best setting of hyperparameters might be different for datasets
+We find  that the best setting of hyperparameters is different from datasets
 of  different  data  size.  The  class label number of ITG and Amazon-670k are
 similar  in  our  experimental setting, which is around 250. However the total
 amount of data points of ITG is approximately 2 times larger than Amazon-670k.
@@ -302,13 +296,10 @@ of  the  classes  contains  over 10 data points. However, for Amazon-670k, the
 amount  of  data  sample  for  each  class  is  scarce, thus, we may need more
 candidate  classes to sample enough effective sentence pairs for sentence-pair
 model  layer  of  SFC.  In this way, the setting of $K=10$ and $P=5$ becomes a
-good choice. However, in spite of the effect on evaluation performance brought
-by different settings of hyperparameters, joint SFC still steadily outperforms
-two-stage  SFC  by  0.41  percents  in  overall  average  F1 score  on  ITG and
-Amazon-670k datasets.
+good choice. 
 
-In  conclusion, to the best of our knowledge, these experimental results place
-joint  SFC as the best performing model on 5 diverse experimental datasets for
-text   classification   task,   especially   when   it's   under  low-resource
-task-specific conversational chatbot scenario.
+However,  in  spite of the effect on evaluation performance brought by different
+settings  of hyperparameters, joint SFC still steadily outperforms two-stage SFC
+by  0.41  percent  points  in  overall  average  F1 score on ITG and Amazon-670k
+datasets.
 
