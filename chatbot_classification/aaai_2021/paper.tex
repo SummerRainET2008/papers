@@ -115,7 +115,7 @@
 
   The   first  one,  \emph{text  classification},  includes  classic  long  text
   classification  and  short  text  classification  in  this  scenario.  Besides
-  traditional  machine  learning  models  like  SVM,  boosting  tree,  many work
+  traditional  machine  learning  models  like  SVM \cite{suykens1999least},  boosting  tree \cite{tu2005probabilistic},  many work
   \cite{wen2016network}  choose  neural  network  such  as  convolutional neural
   networks (CNNs) \cite{kim2014convolutional,zhang2015character,conneau2016very}
   and       long       short       term       memory       networks      (LSTMs)
@@ -129,7 +129,7 @@
   powerful  in  solving  many  NLP  tasks  including  short-text  classification
   \cite{madabushi2020cost}.      Especially      for      few-shot     scenarios
   \cite{yu2018diverse},     pre-trained     model    based    on    transformers
-  \cite{vaswani2017attention}, shown in Fig. \ref{Fig.1.sub.1}, tends to do more
+  \cite{vaswani2017attention} tends to do more
   help to reducing the negative effects brought by scarcity of training data.
 
   The  second  one,  \emph{similarity model} is also called sentence-pair model.
@@ -141,11 +141,10 @@
   \cite{mnasri2019recent}. In this way, sentence-pair model pre-trained on large
   corpus  of  semantic  similarity  identification task can be applied for being
   used  as  a  tool  to  identify  the class with highest semantic similarity to
-  customer's    query.    A    common    model    structure    of    pre-trained
-  \cite{devlin2018bert} sentence-pair model is based on multiple cross-attention
-  mechanism  \cite{barkan2020scalable},  shown in Fig. \ref{Fig.1.sub.2}. Due to
+  customer's    query.    A    common    model    structure    of    pre-trained sentence-pair model is based on multiple cross-attention
+  mechanism  \cite{barkan2020scalable}. Due to
   the   fact   that   many   experiment   results   have   shown   that  RoBERTa
-  \cite{liu2019roberta} is an improved version of BERT, and has achieved amazing
+  \cite{liu2019roberta} is an improved version of BERT \cite{devlin2018bert}, and has achieved amazing
   results  on  both  text  classification and sentence-pairs semantic similarity
   tasks, we choose RoBERTa as an important baseline approach in this paper.
 
@@ -162,8 +161,8 @@
   The  above limitation motivates us to propose a joint system that is capble of
   taking  advantagges  from  both  classification model and similarity model. We
   calle  it  SFC,  short  for  similairty model fused with classification Model,
-  shown  in  Fig.  \ref{fig:ver.1.3}.  To  better train SFC, we further bring in
-  multi-task   learning   \cite{caruana1993multitask,collobert2008unified}.  Our
+  shown  in  Fig.  \ref{fig:framework}.  To  better train SFC, we further bring in
+  multi-task   learning   \cite{caruana1993multitask,collobert2008unified, liu2019multi}.  Our
   basic  idea  cames  from  two  stages. In the first stage, we use an auxiliary
   model  to  select top-K most possible labels for a input. This model can be an
   elastic search  \cite{divya2013elasticsearch}  or  a  text classification model
@@ -356,7 +355,7 @@
   that  can  help  enhance  the training speed and performance. According to the
   same  method  as  positive  sentence  pair  sampling, we can obtain the set of
   sentence  pairs  with  negative label as $\mathcal{N'}_{i}=\{[(x_{i}, x'_{1}),
-  0], ..., [(x_{i}, x'_{P\cdot K}), 0]\}$
+  0], ..., [(x_{i}, x'_{P\cdot (K-1)}), 0]\}$
 
   In  this way, we generate the sentence pair dataset $\mathcal{D'}$ for stage 2
   based  on  the  top-K  class  label  set $\mathcal{C'}$ provided by stage 1 as
@@ -417,13 +416,12 @@
   represent  the  level  of  similarity  for each sentence pair, and in the mean
   time,  ${\Phi}^{K,neg}$  can  represent  the  level  of dissimilarity for each
   sentence  pair. Then, we can do average pooling for each candidate class among
-  the  top-K  classes  as  shown  in  Equ.  \ref{eq:average  pooling:1} and Equ.
-  \ref{eq:average pooling:2}.
+  the  top-K  classes  as  shown  in  Equ.  \ref{eq:average  pooling}.
 
   \begin{align}
-    {\xi}_{i,j}^{K,pos} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,pos} \label{eq:average pooling:1}\\
+    {\xi}_{i,j}^{K,pos} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,pos} \ \ \ \ \ \ \ 
     {\xi}_{i,j}^{K,neg} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,neg}
-    \label{eq:average pooling:2}
+    \label{eq:average pooling}
   \end{align}
 
   With  the  average pooling result ${\xi}^{K,pos}$ and ${\xi}^{K,neg}$, we also
@@ -492,12 +490,12 @@
           RoBERTa-base & \multirow{2}*{$0.8732$} & \multirow{2}*{$0.9254$} & \multirow{2}*{$0.9363$} & \multirow{2}*{$0.9482$} & \multirow{2}*{$0.9558$} & \multirow{2}*{$0.9637$} & \multirow{2}*{$0.7305$} & \multirow{2}*{$0.8654$} & \multirow{2}*{$0.8808$} & \multirow{2}*{$0.9080$} & \multirow{2}*{$0.9061$} & \multirow{2}*{$0.9293$} & \multirow{2}*{$0.5831$} & \multirow{2}*{$0.6790$} & \multirow{2}*{$0.7064$} & \multirow{2}*{$0.7100$} & \multirow{2}*{$0.7320$} & \multirow{2}*{$0.7472$} & \multirow{2}*{$0.7734$} & \multirow{2}*{$0.6708$}\tabularnewline
           (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
           \hline
-          RoBERTa-large & \multirow{2}*{$\textbf{0.8974i}$} &
+          RoBERTa-large & \multirow{2}*{$\textbf{0.8974}$} &
           \multirow{2}*{$\textbf{0.9372}$} & \multirow{2}*{$\textbf{0.9508}$} &
           \multirow{2}*{$\textbf{0.9584}$} & \multirow{2}*{$\textbf{0.9621}$} & 
           \multirow{2}*{$\textbf{0.9733}$} & \multirow{2}*{$\textbf{0.7690}$} & 
           \multirow{2}*{$\textbf{0.8728}$} & \multirow{2}*{$\textbf{0.8966}$} & 
-          \multirow{2}*{$\textbf{0.9099}$} & \multirow{2}*{$i\textbf{0.9227}$} & 
+          \multirow{2}*{$\textbf{0.9099}$} & \multirow{2}*{$\textbf{0.9227}$} & 
           \multirow{2}*{$\textbf{0.9313}$} & \multirow{2}*{$\textbf{0.6044}$} & 
           \multirow{2}*{$\textbf{0.7002}$} & \multirow{2}*{$\textbf{0.7129}$} & 
           \multirow{2}*{$\textbf{0.7436}$} & \multirow{2}*{$\textbf{0.7493}$} & 
@@ -527,7 +525,7 @@
       randomly  sampled  250  classes  with  training sample numbers within 5-15
       samples  per  class.  For  CLINC150,  BANKING77,  HWU64, we set up various
       few-shot  settings  (5/10/15/20/30/50 samples per class) while keeping the
-      test  set to be fixed. The highest scores for each data setting are marked
+      test  set to be fixed. The highest scores among all the baseline models and SFC variants for each data setting are both marked
       in bold.
     }
     \label{tbe:table2}
@@ -629,7 +627,7 @@
 
   \begin{enumerate}
     \item \emph{Pretrained model based classification system}, which consists of
-    BERT,  RoBERTa,  and  ALBERT  \cite{lan2019albert}  based.  These pretrained
+    BERT \cite{devlin2018bert},  RoBERTa \cite{liu2019roberta},  and  ALBERT  \cite{lan2019albert}  based.  These pretrained
     models  are  practically  proven  to  achieve  outstanding  performances  in
     classification task and other NLP tasks.
 
@@ -639,15 +637,15 @@
     model is based on output from RoBERTa tokenization, and the kernels are set
     as 1, 2, 3, 4, 5. Regarding LEAM, a literal class label is required, which
     is available only in HWU64, CLINC150, BANKING77. Thus, for other two
-    datasets, we have to use its class number instead.  Empircally,
+    datasets, we have to use its class number instead.  Empirically,
     a  non-pretrained  model  based  system  are  not  performing  as  well as a
     pretrained  models  based,  if  both is applicable in some task. Our listing
     these  non-pretrained model based systems here is to provide a comprehensive
     performance comparison on our datasets.
 
     \item   \emph{Pre-trained   model   based   similarity   model}.  We  choose
-    RoBERTa-large  as  our  fundermental  module as our SFC systems are based on
-    RoBERTa  too, and RoBERTa is empircally more effective than other pretrained
+    RoBERTa-large  as  our  fundamental  module as our SFC systems are based on
+    RoBERTa  too, and RoBERTa is empirically more effective than other pretrained
     models  in  the  short  text  classification  task  in  our  experiments. In
     inference,  we  use  an  elastic search to find a set of potential candidate
     labels for the similarity model, to guarantee a reasonable running time.
