@@ -1,0 +1,166 @@
+----------------------------- * For Reviewer #3 * ------------------------------
+
+### Question 1: Was the pre-trained model used in baseline were fine-tuned …
+
+Response:
+Thanks  for  your invaluable question. All pre-trained model based baselines are
+fine-tuned. Sorry for our careless assumption that in NLP almost all pre-trained
+model based systems have to be fine-tuned.
+
+Usually  in our experiments, RoBERTa and BERT model layers are tuned, regardless
+of  being  in  baselines or SFC, with a learning rate of 5e-4, and task-specific
+layers with a learning rate of 1e-4. This setting is empirically efficient.
+
+Besides, all other settings, like the polynomial decay, Adam optimize, and using
+a development set, are the same.
+
+#####  Question  2:  the baseline can be stronger, such as joint-training of NER
+and intent detection using BERT.
+
+Response:
+Thanks  for such a nice question. We did notice this line of work, introduced in
+line 154. We can put the analysis below in our next version. Appreciate.
+
+First,  the  datasets,  usually used for both intent and NER tasks, namely Snips
+and ATIS, have quite limited intent number, 7 and 21 respectively. However, they
+define  quite  rich  NER  labels,  72  and  120  respectively. In our researched
+applications,  the available labeled data is often limited, then NER module in a
+joint  model  might not be sufficiently trained. However, for some popular NERs,
+address, person, time, city, there are more available data for better training.
+
+Now  considering  a  joint  model,  our  framework  is  still  supportive of NER
+training. In the first stage of SFCs, which is a BERT-like classification model,
+we  can  trivially develop a fourth objective, as NER. This is a clear effective
+idea. Refer to "BERT for Joint Intent Classification and Slot Filling".
+
+However,  the  four  public datasets and one private dataset do not have any NER
+information.  Thus,  in  this  work,  we  exclusively compare the classification
+performance.
+
+#####  Question  3:  -  There  is  not  much  what  ...  exactly was improved by
+introducing the similarity model.
+
+Response: 
+Sorry  for  the  unclear explanation. This is really difficult to exactly answer
+why.   We   tried  to  explain  this  point  in  "Does  joint  SFC  improve  the
+classification  in  stage  1" in the experimental part. Our experiment, table 3,
+show  that  SFC  improves  the top-5 accuracy in the first stage, at the cost of
+top-1 accuracy, to improve the final performance.
+
+Hope this kind of clarify this issue. Appreciate!
+
+----------------------------- * For Reviewer #4 *  -----------------------------
+
+###  Question  1: "classification model cannot use data augmentation method" and
+"similarity  model  doesn't  perform  well  on a new task-specific dataset". Why
+putting ... together ...?
+
+Response:
+Thanks  for  your  question.  This  is an invaluable opinion that we should have
+spent effort to clarify it.
+
+In  the  classification  model,  let  (x, y) be the input feature and label of a
+sample.  In  our target application, we need enough labeled data like such pairs
+(x,  y).  However, we are lacking of those pairs, except spending lots of effort
+labeling them manually. Even though in a second application, we have enough data
+like  (x,  y), and because the label definitions of two applications are totally
+different,  then  we  have no way to bring the data in the second application to
+the first application.
+
+This  is  quite  different  in  the similarity model which only models two x’s
+similarity, and this definition is more general. In inference, given a x_new, we
+target at searching the most similar x, modeled by similarity(x_new, x), and use
+the  label  of  this  x as the label of x_new. Let’s continue with the example
+above.  In  the  third application, though its training data is from a different
+domain,  yet the similarity model (x1, x2) can be used in the first application,
+as the label definitions do not matter here.
+
+I hope this explanation can provide more information for you. Appreciate!
+
+###  Question  2:  How  to solve the error propagation problem? 
+
+Response:
+Thanks  for  you  in-depth  question.  The  multi-stage  modeling is popular and
+inevitable  in  NLP.  Hence  a  general  idea is joint modeling which trains all
+stages simultaneously.
+
+Our  two-stage  SFC  does  have  the  issue pointed out by you. Thus, we further
+propose  joint  SFC  to  alleviate  this  issues. However, this issue can not be
+solved ideally.
+
+Our  table 3 explores the intermediate result in the joint SFC. We can see that,
+the  top-5  accuracy  in  the  first  stage  got  improved, at the cost of top-1
+accuracy, in exchange of the final improved performance.
+
+I hope this looks a bit clearer for you. Appreciate!
+
+### Question 2: The authors simply putting a classification model and a matching
+model together, and the authors haven't made any improvement.
+
+Response: Sorry for confusing you. 
+First,  the combination of two rather different models are not trivial, as their
+structures  are  hard  to combine efficiently. In comparison, the two losses are
+trivial to combine.
+
+In  our practical applications, such as chatbot, we are often facing the problem
+of  lacking  sufficient  labeled  data.  The  classification  model  has  a high
+accuracy,  while  quite  hard to utilize external data; the similarity is on the
+contrary. This is the motivation of combing two models.
+
+I hope this can help you understand better. Appreciate!
+
+
+----------------------------- * For Reviewer #5 * ------------------------------
+
+###  Question  1: Can you explain the impact of the fine-tuning process on Quora
+dataset?
+
+Response:  This  is a really interesting problem. We did notice this issue, yet we
+think  this is not influencing the fairness of our model over ALL baselines. Due
+to the target workload of experiments, we did not explain much about this issue.
+Let's clarify in-depth now.
+
+First the merit of a similarity model is that we can expand our training data.
+Due to page limit, could refer to the response to the first question of reviewer
+#4? 
+
+As  our  researched  problem  is  the  application  without sufficient data, the
+similarity  model baseline is also influenced due to insufficient in-domain data
+to  a  great extent. Thus, generally the similarity baseline has to use external
+data.
+
+Then this merit is naturally inherited in our SFC models. When comparing SFCs to
+a  similarity model baseline, our experiments are fair; when comparing SFCs to a
+classification, supporting external data is also our advance, which is fair too.
+Hence, in order to reduce the explanation workload, we just use this setting.
+
+### Question 2: Will you release you code if your paper were accepted?
+
+Definitely! I am stilling considering how to release the codes without violating
+the rule of releasing author information.
+
+
+----------------------------- * For Reviewer #6 *  -----------------------------
+
+###  Question  1:  The method seems time-consuming, especially the second stage.
+
+Response: thanks for this good question.
+
+Regarding  the  training time: the time of SFCs is actually the summation of the
+classification  model  baseline  and  the  similarity  model  baseline.  In  our
+settings,  the  classification  model  needs  about  5  hours in a single Nvidia
+RTX8000 GPU; the similarity model needs about 12 hours; our model needs about 14
+hours due to faster convergence.
+
+Regarding the inference time, the classification model baseline is about 0.2 ms;
+the  similarity  model  baseline  is  about  0.5 ms; our joint SFC needs 0.6 ms.
+Actually  both  the  similarity  model  baseline  and  our  joint SFC can be GPU
+parallelized in the similarity computation, if we need pretty fast response time
+in a real product.
+
+As  our  researched problem is the application without sufficient training data,
+hence, the extra training cost from the external data might not be a problem.
+
+Thanks for pointing out. We should have included in our paper!
+
+
