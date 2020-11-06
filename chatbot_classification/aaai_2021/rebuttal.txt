@@ -94,7 +94,7 @@ accuracy, in exchange of the final improved performance.
 
 I hope this looks a bit clearer for you. Appreciate!
 
-### Question 2: The authors simply putting a classification model and a matching
+### Question 3: The authors simply putting a classification model and a matching
 model together, and the authors haven't made any improvement.
 
 Response: Sorry for confusing you. 
@@ -144,7 +144,7 @@ the rule of releasing author information.
 
 ###  Question  1:  The method seems time-consuming, especially the second stage.
 
-Response: thanks for this good question.
+Response: Thanks for this good question.  We should have included in our paper!
 
 Regarding  the  training time: the time of SFCs is actually the summation of the
 classification  model  baseline  and  the  similarity  model  baseline.  In  our
@@ -161,6 +161,5 @@ in a real product.
 As  our  researched problem is the application without sufficient training data,
 hence, the extra training cost from the external data might not be a problem.
 
-Thanks for pointing out. We should have included in our paper!
 
 
