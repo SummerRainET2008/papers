@@ -1,0 +1,324 @@
+\section{Methodology}
+In  this section, we describe our proposed SFC method, which includes the basic two-stage SFC and its more compact version joint SFC.
+
+\subsection{Two-stage SFC}
+
+It consists of the following  two  independent stages  in  charge of different  jobs. 
+
+\subsubsection*{
+  Stage 1: classification model for providing top-K candidate class labels
+} 
+We  can  use any auxiliary text classification model or tool,
+such as Term Frequency-Inverse Document Frequency (TF-IDF)retrieval, to
+provide  top-K  most  related  class  labels. These selected class labels will
+later  be  used to sample sentence pairs of both positive and negative
+samples  for  stage  2. 
+
+In  this  work,  we  choose pretrained models to fine tune on our data.
+Due to the excellent performance of RoBERTa in this task, compared to other pretrained
+models, we use RoBERTa as the encoder of classification model in our setting.
+
+Given   a   data   point   $x_{i}$  with  class  label  $y_{i}$  from  dataset
+$\mathcal{D}$, we take the final hidden state $h_{i}$ of the first token [CLS]
+encoded  by  RoBERTa  as the representation for the whole sequence of $x_{i}$.
+Then  a linear layer is followed to output probabilistic distribution of class
+labels,  $softmax(W^Ch_{i}+b^C)=softmax({\Phi}^C_{i})$,  where $W^C$ and $b^C$
+are  trainable  parameters.  Then, the loss in stage 1 classification model is
+shown in Equ. \ref{eq:classification_loss},
+
+
+\begin{equation}
+  \begin{aligned}
+    \mathcal{L}^{C}&=\frac{1}{N}\sum_{i=1}^{N}-log(\frac{exp(\varPhi_{i,y_{i}}^C)}{\sum_{j=1}^{C}exp(\varPhi_{i,j}^C)}) \\
+    \label{eq:classification_loss}
+  \end{aligned}
+\end{equation}
+
+\subsubsection*{
+  Stage 2: sentence-pair similarity model based classification with multi-task
+  learning
+}
+We  continue choosing RoBERTa as the main module in this stage that identifies
+the class label with strongest semantic similarity to the user input sentence.
+
+Suppose  we have a training dataset $\mathcal{D}=\{x_{i},y_{i}\}_{i=1}^{N}$ of
+$N$  data  points,  in  which $x_{i}$ is the user input query and $y_{i}$ is a
+single  class label from a class label set of $C$ classes in total. We 
+generate            a sentence            pair            dataset
+$\mathcal{D'}=\{[(x,x')_{j},l_{j}]\}_{j=1}^{M}$ from $\mathcal{D}$,   where   $(x,   x')_{j}$  is
+a pair of two history queries \footnote{For simplicity, we use query
+to denote a user's question or a response.}, and $l_{j}\in\{0, 1\}$ denotes the
+similarity label that only the ones from the same class label are considered
+similar. The size of $\mathcal{D'}$  would be up to $O(N^2)$ if no any
+sampling strategy is used.  This is quite time-consuming  for the  training
+in stage 2 because $N$ can be several hundreds or thousands even under 
+few shot setting in task-specific chatbot scenario. 
+
+Therefore,  we  adopt  the idea of adversarial negative sampling strategy from
+the  work  \cite{bamler2020extreme}.  The  key  idea is to train with negative
+samples  that  are hard to be distinguished from positive samples. Now suppose
+we  have  a  user  input query $x_{i}$ and top-K most related class labels set
+$\mathcal{C'}=\{c'_{1},  \dots,  c'_{K}\}$ provided by auxiliary model or tool
+in  stage  1, where $K$ is a hyperparameter to control candidate class number,
+we  apply  the  adversarial  negative sampling strategy into our sentence pair
+sampling process by the following two steps:
+
+The  first step is \emph{positive sentence pair sampling}. During the training
+process,  we  first make sure the ground truth class label $y_{i}$ for $x_{i}$
+is  within  the  candidate  class  label  set  $\mathcal{C'}$. If $y_{i}\notin
+\mathcal{C'}$,  we  manually  add  $y_{i}$  into  $\mathcal{C'}$  by replacing
+$c'_{K}$  with  $y_{i}$, since $c'_{K}$ is the least promising candidate label
+according  to  the  auxiliary  model  in stage 1. Afterwards, we will randomly
+sample  $P$ sentences $\{x'_{1}, \dots, x'_{P}\}$ with the same class label as
+$y_{i}$  from  dataset  $\mathcal{D}$  to  form the set of sentence pairs with
+positive  label  $\mathcal{P'}_{i}=\{[(x_{i},  x'_{1}),  1],  \dots,  [(x_{i},
+x'_{P}),  1]\}$,  where $P$ is also a hyperparameter set to control the number
+of sentences we should sample from each class.
+
+\begin{table*}
+  \begin{centering}
+    \scalebox{0.75}{
+      \begin{tabular}{|c|c|c|c|c|c|}
+        \hline 
+        \textbf{Dataset} & \textbf{Domain} & \textbf{\#Class} &
+        \textbf{\#Training Samples} & \textbf{\#Samples/Class} & \textbf{Settings}\tabularnewline
+        \hline 
+        ITG & FAQ chatbot & 228 & 3938 * 0.7 & 12 & 3-fold\tabularnewline
+        \hline 
+        Amazon-670k & Product review & 250 & 2658 * 0.7 & 8 & 3-fold\tabularnewline
+        \hline 
+        HWU64 & intention detection & 64 & [320, 640, 960, 1280, 1920, 3200] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+        \hline 
+        CLINC150 & intention detection & 150 & [750, 1500, 2250, 3000, 4500, 7500] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+        \hline 
+        BANKING77 & intention detection & 77 & [385, 770, 1155, 1540, 2310, 3850] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+        \hline 
+      \end{tabular}
+    }
+    \par
+  \end{centering}
+  \caption{Statistics for all datasets and few shot settings.}
+
+  \label{tbe:dataset statistic}
+\end{table*}
+
+
+The  second  step  is  \emph{negative sentence pair sampling}: As for negative
+sentence  pairs,  we will also randomly sample $P$ sentences for each class in
+the negative candidate class label set $\mathcal{C'}\backslash \{y_{i}\}$. The
+class  labels  in  $\mathcal{C'}\backslash  \{y_{i}\}$  are  the  set  of most
+confusing  class  labels comparing to the ground truth ${y_{i}}$, so we assume
+that  the  sentence  pairs  with  negative  label  grouped by user input query
+$x_{i}$  and sentences with class labels in $\mathcal{C'}\backslash \{y_{i}\}$
+are  strong  adversarial  negative  samples for sentence-pair similarity model
+that  can  help  enhance  the training speed and performance. According to the
+same  method  as  positive  sentence  pair  sampling, we can obtain the set of
+sentence  pairs  with  negative label as $\mathcal{N'}_{i}=\{[(x_{i}, x'_{1}),
+0], ..., [(x_{i}, x'_{P\cdot K}), 0]\}$
+
+In  this way, we generate the sentence pair dataset $\mathcal{D'}$ for stage 2
+based  on  the  top-K  class  label  set $\mathcal{C'}$ provided by stage 1 as
+$\mathcal{D'}=\{\mathcal{P'}_{i}\cup  \mathcal{N'}_{i}\}_{i=1}^{N}$,  in which
+we have $M=N\cdot K\cdot P$ data points of sentence pairs in total.
+
+Before starting to fine-tune our sentence-pair model on task-specific dataset,
+we  first  fine-tune  RoBERTa  on  Quora  dataset  \cite{iyer2017first}, which
+contains  404,290  potential  duplicate question pairs, for transfer learning.
+This  is  also  the  merit of similarity based model, as labeled task-specific
+classification  data  is  hard  to  acquire,  yet  general sentence pairs with
+similar semantics can be much easier to acquire.
+
+\subsubsection*{Multi-task based training}
+We   continue  to  do  multi-task  training  on  sentence-pair  dataset
+$\mathcal{D'}$ sampled from the top-K candidate class labels provided by stage
+1. In stage 2, we have two tasks tuning our system.
+
+The first task is \emph{regular sentence-pair similarity task}.
+For  sentence  pair semantic similarity task, given a data point $(x, x')_{i}$
+with       similarity       label       $l_{i}$       from       data      set
+$\mathcal{D'}=\{[(x,x')_{i},l_{i}]\}_{i=1}^{M}$,   Roberta   takes  the  final
+hidden  state  $h_{i}$  of the first token [CLS] as the representation for the
+sequence of packed sentence pair $(x, x')_{i}$. Let's suppose we have a linear
+layer  as  ${\Phi}^S_{i}=W^Sh_{i}+b^S$,  where  $W^S$  and $b^S$ are trainable
+parameters,  and  the probability score for $(x, x')_{i}$ can be calculated as
+$p^S_{i}=softmax({\Phi}^S_{i})$.
+
+Due  to  the  fact that sentence pairs within the same class is much fewer than
+that from  different  classes,  the  dataset  $\mathcal{D'}$  is
+quite imbalanced.  Therefore, we will accommodate a weight variable $w^S = [K-1, 1]$
+to  the  loss  to eliminate the bias brought by data imbalance, shown in Equ.
+\ref{eq:similarity_loss}.
+
+\begin{equation}
+  \begin{aligned}
+    \mathcal{L}^{S}&=\frac{1}{M}\sum_{i=1}^{M}-w^S_{l_i}\cdot log(\frac{exp(\varPhi_{i,l_{i}}^S)}{\sum_{j=0}^{1}exp(\varPhi_{i,j}^S)}) \\
+    \label{eq:similarity_loss}
+  \end{aligned}
+\end{equation}
+
+The  second  task  is  \emph{classification  on  top-K classes}. As minimizing
+similarity  loss  is  not  our  final goal in the intention classification, we
+bring  back  classification  loss again. In this task, the network is based on
+sentence  pair  similarity  modules.  The  only  difference  is  that we add a
+task-specific  average  pooling  layer,  shown  in Fig. \ref{fig:framework} to
+accomplish the classification task based on sentence-pair model.
+
+We  already  know  that the size of ${\Phi}^S$ in task 1 is $M\times 2=(N\cdot
+K\cdot  P)\times  2$, where $N$ is the total number of data points in original
+training  data $\mathcal{D}$, $K$ is a hyperparameter that controls the number
+of   candidate   class  labels  provided  by  stage  1,  and  $P$  is  also  a
+hyperparameter that controls the number of sentences we should randomly sample
+from each candidate class labels. Now, for the average pooling layer, we first
+reshape  ${\Phi}^S$  into  the  size  of $N\times K\times P\times 2$, and then
+split  it  into  ${\Phi}^{K,pos}$  and ${\Phi}^{K,neg}$, and both of them will
+have  the  size  of  $N\times  K\times  P$.  In this way, ${\Phi}^{K,pos}$ can
+represent  the  level  of  similarity  for each sentence pair, and in the mean
+time,  ${\Phi}^{K,neg}$  can  represent  the  level  of dissimilarity for each
+sentence  pair. Then, we can do average pooling for each candidate class among
+the  top-K  classes  as  shown  in  Equ.  \ref{eq:average  pooling}.
+
+\begin{align}
+  {\xi}_{i,j}^{K,pos} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,pos} \ \ \ \ \ \ \ 
+  {\xi}_{i,j}^{K,neg} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,neg}
+  \label{eq:average pooling}
+\end{align}
+
+With  the  average pooling result ${\xi}^{K,pos}$ and ${\xi}^{K,neg}$, we also
+generate   a   top-K   class   label   $l^{K}_i\in   [1,\dots,K]$   for   each
+${\xi}^{K,pos}_{i}$ and ${\xi}^{K,neg}_{i}$. The loss for top-K classification
+task is shown in Equ. \ref{eq:top-k_classification_loss}. In Equ. \ref{eq: pos
+top-k   loss}   and   Equ.   \ref{eq:   neg   top-k   loss},  the  first  term
+$\xi_{i,l^{K}_{i}}^{K,pos}$  and  $\xi_{i,l^{K}_{i}}^{K,neg}$  encourage  high
+level  of  similarity  and  low  level  of dissimilarity for prediction of the
+correct label $l^{K}_i$ within the top-K candidate classes.
+
+\begin{align}
+  \mathcal{L}^{K} = \frac{1}{N}\sum_{i=1}^{N}(\mathcal{L}^{K,pos}_{i} - \mathcal{L}^{K,neg}_{i})
+  \label{eq:top-k_classification_loss}
+\end{align}
+where
+
+\begin{equation}
+  \begin{aligned}
+    \mathcal{L}^{K,pos}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,pos})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,pos})})
+    \label{eq: pos top-k loss}
+  \end{aligned}
+\end{equation}
+
+\begin{equation}
+  \begin{aligned}
+    \mathcal{L}^{K,neg}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,neg})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,neg})}) \\
+    \label{eq: neg top-k loss}
+  \end{aligned}
+\end{equation}
+
+Finally,  the  overall  loss  function for multi-task learning in stage 2 is
+shown in Equ. \ref{eq:two-stage_SFC_loss}. The training objective of stage 2 is
+to  minimize  the  weighted  sum  of task-specific losses. Here $\alpha_S$ and
+$\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
+
+\begin{align}
+  \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K
+  \label{eq:two-stage_SFC_loss}
+\end{align}
+
+
+\begin{table*}
+  \begin{centering}
+    \scalebox{0.45}{
+      \begin{tabular}{|c|cccccc|cccccc|cccccc|c|c|}
+        \hline 
+        \multicolumn{1}{|c|}{\multirow{2}*{\textbf{Models}} }& \multicolumn{6}{c|}{\textbf{CLINC150}}& \multicolumn{6}{c|}{\textbf{BANKING77}}& \multicolumn{6}{c|}{\textbf{HWU64}}& \ \ \ \textbf{ITG} \ \ \ & \textbf{Amazon-670k}\tabularnewline
+        \cline{2-21}
+        \multicolumn{1}{|c|}{} & $\textbf{5}$ & $\textbf{10}$ & $\textbf{15}$
+        & $\textbf{20}$ & $\textbf{30}$ & $\textbf{50}$ & $\textbf{5}$ &
+        $\textbf{10}$ & $\textbf{15}$ & $\textbf{20}$ & $\textbf{30}$ &
+        $\textbf{50}$ & $\textbf{5}$ & $\textbf{10}$ & $\textbf{15}$ &
+        $\textbf{20}$ & $\textbf{30}$ & $\textbf{50}$ & \textbf{3-fold} &
+        \textbf{3-fold}\tabularnewline
+        \hline
+        TextCNN & \multirow{2}*{$0.5318$} & \multirow{2}*{$0.6963$} & \multirow{2}*{$0.7609$} & \multirow{2}*{$0.8142$} & \multirow{2}*{$0.8526$} & \multirow{2}*{$0.8867$} & \multirow{2}*{$0.4408$} & \multirow{2}*{$0.6436$} & \multirow{2}*{$0.7366$} & \multirow{2}*{$0.7918$} & \multirow{2}*{$0.8228$} & \multirow{2}*{$0.8619$} & \multirow{2}*{$0.3112$} & \multirow{2}*{$0.4007$} & \multirow{2}*{$0.4823$} & \multirow{2}*{$0.5272$} & \multirow{2}*{$0.5782$} & \multirow{2}*{$0.6262$} & \multirow{2}*{$0.6624$} & \multirow{2}*{$0.4401$}\tabularnewline
+        (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        LEAM & \multirow{2}*{$0.7514$} & \multirow{2}*{$0.8203$} & \multirow{2}*{$0.8612$} & \multirow{2}*{$0.8802$} & \multirow{2}*{$0.9010$} & \multirow{2}*{$0.9180$} & \multirow{2}*{$0.5422$} & \multirow{2}*{$0.7812$} & \multirow{2}*{$0.8129$} & \multirow{2}*{$0.8280$} & \multirow{2}*{$0.8610$} & \multirow{2}*{$0.8727$} & \multirow{2}*{$0.4545$} & \multirow{2}*{$0.5554$} & \multirow{2}*{$0.5936$} & \multirow{2}*{$0.6599$} & \multirow{2}*{$0.6855$} & \multirow{2}*{$0.7046$} & \multirow{2}*{$0.7086$} & \multirow{2}*{$0.6091$}\tabularnewline
+        (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        \hline
+        BERT-large & \multirow{2}*{$0.8080$} & \multirow{2}*{$0.8904$} & \multirow{2}*{$0.9265$} & \multirow{2}*{$0.9334$} & \multirow{2}*{$0.9497$} & \multirow{2}*{$0.9595$} & \multirow{2}*{$0.5780$} & \multirow{2}*{$0.8004$} & \multirow{2}*{$0.8518$} & \multirow{2}*{$0.8827$} & \multirow{2}*{$0.8858$} & \multirow{2}*{$0.8982$} & \multirow{2}*{$0.4711$} & \multirow{2}*{$0.5963$} & \multirow{2}*{$0.6342$} & \multirow{2}*{$0.7010$} & \multirow{2}*{$0.7117$} & \multirow{2}*{$0.7424$} & \multirow{2}*{$0.7485$} & \multirow{2}*{$0.6658$}\tabularnewline
+        (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        ALBERT-xxlarge & \multirow{2}*{$0.8497$} & \multirow{2}*{$0.9008$} & \multirow{2}*{$0.9296$} & \multirow{2}*{$0.9297$} & \multirow{2}*{$0.9466$} & \multirow{2}*{$0.9578$} & \multirow{2}*{$0.5549$} & \multirow{2}*{$0.7981$} & \multirow{2}*{$0.8231$} & \multirow{2}*{$0.8530$} & \multirow{2}*{$0.8571$} & \multirow{2}*{$0.9096$} & \multirow{2}*{$0.4879$} & \multirow{2}*{$0.6116$} & \multirow{2}*{$0.6135$} & \multirow{2}*{$0.6996$} & \multirow{2}*{$0.7094$} & \multirow{2}*{$0.7376$} & \multirow{2}*{$0.7253$} & \multirow{2}*{$0.6893$}\tabularnewline
+        (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        RoBERTa-base & \multirow{2}*{$0.8732$} & \multirow{2}*{$0.9254$} & \multirow{2}*{$0.9363$} & \multirow{2}*{$0.9482$} & \multirow{2}*{$0.9558$} & \multirow{2}*{$0.9637$} & \multirow{2}*{$0.7305$} & \multirow{2}*{$0.8654$} & \multirow{2}*{$0.8808$} & \multirow{2}*{$0.9080$} & \multirow{2}*{$0.9061$} & \multirow{2}*{$0.9293$} & \multirow{2}*{$0.5831$} & \multirow{2}*{$0.6790$} & \multirow{2}*{$0.7064$} & \multirow{2}*{$0.7100$} & \multirow{2}*{$0.7320$} & \multirow{2}*{$0.7472$} & \multirow{2}*{$0.7734$} & \multirow{2}*{$0.6708$}\tabularnewline
+        (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        RoBERTa-large & \multirow{2}*{$\textbf{0.8974}$} &
+        \multirow{2}*{$\textbf{0.9372}$} & \multirow{2}*{$\textbf{0.9508}$} &
+        \multirow{2}*{$\textbf{0.9584}$} & \multirow{2}*{$\textbf{0.9621}$} & 
+        \multirow{2}*{$\textbf{0.9733}$} & \multirow{2}*{$\textbf{0.7690}$} & 
+        \multirow{2}*{$\textbf{0.8728}$} & \multirow{2}*{$\textbf{0.8966}$} & 
+        \multirow{2}*{$\textbf{0.9099}$} & \multirow{2}*{$\textbf{0.9227}$} & 
+        \multirow{2}*{$\textbf{0.9313}$} & \multirow{2}*{$\textbf{0.6044}$} & 
+        \multirow{2}*{$\textbf{0.7002}$} & \multirow{2}*{$\textbf{0.7129}$} & 
+        \multirow{2}*{$\textbf{0.7436}$} & \multirow{2}*{$\textbf{0.7493}$} & 
+        \multirow{2}*{$\textbf{0.7678}$} & \multirow{2}*{$\textbf{0.7990}$} & 
+        \multirow{2}*{$\textbf{0.7156}$}\tabularnewline
+        (classification) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        \hline
+        RoBERTa-large & \multirow{2}*{$0.8266$} & \multirow{2}*{$0.8861$} & \multirow{2}*{$0.9023$} & \multirow{2}*{$0.9084$} & \multirow{2}*{$0.9090$} & \multirow{2}*{$0.9407$} & \multirow{2}*{$0.757$} & \multirow{2}*{$0.8476$} & \multirow{2}*{$0.8614$} & \multirow{2}*{$0.8743$} & \multirow{2}*{$0.8749$} & \multirow{2}*{$0.8980$} & \multirow{2}*{$0.5425$} & \multirow{2}*{$0.6164$} & \multirow{2}*{$0.6503$} & \multirow{2}*{$0.6729$} & \multirow{2}*{$0.6947$} & \multirow{2}*{$0.7231$} & \multirow{2}*{$0.7418$} & \multirow{2}*{$0.6362$}\tabularnewline
+        (similarity) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        \hline
+        2-stage SFC & \multirow{2}*{$0.8979$} & \multirow{2}*{$0.9457$} & \multirow{2}*{$0.9517$} & \multirow{2}*{$0.9591$} & \multirow{2}*{$0.9610$} & \multirow{2}*{$0.9664$} & \multirow{2}*{$0.7975$} & \multirow{2}*{$0.8818$} & \multirow{2}*{$0.8962$} & \multirow{2}*{$0.9109$} & \multirow{2}*{$0.9187$} & \multirow{2}*{$0.9198$} & \multirow{2}*{$0.6477$} & \multirow{2}*{$0.7055$} & \multirow{2}*{$0.7200$} & \multirow{2}*{$0.7232$} & \multirow{2}*{$0.7484$} & \multirow{2}*{$0.7653$} & \multirow{2}*{$0.7972$} & \multirow{2}*{$0.7189$}\tabularnewline
+        (task1) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        2-stage SFC & \multirow{2}*{$0.9162$} & \multirow{2}*{$0.9424$} & \multirow{2}*{$0.9530$} & \multirow{2}*{$0.9617$} & \multirow{2}*{$0.9633$} & \multirow{2}*{$0.9690$} & \multirow{2}*{$0.7997$} & \multirow{2}*{$0.8823$} & \multirow{2}*{$0.8945$} & \multirow{2}*{$0.9123$} & \multirow{2}*{$0.9236$} & \multirow{2}*{$0.9317$} & \multirow{2}*{$0.6498$} & \multirow{2}*{$0.6980$} & \multirow{2}*{$0.7202$} & \multirow{2}*{$0.7358$} & \multirow{2}*{$0.7498$} & \multirow{2}*{$0.7657$} & \multirow{2}*{$0.8020$} & \multirow{2}*{$0.7311$}\tabularnewline
+        (task2) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        2-stage SFC & \multirow{2}*{$0.9167$} & \multirow{2}*{$0.9456$} & \multirow{2}*{$0.9571$} & \multirow{2}*{$0.9638$} & \multirow{2}*{$0.9658$} & \multirow{2}*{$0.9753$} & \multirow{2}*{$0.8135$} & \multirow{2}*{$0.8854$} & \multirow{2}*{$0.8931$} & \multirow{2}*{$0.9192$} & \multirow{2}*{$0.9257$} & \multirow{2}*{$0.9339$} & \multirow{2}*{$0.6525$} & \multirow{2}*{$0.7092$} & \multirow{2}*{$0.7168$} & \multirow{2}*{$0.7476$} & \multirow{2}*{$0.7519$} & \multirow{2}*{$0.7696$} & \multirow{2}*{$\textbf{0.8124}$} & \multirow{2}*{$0.7364$}\tabularnewline
+        (task1 + task2) & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        \hline
+        \multirow{2}*{Joint SFC} & \multirow{2}*{$\textbf{0.9231}$} & \multirow{2}*{$\textbf{0.9560}$} & \multirow{2}*{$\textbf{0.9644}$} & \multirow{2}*{$\textbf{0.9669}$} & \multirow{2}*{$\textbf{0.9712}$} & \multirow{2}*{$\textbf{0.9821}$} & \multirow{2}*{$\textbf{0.8270}$} & \multirow{2}*{$\textbf{0.9069}$} & \multirow{2}*{$\textbf{0.9103}$} & \multirow{2}*{$\textbf{0.9209}$} & \multirow{2}*{$\textbf{0.9323}$} & \multirow{2}*{$\textbf{0.9463}$} & \multirow{2}*{$\textbf{0.6697}$} & \multirow{2}*{$\textbf{0.7211}$} & \multirow{2}*{$\textbf{0.7254}$} & \multirow{2}*{$\textbf{0.7497}$} & \multirow{2}*{$\textbf{0.7593}$} & \multirow{2}*{$\textbf{0.7772}$} & \multirow{2}*{$0.8114$} & \multirow{2}*{$\textbf{0.7445}$}\tabularnewline
+        & & & & & & & & & & & & & & & & & & & &\tabularnewline
+        \hline
+      \end{tabular}
+    }
+    \par
+  \end{centering}
+  \caption{
+    F1 scores  on  five  task-specific  datasets text classification in chatbot
+    under low resource. For ITG, we keep the full dataset. For Amazon-670k, we
+    randomly  sampled  250  classes  with  training sample numbers within 5-15
+    samples  per  class.  For  CLINC150,  BANKING77,  HWU64, we set up various
+    few-shot  settings  (5/10/15/20/30/50 samples per class) while keeping the
+    test  set to be fixed. The highest scores among all the baseline models and SFC variants for each data setting are both marked
+    in bold.
+  }
+  \label{tbe:table2}
+\end{table*}
+
+
+
+\subsection{Joint SFC}
+In  two-stage  SFC,  Stage  1  and  stage 2 are separate that there is no deep
+interaction  with each other during training. In this case, the performance of
+stage  1  may  limit  the potential of stage 2; meanwhile, stage 2 also cannot
+give  training feedback back to stage 1 for fine-tuning. Therefore, to further
+improve  the  overall performance of SFC, we proposed a joint model structure,
+shown in Fig. \ref{fig:framework}.
+
+In  joint  SFC,  classification  model is being placed in lower layer level to
+dynamically  provide  top-K  candidate  class  labels  for  the  sentence-pair
+similarity  model  placed in higher layer level through a top-K pooling layer.
+In  this way, classification model and similarity model can be merged into one
+single  joint-model  for  multi-task training with sentence pairs sampled from
+varying  candidate  class  labels,  thus  avoiding the limitation brought by 2
+separate stage structure.
+
+There  are 3 tasks in total during the training process of joint SFC, shown in
+Fig. \ref{fig:framework}, and the overall loss is also the weighted sum of all
+the   task-specific  losses,  shown  in  Equ.  \ref{eq:joint_SFC_loss}.  Here,
+$\alpha_S$,  $\alpha_K$  and  $\alpha_C$  represent  the  weights  for  task 1
+sentence-pair  similarity  in  Equ.  \ref{eq:similarity_loss},  task  2  top-K
+classification  in Equ. \ref{eq:top-k_classification_loss}, and task 3 general
+single       sentence       classification      respectively      in      Equ.
+\ref{eq:classification_loss}.
+
+\begin{align}
+  \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K + \alpha_C \mathcal{L}^C
+  \label{eq:joint_SFC_loss}
+\end{align}
+
