@@ -59,7 +59,9 @@ system  with limited resource is also quite important to help developers label
 data more efficiently.
 
 \subsection{Baselines}
-We choose three kinds of system to construct our baselines.
+We choose three kinds of system to construct our baselines. All our pretrained 
+model baselines are being fine-tuned on all the experimental datasets. Additionally, 
+the similarity model baseline will use the same fine-tuning process on Quora dataset  \cite{iyer2017first} as all our SFC models. As our researched problem is the application without sufficient data, the similarity model baseline is influenced due to insufficient in-domain data to a great extent. Thus, generally the similarity model baseline has to use external data.
 
 \begin{enumerate}
   \item \emph{Pretrained model based classification system}, which consists of
@@ -110,6 +112,17 @@ For  the  experiments  in  Table  \ref{tbe:table2},  we  empirically  set  the
 hyperparameter  to  be  $K=5$  and  $P=10$  for  all  SFC  variants.  In Table
 \ref{tbe:table3},  we  conduct extensive experiments to see the performance of
 SFC system under various hyperparameter settings.
+
+As for the training time, in our settings, our joint SFC model needs about 14
+hours to reach convergence using a single Nvidia RTX8000 GPU. In comparison, the classification baseline model needs about 5 hours and the similarity baseline model
+needs about 12 hours, which indicates that our joint SFC model spends less training
+time than the summation of two baseline models due to faster convergence. 
+
+As for the inference time, the classification model baseline is about 0.2 ms;
+the similarity model baseline is about 0.5 ms and our joint SFC model takes only 0.6 ms.
+Actually both the similarity model baseline and our joint SFC can be GPU
+parallelized in the similarity computation, if we need pretty fast response time
+in a real product.
 
 \subsection{Result Analysis}
 We  report  the F1 score \footnote{In the multi-class and multi-label case, this
@@ -215,7 +228,8 @@ based classification model.
 
 The joint training does not improve the classification performance in stage 1,
 measured  by  top-1  accuracy.  However,  it  improves  the  quality of top-5
-candidate  class  labels.  It  can  be  explained that, a classification model
+candidate  class  labels, which can further improve the effect of sentence pair
+similarity training. The reason is that, a classification model
 inherently optimizes the objective loss, 0-1 error of top-1 here; the sentence
 pair similairity model in the joint SFC poses more positive effect in optimizing the 
 candidate labels.

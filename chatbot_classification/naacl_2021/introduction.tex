@@ -89,8 +89,11 @@ through similar sentence detection  \cite{sun2019fine},  it  is  still  quite  h
 a new task-specific dataset,  since their objective losses are totally different. 
 
 The  above  limitations motivate us to propose a joint system that is capable of
-taking  advantages  from both the classification and similarity models. We call
-it  as SFC,  short  for  similarity model fused with classification model, shown in
+taking  advantages  from both the classification and similarity models. The similarity
+model can help us involve the data augmentation method to overcome the data insufficiency
+challenge. In the meantime, the candidate labels provided by classification model can 
+effectively reduce the noise for sentence pair semantic similarity task. We call
+our system as SFC,  short  for  similarity model fused with classification model, shown in
 Fig.  \ref{fig:framework}.  We further bring in multi-task learning   \cite{caruana1993multitask,collobert2008unified,  liu2019multi} to train SFC.  
 Our basic  idea  consists of two stages. In the first stage, we use an auxiliary model
 to  select  top-K most possible labels for an input. This model can be an elastic
