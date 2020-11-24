@@ -40,7 +40,7 @@ term  memory  networks  (LSTMs)  \cite{mousa2017contextual,liu2016recurrent}  to
 accomplish  the  task  of  extracting  semantic  features from limited amount of
 words.  Another two interesting lines of work, label-word
 joint models, and joint NER and classification are discussed in the related work
-section.  Recently,  pre-trained  language  models  on  large  corpus  like BERT
+of appendix.  Recently,  pre-trained  language  models  on  large  corpus  like BERT
 \cite{devlin2018bert}  and  RoBERTa  \cite{liu2019roberta}  has been proven more
 powerful   in   solving  many  NLP  tasks  including  short-text  classification
 \cite{madabushi2020cost}.       Especially      for      few-shot      scenarios
@@ -62,13 +62,13 @@ Regarding  the  \emph{text  classification  model}, when the labeled data in cur
 domain  is  insufficient,  it  is  quite  hard  to adopt labeled data from other
 domains, as their label definitions are often incompatible to each other. Though
 we can use some paraphrasing methods, e.g., machine translation based, to expand
-the labeled data, the resulting benenift is still limited.
+the labeled data, the resulting benefit is still limited.
 Regarding the  \emph{similarity model}, the foremost advantage is it does not pose
 any restriction on label definition in a domain, as it merely models the
 similarity of two input texts. Thus, we may borrow plenty of extra data to help
 the similarity model training in current domain \cite{sun2019fine}. 
 Yet, its biggest disadvantage is its optimization loss differs from that in a
-specific task. This always lead to a suboptimial model.  
+specific task. This always lead to a suboptimal model.  
 
 The  above  limitations motivate us to propose a system that 
 takes both the performance of a classification model and the ability of
