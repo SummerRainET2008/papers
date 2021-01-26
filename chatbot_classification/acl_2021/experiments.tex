@@ -108,7 +108,7 @@ be found in the appendix due to the space limitation.
 We  report  the F1 score \footnote{In the multi-class and multi-label case, this
 is  the  average  of  the F1 score of each class with weighting depending on the
 numbers  in  each class.} as the main evaluation measure for all experiments in
-Table \ref{tbe:table2}.
+Table \ref{tbe:table2} and Table \ref{tbe:addtional ner experiments}.
 
 \subsubsection*{Are multi-task and joint training working?} 
 First, we compare the four  SFC  variants to analyze the improvement
@@ -133,18 +133,18 @@ brought  by  multi-task  and  joint-model  structure.
         RoBERTa-large & \multirow{2}*{${0.3520}$} &
         \multirow{2}*{${0.4088}$} & \multirow{2}*{${0.4353}$} &
         \multirow{2}*{${0.9560}$} & \multirow{2}*{${0.9706}$} & 
-        \multirow{2}*{${0.9832}$}\tabularnewline
+        \multirow{2}*{$\textbf{0.9832}$}\tabularnewline
         (classification w/ NER) & & & & & & \tabularnewline
         \hline
         Joint SFC & \multirow{2}*{${0.3843}$} &
         \multirow{2}*{${0.4130}$} & \multirow{2}*{${0.4390}$} &
-        \multirow{2}*{${0.9404}$} & \multirow{2}*{${0.9761}$} & 
+        \multirow{2}*{${0.9618}$} & \multirow{2}*{${0.9761}$} & 
         \multirow{2}*{${0.9825}$}\tabularnewline
         (w/o NER) & & & & & & \tabularnewline
         \hline
         Joint SFC & \multirow{2}*{$\textbf{0.3925}$} &
         \multirow{2}*{$\textbf{0.4420}$} & \multirow{2}*{$\textbf{0.4456}$} &
-        \multirow{2}*{${0.9442}$} & \multirow{2}*{${0.9729}$} & 
+        \multirow{2}*{$\textbf{0.9639}$} & \multirow{2}*{$\textbf{0.9784}$} & 
         \multirow{2}*{${0.9826}$}\tabularnewline
         (w/ NER) & & & & & & \tabularnewline
         \hline
@@ -231,7 +231,7 @@ Regarding  the  similarity  model,  as  analyzed  above,  we  only  choose the
 RoBERTa-large based implementation as our baseline. Joint SFC achieves more improvement of
 7.09  percent points  on average F1 score. 
 
-As for the intent classification and NER joint model, we choose the state-of-the-art RoBERTa-large model with NER loss as our baseline. For ablation study, we did experiments on Joint SFC model with and without NER loss respectively. Our Joint SFC without NER loss still outperforms RoBERTa with NER loss baseline by 1.34 percent points on average. This indicates that the fusion of classification and similarity can even works better than utilizing additional NER information under few-shot chatbot scenario. Moreover, our Joint SFC with NER loss achieves further improvement by 2.80 percent points over RoBERTa with NER loss baseline. In this way, we show the compatibility of our Joint SFC model with extra semantic information.
+As for the intent classification and NER joint model, we choose the state-of-the-art RoBERTa-large model with NER loss as our strongest baseline. For ablation study, we did experiments on Joint SFC model with and without NER loss respectively. From Table \ref{tbe:addtional ner experiments}, we can see that our Joint SFC without NER loss still outperforms RoBERTa with NER loss baseline by 0.86 percent points on average. This indicates that the fusion of classification and similarity can even works better than fusing with additional NER information under few-shot chatbot scenario. Moreover, after adding NER loss to Joint SFC, it achieves further improvement by 1.66 percent points over RoBERTa with NER loss baseline. Especially for FRAMES dataset, which is a much more difficult task in comparison with ATIS, our Joint SFC with NER loss achieves a bigger improvement of 2.8 percent points on average. In this way, we show the compatibility of our Joint SFC model with extra semantic information, as well as the stable outstanding performance of Joint SFC when facing hard tasks with few training data.
 
 The above analysis illustrates that suitable fusing these two kinds of models
 can take their advantages.
