@@ -4,14 +4,14 @@
 \subsection{Datasets}
 Our experiments aim to study the short text classification in the low-resource
 environment  popular  in  the  task-specific conversational chatbot application.
-Hence we choose and configure set datasets to serve this study. Different from
+Hence we choose and configure datasets to serve this study. Different from
 the  datasets from other short text classification research, such as semantics
 classification  with  very  limited  semantics labels and relatively longer
-input,   the   datasets  adopted  in  our  experiments  are  typically  having
+input,   the   datasets  adopted  in  our  experiments   typically  contain
 comparatively  large  number  of  class labels, ranging from several dozens to
 hundreds,  and  each  class  label  is  associated  with  a handful of labeled
 queries with each  query  being usually  one  sentence. Table \ref{tbe:dataset
-statistic} displays their statistics.  All settings of four public datasets would 
+statistic} displays their statistics.  All settings of six public datasets would 
 be released to github soon.
 
 \begin{enumerate}
@@ -25,11 +25,10 @@ be released to github soon.
   complete  dataset  contains 670,091 class labels, 285,176 training samples and
   150,875   testing   samples   \cite{bhatia2016extreme}.  As  each  sample  may
   correspond  to  multiple  class labels, we keep only the first one. We further
-  filter  out the class labels that each one is associated with only 5 to 15 samples,
-  or  reviews,  to  mimic  the  chatbot scenario. From them, we sample 250 class
-  labels as well as their samples to form a subset with 2658 samples.
+  filter  out the class labels that only associated to training samples within the amount of 5 to 15 to  mimic  the  few-shot chatbot scenario. From them, we sample 250 class
+  labels as well as their training samples to form a subset with 2658 samples.
 
-  \item \emph{HWU64}, is a intention detection dataset designed for
+  \item \emph{HWU64}, is an intention detection dataset designed for
   home  robot  scenario \cite{liu2019benchmarking}. It aims at the specific task
   of  capturing  the  intention  for  different  user requests to home robot and
   finding  the corresponding answer. The raw dataset contains 25,716 data points
@@ -40,7 +39,7 @@ be released to github soon.
   in    the    same   style   made   by   real   users   through   crowdsourcing
   \cite{larson2019evaluation}.
 
-  \item \emph{BANKING77}, is a intention detection dataset for bank
+  \item \emph{BANKING77}, is an intention detection dataset for bank
   customer  services.  The  raw dataset contains 13,084 data points for 77 class
   labels \cite{casanueva2020efficient}.
   
@@ -66,7 +65,7 @@ system  with limited resource is also quite important to help developers label
 data more efficiently.
 
 \subsection{Baselines}
-We  choose  three kinds of system as our baselines. All our pretrained
+We  choose  four kinds of system as our baselines. All our pretrained
 model   baselines  are  fine-tuned  on  our datasets.
 Especially, the similarity  model  baseline  and all similarity modules in SFCs
 use extra Quora  dataset  \cite{iyer2017first}  to enhance system performance.
@@ -111,7 +110,7 @@ numbers  in  each class.} as the main evaluation measure for all experiments in
 Table \ref{tbe:table2} and Table \ref{tbe:addtional ner experiments}.
 
 \subsubsection*{Are multi-task and joint training working?} 
-First, we compare the four  SFC  variants to analyze the improvement
+First, we compare the four  SFC  variants shown in Table \ref{tbe:table2} to analyze the improvement
 brought  by  multi-task  and  joint-model  structure. 
 
 \begin{table}
