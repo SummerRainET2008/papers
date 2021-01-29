@@ -153,12 +153,14 @@ quite imbalanced.  Therefore, we will accommodate a weight variable $w^S = [K-1,
 to  the  loss  to eliminate the bias brought by data imbalance, shown in Equ.
 \ref{eq:similarity_loss}.
 
+\vspace{-1.25em}
 \begin{equation}
   \begin{aligned}
     \mathcal{L}^{S}&=\frac{1}{M}\sum_{i=1}^{M}-w^S_{l_i}\cdot log(\frac{exp(\varPhi_{i,l_{i}}^S)}{\sum_{j=0}^{1}exp(\varPhi_{i,j}^S)}) \\
     \label{eq:similarity_loss}
   \end{aligned}
 \end{equation}
+\vspace{-1.75em}
 
 The  second  task  is  \emph{classification  on  top-K classes}. As minimizing
 similarity  loss  is  not  our  final goal in the intent classification, we
@@ -196,12 +198,12 @@ $\xi_{i,l^{K}_{i}}^{K,pos}$  and  $\xi_{i,l^{K}_{i}}^{K,neg}$  encourage  high
 level  of  similarity  and  low  level  of dissimilarity for prediction of the
 correct label $l^{K}_i$ within the top-K candidate classes.
 
+\vspace{-1em}
 \begin{align}
   \mathcal{L}^{K} = \frac{1}{N}\sum_{i=1}^{N}(\mathcal{L}^{K,pos}_{i} - \mathcal{L}^{K,neg}_{i})
   \label{eq:top-k_classification_loss}
 \end{align}
 where
-
 \begin{equation}
   \begin{aligned}
     \mathcal{L}^{K,pos}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,pos})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,pos})})
@@ -215,6 +217,7 @@ where
     \label{eq: neg top-k loss}
   \end{aligned}
 \end{equation}
+\vspace{-1.25em}
 
 Finally,  the  overall  loss  function for multi-task learning in stage 2 is
 shown in Equ. \ref{eq:two-stage_SFC_loss}. The training objective of stage 2 is
