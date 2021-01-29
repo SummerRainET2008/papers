@@ -1,20 +1,11 @@
 \begin{abstract}
-  Task-specific chatbot systems have gained many important applications, such as
-  smart  speaker,  customer  service system. One fundermental module behind them, detecting
-  intent of a user's input, can be modeled as a short text classification
-  problem.  However, in  the early stage of buidling a chatbot, collecting enough labeled
-  data  for  hundreds  of  thousands  of  user  intents is expensive. Popular
-  classfication models, direct mapping a query to an intent, have a high precsion,
-  while depending on enough task-specific labels information. In comparison, similarity models,
-  modeling  similarity  of two queries instead, can utilize out-of-domain data,
-  while  having  a  relatively  lower  precision,  due  to  the  discrepency  of
-  similairty loss and real classification loss. In this work, we propose a novel
-  model,  called  similarity  model  fused  with  classification model (SFC), to
-  combine  the  merits of the two kinds of models in the framework of multi-task
-  training.  Our  extensive  experiments  on  6  public  and  1 private datasets
-  demostrate  that  our  systems outperform very strong baselines (i.e., RoBERTa
-  based  pretrained  model,  joint model with NER), espeically with insufficient
-  data.
+  Task-specific chatbot systems have gained many important applications, such as smart  speaker,  customer  service system. 
+  One fundermental module behind them is detecting intent of a user's input, and can be modeled as a short text classification problem.  
+  However, in  the early stage of buidling a chatbot, collecting enough labeled data  for  hundreds  of  thousands  of  user  intents is expensive. 
+  Popular classfication models, direct mapping a query to an intent, have a high precsion, while depending on enough task-specific labels information. 
+  In comparison, similarity models, modeling  similarity  of two queries instead, can utilize additional out-of-domain data, while  having  a  relatively  lower  precision,  due  to  the  discrepency  of similairty loss and real classification loss. 
+  In this work, we propose a novel model,  called  similarity  model  fused  with  classification model (SFC), to combine  the  merits of the two kinds of models in the framework of multi-task training.  
+  Our  extensive  experiments  on  6  public  and  1 private datasets demostrate  that  our  systems outperform very strong baselines (i.e., RoBERTa based  pretrained  model,  joint model with NER), espeically with insufficient data.
 
 \end{abstract}
 

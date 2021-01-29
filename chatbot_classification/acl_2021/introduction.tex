@@ -1,102 +1,57 @@
 \section{Introduction}
 \label{sec:intro}
 
-Task-specific  conversational  chatbot  \cite{wen2016network}  has been applied
-into  many practical products. One typical example is the chatbot that shares the working burden of
-human  customer  service  agents  responsible  for  customers' questions. 
-Another one is intelligent  speakers, e.g. Siri, Google home. 
-Regardless of whether these conversations belong to
-single or  multi-round, an essential technique underlying this type of chatbot is to
-identify  the  real  intent  behind  a  user's  question or reply. 
-The detected intent  with  its  associated  information  is then mapped into a
-predefined dialog logic graph, from which a suitable response is returned.
-This  is  the  main  difference  from  a  free chatbot.  
+Task-specific  conversational  chatbot  \cite{wen2016network}  has been applied into  many practical products. 
+A popular one is the smart speaker, e.g. Alex, Siri, Google home. 
+Another important one is the customer service system, which greatly help human agents handle miscellanious customer's questions.
+No matter these applications involves single- or  multi-round conversations, a critical step is to identify  the  intent  behind  a  user's  question or response. 
+The detected intent  with  its  associated  attributes is then mapped into a predefined dialog logic to obtain a suitable response to return to customers.
 
-intent detection in task-specific chatbot  is  a  challenging task due to its inherent properties. First,
-a customer's  utterance  within  a conversation is usually quite short. Since it
-does  not  contain  enough  information,  short  texts \cite{song2014short} are
-thought  to  be  more  ambiguous  compared to long texts such as paragraphs or
-documents,  posing  a  great challenge \cite{chen2019deep} for classification
-task   \cite{phan2008learning,yan2009dynamic,hua2015short}.   Second,  in  the
-initial  stage  of  building  a  chatbot , it is often rather hard to collect
-sufficient  labeled  data  to  train  a good model. Developers have to
-examine tons of real system logs for typical user's utterances, and then label
-them  with expected intents. Therefore, to build a task-specific chatbot with
-high  performance, it is essential to solve the challenge of short-text
-classification   \cite{sriram2010short}   problem   under   few-shot   setting
-\cite{yu2018diverse}.
+In  the early stage  of  building  a  chatbot , sufficient  labeled  data is often expensive to obtain to render the system to achieve a strong performance.
+People thus have to filter out enough typical users' utterances from tons of real conversation logs, and label them  with proper intents. 
+In practice, this procedure can be improved by active-learning like operations. 
+A basic intent detection system with very limited manually labeled data can be built first, and then it filters out a set of potential data with high confidences for humans to label.
+The new data is added to train a better system again. 
+This procedure iterates until the system reach a high performance.
+Therefore, it is meaningful to address the challenge of short-text classification   \cite{sriram2010short, chen2019deep, phan2008learning,yan2009dynamic,hua2015short}   problem   under the few-shot   setting \cite{yu2018diverse}.
 
+Existent approaches for intent detection can be roughly categorized as text classfication model and text similarity model.
 
-Generally  there  are  two  kinds  of  approaches  to  address  this  problem.
+The first one,  \emph{text  classification model},  includes a variety of work.
+From  traditional  machine  learning models like SVM \cite{suykens1999least}, boosting tree  \cite{tu2005probabilistic},  to neural networks \cite{wen2016network}, such as   convolutional      neural     networks (CNNs) \cite{kim2014convolutional,zhang2015character,conneau2016very}  and  long  short term  memory  networks  (LSTMs)  \cite{mousa2017contextual,liu2016recurrent}, and then to the most popular pretrained language models based, such as BERT \cite{devlin2018bert}, RoBERTa  \cite{liu2019roberta} and etc. 
+Especiallaly, pretrained     models     based    \cite{vaswani2017attention}  tends to be more helpful in the few-shot scenario \cite{yu2018diverse, madabushi2020cost}  to alleviate the dearth of training data.
+Another two interesting lines of work, label-word joint models, and joint NER and classification are discussed in the related work of appendix.
 
+The  second  one, \emph{text similarity model}, is usually employed to calculate how  similar  between an input text and a historical text in the repository. 
+The associated label of the most similar historical text is returned as the label of the  text  to  query \cite{jafarpour2010filter,   leuski2011npceditor}.  
+A  popular  and  effective  methodology  is adopting pretrained models to model the similarity calculation as a binary classification problem.
 
-The   first   one,   \emph{text  classification},  includes  classic  long  text
-classification   and   short  text  classification  in  this  scenario.  Besides
-traditional  machine  learning models like SVM \cite{suykens1999least}, boosting
-tree  \cite{tu2005probabilistic},  many work \cite{wen2016network} choose neural
-network      such      as      convolutional      neural     networks     (CNNs)
-\cite{kim2014convolutional,zhang2015character,conneau2016very}  and  long  short
-term  memory  networks  (LSTMs)  \cite{mousa2017contextual,liu2016recurrent}  to
-accomplish  the  task  of  extracting  semantic  features from limited amount of
-words.  Another two interesting lines of work, label-word
-joint models, and joint NER and classification are discussed in the related work
-of appendix.  Recently,  pre-trained  language  models  on  large  corpus  like BERT
-\cite{devlin2018bert}  and  RoBERTa  \cite{liu2019roberta}  has been proven more
-powerful   in   solving  many  NLP  tasks  including  short-text  classification
-\cite{madabushi2020cost}.       Especially      for      few-shot      scenarios
-\cite{yu2018diverse},     pre-trained     models     based    on    transformers
-\cite{vaswani2017attention}  tends to be more helpful to alleviate the dearth of
-training data.
+Despite  plenty of success  of  these two methodologies, they still have some limitations in this task especially when data is insufficient.
+Regarding  the  \emph{text  classification  model}, it learns a function that directly maps an input query into its expected label.
+Its training requires data in the form of a pair of  a query and a task dependent label. 
+It is quite hard to adopt labeled data from other domains, as their label definitions are often incompatible to each other. 
+Though we can use some data augmentation methods to alleivate the paucity of data,  e.g., translation based paraphrasing methods, the resulting benefit is still limited because of the data being homogeneous, in the case that our labeled data is very insufficient.
+Regarding the  \emph{similarity model}, the foremost advantage is it does not pose any restriction on the label definition of user intents, but aims to learn a function that measure how similar of two sentences are. 
+Then in the intent detection task, we are only concerned which labeled query is the most similary one to the current input, and then use its label as the output.
+This results in a possibility that even though the labeled data in current domain is scarce, we may borrow additional data from another domain to help enhance the similarity model to make a better intent prediction.
+Nevertheless, just as every coin has two sides, the high flexibility of similarity model leads to its worse performance compared to a classification model,  because its training loss differs from a classification loss corresponding to the intent detection goal.
+More, it requires an auxiliary model to narrow down candidate labeled queries to speed up the calculation, which makes it slow in the speed and tricky in the auxiliary model selection. 
 
-The  second  one, \emph{text similarity model}, is usually employed to calculate
-how  similar  between an input text and a historical text in the repository. The
-associated label of the most similar historical text is returned as the label of
-the  text  to  query \cite{jafarpour2010filter,   leuski2011npceditor}.  
-A  popular  and  effective  methodology  is adopting BERT
-\cite{devlin2018bert} and other pretrained models \cite{liu2019roberta} to model
-the similarity model as a binary classification problem.
+The  above  limitations motivate us to propose a system that may take both the high performance from a classification model and the ability of supporting out-of-domain data from a similarity model.
+We call our system as SFC,  short  for  similarity model fused with classification model, shown in Fig.  \ref{fig:framework}.  
+In order to train effectively, we further borrow the multi-task learning   \cite{caruana1993multitask,collobert2008unified,  liu2019multi}.
+Our basic  idea  come naturally, and the first impementation consists of two stages. 
+In the first stage, we use an auxiliary model to  select  top-K most possible labels for an input. 
+This model can be an elastic search  \cite{divya2013elasticsearch}  or a text classification model trained on current domain.  
+In  the  second  stage,  we  build  a classification  model  which is composed of several similarity  modules. 
+Then, this structure  derives  two  goals to train towards, the task-specific classification loss ,  and  the similarity loss on both in-domain and out-of-domain data. 
+In this version, the two stages are  independently optimized, so we call it \emph{two-stage SFC}. 
 
-Despite  the  success  of  these two approaches, they still have some
-limitations.  
-Regarding  the  \emph{text  classification  model}, when the labeled data in current
-domain  is  insufficient,  it  is  quite  hard  to adopt labeled data from other
-domains, as their label definitions are often incompatible to each other. Though
-we can use some paraphrasing methods, e.g., machine translation based, to expand
-the labeled data, the resulting benefit is still limited.
-Regarding the  \emph{similarity model}, the foremost advantage is it does not pose
-any restriction on label definition in a domain, as it merely models the
-similarity of two input texts. Thus, we may borrow plenty of extra data to help
-the similarity model training in current domain \cite{sun2019fine}. 
-Yet, its biggest disadvantage is its optimization loss differs from that in a
-specific task. This always lead to a suboptimal model.  
+We further find that the  quality of outputs from the first stage might limit the final performance of the system,  since  those outputs are fixed in the whole system training  procedure.  
+This  observation motivates us to continue improving  the  above two-stage  SFC  into a joint training setting, and we call this second version as \emph{joint SFC}. 
+In this  way, the first stage model can be optimized by the optimization in the second stage so that it can provide better candidates to improve the performance of the second stage in turn.
 
-The  above  limitations motivate us to propose a system that 
-takes both the performance of a classification model and the ability of
-supporting out-of-domain data from a similarity model.
-We call our system as SFC,  short  for  similarity model fused with classification model, shown in
-Fig.  \ref{fig:framework}.  We further bring in multi-task learning   \cite{caruana1993multitask,collobert2008unified,  liu2019multi} to train SFC.  
-Our basic  idea  consists of two stages. In the first stage, we use an auxiliary model
-to  select  top-K most possible labels for an input. This model can be an elastic
-search  \cite{divya2013elasticsearch}  or a text classification model trained on
-current   task-specific   chatbot   data.  In  the  second  stage,  we  build  a
-classification  model  whose  main  modules  are  similarity  models. Then, this
-structure  derives  two  goals to train towards, the classification loss for our
-application,  and  the similarity loss for the main modules. When the two stages
-are  independently optimized, we call \emph{two-stage SFC}. 
-
-We further find that
-the  quality of the output from the first stage might limit the final performance of the
-system,  since  the  candidate labels for an input is fixed in the
-whole  multi-task  training  process.  This  observation motivates us to further
-improve  the  two-stage  SFC  into a joint training setting, called \emph{joint SFC}. In
-this  way,  the  candidate texts associated  with the top-K classes also become
-dynamic,  and  the  text  classification  model  in the first stage will also be
-further optimized to provide better top-K results by the final training loss.
-
-Experiment  results  from  4  public  and  1  private  short-text classification
-datasets,  show  that  our proposed SFC joint system can achieve significant and
-consistent  improvements  over  strong baselines, especially in the low resource
-settings.
+Experiment  results  from  6  public  and  1  private  short-text classification datasets,  show  that  our proposed SFC joint system can achieve significant and consistent  improvements  over  strong baselines, especially in the low resource settings.
 
 \begin{figure*}[t]
   \begin{centering}
