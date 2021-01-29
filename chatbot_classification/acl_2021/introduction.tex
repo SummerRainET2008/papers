@@ -7,12 +7,12 @@ human  customer  service  agents  responsible  for  customers' questions.
 Another one is intelligent  speakers, e.g. Siri, Google home. 
 Regardless of whether these conversations belong to
 single or  multi-round, an essential technique underlying this type of chatbot is to
-identify  the  real  intention  behind  a  user's  question or reply. 
-The detected intention  with  its  associated  information  is then mapped into a
+identify  the  real  intent  behind  a  user's  question or reply. 
+The detected intent  with  its  associated  information  is then mapped into a
 predefined dialog logic graph, from which a suitable response is returned.
 This  is  the  main  difference  from  a  free chatbot.  
 
-Intention detection in task-specific chatbot  is  a  challenging task due to its inherent properties. First,
+intent detection in task-specific chatbot  is  a  challenging task due to its inherent properties. First,
 a customer's  utterance  within  a conversation is usually quite short. Since it
 does  not  contain  enough  information,  short  texts \cite{song2014short} are
 thought  to  be  more  ambiguous  compared to long texts such as paragraphs or
@@ -21,7 +21,7 @@ task   \cite{phan2008learning,yan2009dynamic,hua2015short}.   Second,  in  the
 initial  stage  of  building  a  chatbot , it is often rather hard to collect
 sufficient  labeled  data  to  train  a good model. Developers have to
 examine tons of real system logs for typical user's utterances, and then label
-them  with expected intentions. Therefore, to build a task-specific chatbot with
+them  with expected intents. Therefore, to build a task-specific chatbot with
 high  performance, it is essential to solve the challenge of short-text
 classification   \cite{sriram2010short}   problem   under   few-shot   setting
 \cite{yu2018diverse}.

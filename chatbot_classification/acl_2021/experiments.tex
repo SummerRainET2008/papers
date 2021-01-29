@@ -28,9 +28,9 @@ be released to github soon.
   filter  out the class labels that only associated to training samples within the amount of 5 to 15 to  mimic  the  few-shot chatbot scenario. From them, we sample 250 class
   labels as well as their training samples to form a subset with 2658 samples.
 
-  \item \emph{HWU64}, is an intention detection dataset designed for
+  \item \emph{HWU64}, is an intent detection dataset designed for
   home  robot  scenario \cite{liu2019benchmarking}. It aims at the specific task
-  of  capturing  the  intention  for  different  user requests to home robot and
+  of  capturing  the  intent  for  different  user requests to home robot and
   finding  the corresponding answer. The raw dataset contains 25,716 data points
   for 64 class labels through crowdsourcing.
 
@@ -39,7 +39,7 @@ be released to github soon.
   in    the    same   style   made   by   real   users   through   crowdsourcing
   \cite{larson2019evaluation}.
 
-  \item \emph{BANKING77}, is an intention detection dataset for bank
+  \item \emph{BANKING77}, is an intent detection dataset for bank
   customer  services.  The  raw dataset contains 13,084 data points for 77 class
   labels \cite{casanueva2020efficient}.
   
@@ -256,7 +256,7 @@ settings, and show results in Fig. \ref{fig:trend}.
 
 Our main focus  is  to  study  chatbot  building  in common situation during real-world
 application  where  only  a few sample sentences are available for each class.
-The  experimental  results  for  the  3  diverse  intention detection datasets
+The  experimental  results  for  the  3  diverse  intent detection datasets
 (ClINC150,  BANKING77,  HWU64)  under  few-shot  settings, 5 to 50 samples per
 class,  indicate that our proposed joint SFC can achieve 2.47 percents average
 improvement   over  one  of  the  most  powerful  baseline  models,  which  is
@@ -298,9 +298,9 @@ applications, and LEAM shows its power in modeling labeling information.
 
 LEAM  does not perform as well as SFCs, since the first intuitive reason is it
 does  not use pretrained model as encoding module; and another critical reason
-is  in  task-specific  chat applications, it is common to have many intentions
+is  in  task-specific  chat applications, it is common to have many intents
 that are close to some others with a minor difference, and it is hard and even
-impossible  to  name  each  intention  with  a short clear name. One candidate
+impossible  to  name  each  intent  with  a short clear name. One candidate
 solution  is  setting  a most standard sample as the label of that class. When
 using  non-pretrained  models  base  LEAM,  this is applicable. Yet when using
 pretrained  model  based, as the all labels can be hundreds of thousands, then
