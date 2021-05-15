@@ -1,0 +1,77 @@
+\appendix
+
+\newpage
+\section{Appendix}
+
+\subsection{Related work}
+We supplement some work that is very different from classic classification models.
+
+One  line  of  work  is  based  on  label-word  joint  embedding,  such  as LEAM
+\cite{wang2018joint}, MTLE \cite{zhang2017multi} and EXAM \cite{du2019explicit}.
+It  poses  extral  requirements  on label information. However in our case, many
+class  labels  are  close  to  each  other,  and not well-defined. Though we can
+present the class label with one of user's utterances from that class, the label
+will  become  not  only prolix but also biased.
+
+Another   line   of   interesting   work  is  the  joint  training  of  sentence
+classification     and     NER,     such    as    
+\cite{kruengkrai2020improving,zhang2020graph,hakkani2016multi,liu2016attention,goo2018slot}.  
+For  example,  If  both  the  city and date information are
+recognized,  then  they  are good indicators that this query might be booking an
+ticket. 
+
+\subsection{Settings  of  hyperparameters} 
+In  Table \ref{tbe:table3}, we explore the influence from hyperparameters, which
+are  the  number  of  candidate  class  labels $K$ in stage 1, and the number of
+sampled  sentence  pairs  for  each class $P$ in stage 2, on ITG and Amazon-670K
+datasets.  As we control the total number of sampled sentence pairs to about 50 to 60, we
+roughly obatin five combinations of hyperparameters.  
+
+We find  that the best setting of hyperparameters is different from datasets
+of  different  data  size.  The  class label number of ITG and Amazon-670k are
+similar  in  our  experimental setting, which is around 250. However the total
+amount of data points of ITG is approximately 2 times larger than Amazon-670k.
+Therefore,  the  setting of $K=5$ and $P=10$ is good enough for ITG since most
+of  the  classes  contains  over 10 data points. However, for Amazon-670k, the
+amount  of  data  sample  for  each  class  is  scarce, thus, we may need more
+candidate  classes to sample enough effective sentence pairs for sentence-pair
+model  layer  of  SFC.  In this way, the setting of $K=10$ and $P=5$ becomes a
+good choice. 
+
+However,  in  spite of the effect on evaluation performance brought by different
+settings  of hyperparameters, joint SFC still steadily outperforms two-stage SFC
+by  0.41  percent  points  in  overall  average  F1 score on ITG and Amazon-670k
+datasets.
+
+\subsection{Implementation Details}
+For  our  SFC  systems,  we  use RoBERTa-large as the pretrained model for both
+classification  task  and  sentence-pair similarity task. We fine-tune
+our  SFC  system  on  our datasets with max sequence length of 128,
+learning  rate  of 1.5e-5 for RoBERTa-large pretrained model and learning rate
+of  5e-4  for  task-specific  layer  with polynomial decay and Adam optimizer.
+
+In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks
+are  set  as  $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting. The reason
+for  giving  task  2 relatively more weights is that according to the ablation
+experiments  we  did  in Section \ref{sec:exp}, task 2 contributes more to the
+overall  performance.  In  joint  SFC,  in  equ.  \ref{eq:joint_SFC_loss}, the
+weights  of  three  tasks  are  set  as  $\alpha_S=0.25$,  $\alpha_K=0.25$ and
+$\alpha_C=0.5$  in  our setting. Overall, the task weights are less sensitive
+in Joint SFC than in two-stage SFC.
+
+For  the  experiments  in  Table  \ref{tbe:table2},  we  empirically  set  the
+hyperparameter  to  be  $K=5$  and  $P=10$  for  all  SFC  variants.  In Table
+\ref{tbe:table3},  we  conduct extensive experiments to see the performance of
+SFC system under various hyperparameter settings.
+
+As for the training time, in our settings, our joint SFC model needs about 14
+hours to reach convergence using a single Nvidia RTX8000 GPU. In comparison, the classification baseline model needs about 5 hours and the similarity baseline model
+needs about 12 hours, which indicates that our joint SFC model spends less training
+time than the summation of two baseline models due to faster convergence. 
+
+As for the inference time, the classification model baseline is about 0.2 ms;
+the similarity model baseline is about 0.5 ms and our joint SFC model takes only 0.6 ms.
+Actually both the similarity model baseline and our joint SFC can be GPU
+parallelized in the similarity computation, if we need pretty fast response time
+in a real product.
+
