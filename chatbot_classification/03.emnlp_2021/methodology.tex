@@ -1,7 +1,7 @@
 \section{Methodology}
-In  this section, we describe our proposed SFC method, which includes the basic two-stage SFC and its more compact version joint SFC.
+In  this section, we describe our proposed SFC method, which includes the basic 2-stage SFC and its more compact version joint-SFC.
 
-\subsection{Two-stage SFC}
+\subsection{2-stage SFC}
 
 It consists of the following  two  independent stages  in  charge of different  jobs. 
 
@@ -26,13 +26,14 @@ labels,  $softmax(W^Ch_{i}+b^C)=softmax({\Phi}^C_{i})$,  where $W^C$ and $b^C$
 are  trainable  parameters.  Then, the loss in stage 1 classification model is
 shown in Equ. \ref{eq:classification_loss},
 
-
+\vspace{-2em}
 \begin{equation}
   \begin{aligned}
     \mathcal{L}^{C}&=\frac{1}{N}\sum_{i=1}^{N}-log(\frac{exp(\varPhi_{i,y_{i}}^C)}{\sum_{j=1}^{C}exp(\varPhi_{i,j}^C)}) \\
     \label{eq:classification_loss}
   \end{aligned}
 \end{equation}
+\vspace{-2.5em}
 
 \subsubsection*{
   Stage 2: sentence-pair similarity model based classification with multi-task
@@ -87,15 +88,15 @@ of sentences we should sample from each class.
         \hline 
         Amazon-670k & Product review & 250 & 2658 * 0.7 & 8 & 3-fold\tabularnewline
         \hline 
-        HWU64 & intent detect & 64 & [320, 640, 960, 1280, 1920, 3200] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+        HWU64 & Intent detection & 64 & [320, 640, 960, 1280, 1920, 3200] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
         \hline 
-        CLINC150 & intent detect & 150 & [750, 1500, 2250, 3000, 4500, 7500] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+        CLINC150 & Intent detection & 150 & [750, 1500, 2250, 3000, 4500, 7500] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
         \hline 
-        BANKING77 & intent detect & 77 & [385, 770, 1155, 1540, 2310, 3850] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
+        BANKING77 & Intent detection & 77 & [385, 770, 1155, 1540, 2310, 3850] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
         \hline 
-        FRAMES & intent detect with ner & 21 & [208, 408, 984] & [10, 20, 50] & data sampling\tabularnewline
+        FRAMES & Intent detection with NER & 21 & [208, 408, 984] & [10, 20, 50] & data sampling\tabularnewline
         \hline
-        ATIS & inent detect with ner & 21 & [168, 303, 544] & [10, 20, 50] & data sampling\tabularnewline
+        ATIS & Intent detection with NER & 21 & [168, 303, 544] & [10, 20, 50] & data sampling\tabularnewline
         \hline
       \end{tabular}
     }
@@ -153,14 +154,14 @@ quite imbalanced.  Therefore, we will accommodate a weight variable $w^S = [K-1,
 to  the  loss  to eliminate the bias brought by data imbalance, shown in Equ.
 \ref{eq:similarity_loss}.
 
-\vspace{-1.25em}
+\vspace{-1.5em}
 \begin{equation}
   \begin{aligned}
     \mathcal{L}^{S}&=\frac{1}{M}\sum_{i=1}^{M}-w^S_{l_i}\cdot log(\frac{exp(\varPhi_{i,l_{i}}^S)}{\sum_{j=0}^{1}exp(\varPhi_{i,j}^S)}) \\
     \label{eq:similarity_loss}
   \end{aligned}
 \end{equation}
-\vspace{-1.75em}
+\vspace{-2em}
 
 The  second  task  is  \emph{classification  on  top-K classes}. As minimizing
 similarity  loss  is  not  our  final goal in the intent classification, we
@@ -183,6 +184,7 @@ time,  ${\Phi}^{K,neg}$  can  represent  the  level  of dissimilarity for each
 sentence  pair. Then, we can do average pooling for each candidate class among
 the  top-K  classes  as  shown  in  Equ.  \ref{eq:average  pooling}.
 
+\vspace{-2em}
 \begin{align}
   {\xi}_{i,j}^{K,pos} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,pos} \ \ \ \ \ \ \ 
   {\xi}_{i,j}^{K,neg} = \sum_{p=1}^{P}{\varPhi}_{i,j,p}^{K,neg}
@@ -228,11 +230,11 @@ $\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
   \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K
   \label{eq:two-stage_SFC_loss}
 \end{align}
-
+\vspace{-2em}
 
 \begin{table*}
   \begin{centering}
-    \scalebox{0.45}{
+    \scalebox{0.475}{
       \begin{tabular}{|c|cccccc|cccccc|cccccc|c|c|}
         \hline 
         \multicolumn{1}{|c|}{\multirow{2}*{\textbf{Models}} }& \multicolumn{6}{c|}{\textbf{CLINC150}}& \multicolumn{6}{c|}{\textbf{BANKING77}}& \multicolumn{6}{c|}{\textbf{HWU64}}& \ \ \ \textbf{ITG} \ \ \ & \textbf{Amazon-670k}\tabularnewline
@@ -278,7 +280,7 @@ $\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
         2-stage SFC & \multirow{2}*{$0.9167$} & \multirow{2}*{$0.9456$} & \multirow{2}*{$0.9571$} & \multirow{2}*{$0.9638$} & \multirow{2}*{$0.9658$} & \multirow{2}*{$0.9753$} & \multirow{2}*{$0.8135$} & \multirow{2}*{$0.8854$} & \multirow{2}*{$0.8931$} & \multirow{2}*{$0.9192$} & \multirow{2}*{$0.9257$} & \multirow{2}*{$0.9339$} & \multirow{2}*{$0.6525$} & \multirow{2}*{$0.7092$} & \multirow{2}*{$0.7168$} & \multirow{2}*{$0.7476$} & \multirow{2}*{$0.7519$} & \multirow{2}*{$0.7696$} & \multirow{2}*{$\textbf{0.8124}$} & \multirow{2}*{$0.7364$}\tabularnewline
         (task1 + task2) & & & & & & & & & & & & & & & & & & & &\tabularnewline
         \hline
-        \multirow{2}*{Joint SFC} & \multirow{2}*{$\textbf{0.9231}$} & \multirow{2}*{$\textbf{0.9560}$} & \multirow{2}*{$\textbf{0.9644}$} & \multirow{2}*{$\textbf{0.9669}$} & \multirow{2}*{$\textbf{0.9712}$} & \multirow{2}*{$\textbf{0.9821}$} & \multirow{2}*{$\textbf{0.8270}$} & \multirow{2}*{$\textbf{0.9069}$} & \multirow{2}*{$\textbf{0.9103}$} & \multirow{2}*{$\textbf{0.9209}$} & \multirow{2}*{$\textbf{0.9323}$} & \multirow{2}*{$\textbf{0.9463}$} & \multirow{2}*{$\textbf{0.6697}$} & \multirow{2}*{$\textbf{0.7211}$} & \multirow{2}*{$\textbf{0.7254}$} & \multirow{2}*{$\textbf{0.7497}$} & \multirow{2}*{$\textbf{0.7593}$} & \multirow{2}*{$\textbf{0.7772}$} & \multirow{2}*{$0.8114$} & \multirow{2}*{$\textbf{0.7445}$}\tabularnewline
+        \multirow{2}*{Joint-SFC} & \multirow{2}*{$\textbf{0.9231}$} & \multirow{2}*{$\textbf{0.9560}$} & \multirow{2}*{$\textbf{0.9644}$} & \multirow{2}*{$\textbf{0.9669}$} & \multirow{2}*{$\textbf{0.9712}$} & \multirow{2}*{$\textbf{0.9821}$} & \multirow{2}*{$\textbf{0.8270}$} & \multirow{2}*{$\textbf{0.9069}$} & \multirow{2}*{$\textbf{0.9103}$} & \multirow{2}*{$\textbf{0.9209}$} & \multirow{2}*{$\textbf{0.9323}$} & \multirow{2}*{$\textbf{0.9463}$} & \multirow{2}*{$\textbf{0.6697}$} & \multirow{2}*{$\textbf{0.7211}$} & \multirow{2}*{$\textbf{0.7254}$} & \multirow{2}*{$\textbf{0.7497}$} & \multirow{2}*{$\textbf{0.7593}$} & \multirow{2}*{$\textbf{0.7772}$} & \multirow{2}*{$0.8114$} & \multirow{2}*{$\textbf{0.7445}$}\tabularnewline
         & & & & & & & & & & & & & & & & & & & &\tabularnewline
         \hline
       \end{tabular}
@@ -299,15 +301,15 @@ $\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
 
 
 
-\subsection{Joint SFC}
-In  two-stage  SFC,  Stage  1  and  stage 2 are separate that there is no deep
+\subsection{Joint-SFC}
+In  2-stage  SFC,  Stage  1  and  stage 2 are separate that there is no deep
 interaction  with each other during training. In this case, the performance of
 stage  1  may  limit  the potential of stage 2; meanwhile, stage 2 also cannot
 give  training feedback back to stage 1 for fine-tuning. Therefore, to further
 improve  the  overall performance of SFC, we proposed a joint model structure,
 shown in Fig. \ref{fig:framework}.
 
-In  joint  SFC,  classification  model is being placed in lower layer level to
+In  joint-SFC,  classification  model is being placed in lower layer level to
 dynamically  provide  top-K  candidate  class  labels  for  the  sentence-pair
 similarity  model  placed in higher layer level through a top-K pooling layer.
 In  this way, classification model and similarity model can be merged into one
@@ -315,7 +317,7 @@ single  joint-model  for  multi-task training with sentence pairs sampled from
 varying  candidate  class  labels,  thus  avoiding the limitation brought by 2
 separate stage structure.
 
-There  are 3 tasks in total during the training process of joint SFC, shown in
+There  are 3 tasks in total during the training process of joint-SFC, shown in
 Fig. \ref{fig:framework}, and the overall loss is also the weighted sum of all
 the   task-specific  losses,  shown  in  Equ.  \ref{eq:joint_SFC_loss}.  Here,
 $\alpha_S$,  $\alpha_K$  and  $\alpha_C$  represent  the  weights  for  task 1
@@ -324,8 +326,9 @@ classification  in Equ. \ref{eq:top-k_classification_loss}, and task 3 general
 single       sentence       classification      respectively      in      Equ.
 \ref{eq:classification_loss}.
 
+\vspace{-1.5em}
 \begin{align}
   \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K + \alpha_C \mathcal{L}^C
   \label{eq:joint_SFC_loss}
 \end{align}
-
+\vspace{-1.5em}

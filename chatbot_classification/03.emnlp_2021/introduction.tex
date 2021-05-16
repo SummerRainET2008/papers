@@ -45,11 +45,13 @@ In the first stage, we use an auxiliary model to  select  top-K most possible la
 This model can be an elastic search  \cite{divya2013elasticsearch}  or a text classification model trained on current domain.  
 In  the  second  stage,  we  build  a classification  model  which is composed of several similarity  modules. 
 Then, this structure  derives  two  goals to train towards, the task-specific classification loss ,  and  the similarity loss on both in-domain and out-of-domain data. 
-In this version, the two stages are  independently optimized, so we call it \emph{two-stage SFC}. 
+In this version, the two stages are  independently optimized, so we call it \emph{2-stage SFC}. 
 
 We further find that the  quality of outputs from the first stage might limit the final performance of the system,  since  those outputs are fixed in the whole system training  procedure.  
-This  observation motivates us to continue improving  the  above two-stage  SFC  into a joint training setting, and we call this second version as \emph{joint SFC}. 
+This  observation motivates us to continue improving  the  above 2-stage  SFC  into a joint training setting, and we call this second version as \emph{joint-SFC}. 
 In this  way, the first stage model can be optimized by the optimization in the second stage so that it can provide better candidates to improve the performance of the second stage in turn.
+
+Since SFC is in the framework of multi-task training, its inheriently supports adding additional tasks, such as NER, to gain further improvement.
 
 Experiment  results  from  6  public  and  1  private  short-text classification datasets,  show  that  our proposed SFC joint system can achieve significant and consistent  improvements  over  strong baselines, especially in the low resource settings.
 
@@ -59,7 +61,7 @@ Experiment  results  from  6  public  and  1  private  short-text classification
     \par
   \end{centering}
   \caption{
-    \textbf{Network Structure of SFC:} two-stage SFC and joint-SFC are sharing
+    \textbf{Network Structure of SFC:} 2-stage SFC and joint-SFC are sharing
     the  same  network  from  stage  1  and  stage 2, with the only difference
     whether two stages being jointly trained.
   }

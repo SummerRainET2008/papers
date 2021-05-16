@@ -39,7 +39,7 @@ model  layer  of  SFC.  In this way, the setting of $K=10$ and $P=5$ becomes a
 good choice. 
 
 However,  in  spite of the effect on evaluation performance brought by different
-settings  of hyperparameters, joint SFC still steadily outperforms two-stage SFC
+settings  of hyperparameters, joint-SFC still steadily outperforms two-stage SFC
 by  0.41  percent  points  in  overall  average  F1 score on ITG and Amazon-670k
 datasets.
 
@@ -54,24 +54,24 @@ In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks
 are  set  as  $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting. The reason
 for  giving  task  2 relatively more weights is that according to the ablation
 experiments  we  did  in Section \ref{sec:exp}, task 2 contributes more to the
-overall  performance.  In  joint  SFC,  in  equ.  \ref{eq:joint_SFC_loss}, the
+overall  performance.  In  joint-SFC,  in  equ.  \ref{eq:joint_SFC_loss}, the
 weights  of  three  tasks  are  set  as  $\alpha_S=0.25$,  $\alpha_K=0.25$ and
 $\alpha_C=0.5$  in  our setting. Overall, the task weights are less sensitive
-in Joint SFC than in two-stage SFC.
+in joint-SFC than in two-stage SFC.
 
 For  the  experiments  in  Table  \ref{tbe:table2},  we  empirically  set  the
 hyperparameter  to  be  $K=5$  and  $P=10$  for  all  SFC  variants.  In Table
 \ref{tbe:table3},  we  conduct extensive experiments to see the performance of
 SFC system under various hyperparameter settings.
 
-As for the training time, in our settings, our joint SFC model needs about 14
+As for the training time, in our settings, our joint-SFC model needs about 14
 hours to reach convergence using a single Nvidia RTX8000 GPU. In comparison, the classification baseline model needs about 5 hours and the similarity baseline model
-needs about 12 hours, which indicates that our joint SFC model spends less training
+needs about 12 hours, which indicates that our joint-SFC model spends less training
 time than the summation of two baseline models due to faster convergence. 
 
 As for the inference time, the classification model baseline is about 0.2 ms;
-the similarity model baseline is about 0.5 ms and our joint SFC model takes only 0.6 ms.
-Actually both the similarity model baseline and our joint SFC can be GPU
+the similarity model baseline is about 0.5 ms and our joint-SFC model takes only 0.6 ms.
+Actually both the similarity model baseline and our joint-SFC can be GPU
 parallelized in the similarity computation, if we need pretty fast response time
 in a real product.
 
