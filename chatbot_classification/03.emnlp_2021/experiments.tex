@@ -123,17 +123,12 @@ brought  by  multi-task  and  joint-model  structure.
         \multicolumn{1}{|c|}{} & $\textbf{10}$ & $\textbf{20}$ & $\textbf{50}$
         & $\textbf{10}$ & $\textbf{20}$ & $\textbf{50}$\tabularnewline
         \hline
-        RoBERTa-large & \multirow{2}*{${0.3456}$} &
-        \multirow{2}*{${0.4043}$} & \multirow{2}*{${0.4262}$} &
-        \multirow{2}*{${0.9349}$} & \multirow{2}*{${0.9757}$} & 
-        \multirow{2}*{${0.9800}$}\tabularnewline
+        RoBERTa-large & \multirow{2}*{${0.3456}$} & \multirow{2}*{${0.4043}$} & \multirow{2}*{${0.4262}$} & \multirow{2}*{${0.9349}$} & \multirow{2}*{${0.9757}$} & \multirow{2}*{${0.9800}$}\tabularnewline
         (classification) & & & & & & \tabularnewline
         \hline
-        RoBERTa-large & \multirow{2}*{${0.3520}$} &
-        \multirow{2}*{${0.4088}$} & \multirow{2}*{${0.4353}$} &
-        \multirow{2}*{${0.9560}$} & \multirow{2}*{${0.9706}$} & 
-        \multirow{2}*{$\textbf{0.9832}$}\tabularnewline
-        (classification w/ NER) & & & & & & \tabularnewline
+        RoBERTa-large & \multirow{3}*{${0.3520}$} & \multirow{3}*{${0.4088}$} & \multirow{3}*{${0.4353}$} & \multirow{3}*{${0.9560}$} & \multirow{3}*{${0.9706}$} & \multirow{3}*{$\textbf{0.9832}$}\tabularnewline
+        (classification & & & & & & \tabularnewline
+        w/ NER) & & & & & & \tabularnewline
         \hline
         Joint SFC & \multirow{2}*{${0.3843}$} &
         \multirow{2}*{${0.4130}$} & \multirow{2}*{${0.4390}$} &
@@ -191,9 +186,9 @@ between joint SFC and the other baseline models.
 \subsubsection*{Is  the  fusion of classification and similarity models
 helpful?}  We  compare  joint SFC with classification, similarity and NER joint model based baselines respectively.
 
-\begin{table*}
+\begin{table}
   \begin{centering}
-
+  \scalebox{0.58}{
     \begin{tabular}{|c|c|c|c|c|c|c|}
       \hline 
       \multicolumn{1}{|c|}{\multirow{2}*{Dataset}}&\multicolumn{1}{c|}{\multirow{2}*{Model}}& $K=3$ & $K=5$ & $K=10$ & $K=15$ & $K=20$\tabularnewline
@@ -209,6 +204,7 @@ helpful?}  We  compare  joint SFC with classification, similarity and NER joint 
       \hline
     \end{tabular}
     \par
+  }
   \end{centering}
   \caption{
     We  show the performances of SFC from different settings of
@@ -216,7 +212,7 @@ helpful?}  We  compare  joint SFC with classification, similarity and NER joint 
     $P$ denoting the number of sampled sentence pair in stage 2. 
   }
   \label{tbe:table3}
-\end{table*}
+\end{table}
 
 Regarding the  classification  models,  joint SFC
 outperforms RoBERTa-large based, the strongest among all baselines, 
