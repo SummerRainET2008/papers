@@ -76,38 +76,6 @@ positive  label  $\mathcal{P'}_{i}=\{[(x_{i},  x'_{1}),  1],  \dots,  [(x_{i},
 x'_{P}),  1]\}$,  where $P$ is also a hyperparameter set to control the number
 of sentences we should sample from each class.
 
-\begin{table*}
-  \begin{centering}
-    \scalebox{0.75}{
-      \begin{tabular}{|c|c|c|c|c|c|}
-        \hline 
-        \textbf{Dataset} & \textbf{Domain} & \textbf{\#Class} &
-        \textbf{\#Training Samples} & \textbf{\#Samples/Class} & \textbf{Settings}\tabularnewline
-        \hline 
-        ITG & FAQ chatbot & 228 & 3938 * 0.7 & 12 & 3-fold\tabularnewline
-        \hline 
-        Amazon-670k & Product review & 250 & 2658 * 0.7 & 8 & 3-fold\tabularnewline
-        \hline 
-        HWU64 & Intent detection & 64 & [320, 640, 960, 1280, 1920, 3200] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
-        \hline 
-        CLINC150 & Intent detection & 150 & [750, 1500, 2250, 3000, 4500, 7500] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
-        \hline 
-        BANKING77 & Intent detection & 77 & [385, 770, 1155, 1540, 2310, 3850] & [5, 10, 15, 20, 30, 50] & data sampling\tabularnewline
-        \hline 
-        FRAMES & Intent detection with NER & 21 & [208, 408, 984] & [10, 20, 50] & data sampling\tabularnewline
-        \hline
-        ATIS & Intent detection with NER & 21 & [168, 303, 544] & [10, 20, 50] & data sampling\tabularnewline
-        \hline
-      \end{tabular}
-    }
-    \par
-  \end{centering}
-  \caption{Statistics for all datasets and few shot settings.}
-
-  \label{tbe:dataset statistic}
-\end{table*}
-
-
 The  second  step  is  \emph{negative sentence pair sampling}: As for negative
 sentence  pairs,  we will also randomly sample $P$ sentences for each class in
 the negative candidate class label set $\mathcal{C'}\backslash \{y_{i}\}$. The
@@ -200,38 +168,6 @@ $\xi_{i,l^{K}_{i}}^{K,pos}$  and  $\xi_{i,l^{K}_{i}}^{K,neg}$  encourage  high
 level  of  similarity  and  low  level  of dissimilarity for prediction of the
 correct label $l^{K}_i$ within the top-K candidate classes.
 
-\vspace{-1em}
-\begin{align}
-  \mathcal{L}^{K} = \frac{1}{N}\sum_{i=1}^{N}(\mathcal{L}^{K,pos}_{i} - \mathcal{L}^{K,neg}_{i})
-  \label{eq:top-k_classification_loss}
-\end{align}
-where
-\begin{equation}
-  \begin{aligned}
-    \mathcal{L}^{K,pos}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,pos})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,pos})})
-    \label{eq: pos top-k loss}
-  \end{aligned}
-\end{equation}
-
-\begin{equation}
-  \begin{aligned}
-    \mathcal{L}^{K,neg}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,neg})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,neg})}) \\
-    \label{eq: neg top-k loss}
-  \end{aligned}
-\end{equation}
-\vspace{-1.25em}
-
-Finally,  the  overall  loss  function for multi-task learning in stage 2 is
-shown in Equ. \ref{eq:two-stage_SFC_loss}. The training objective of stage 2 is
-to  minimize  the  weighted  sum  of task-specific losses. Here $\alpha_S$ and
-$\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
-
-\begin{align}
-  \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K
-  \label{eq:two-stage_SFC_loss}
-\end{align}
-\vspace{-2em}
-
 \begin{table*}
   \begin{centering}
     \scalebox{0.475}{
@@ -299,6 +235,37 @@ $\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
   \label{tbe:table2}
 \end{table*}
 
+\vspace{-1em}
+\begin{align}
+  \mathcal{L}^{K} = \frac{1}{N}\sum_{i=1}^{N}(\mathcal{L}^{K,pos}_{i} - \mathcal{L}^{K,neg}_{i})
+  \label{eq:top-k_classification_loss}
+\end{align}
+where
+\begin{equation}
+  \begin{aligned}
+    \mathcal{L}^{K,pos}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,pos})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,pos})})
+    \label{eq: pos top-k loss}
+  \end{aligned}
+\end{equation}
+
+\begin{equation}
+  \begin{aligned}
+    \mathcal{L}^{K,neg}_{i} &= -log(\frac{exp(\xi_{i,l^{K}_{i}}^{K,neg})}{\sum_{j=1}^{K}exp(\xi_{i,j}^{K,neg})}) \\
+    \label{eq: neg top-k loss}
+  \end{aligned}
+\end{equation}
+\vspace{-1.25em}
+
+Finally,  the  overall  loss  function for multi-task learning in stage 2 is
+shown in Equ. \ref{eq:two-stage_SFC_loss}. The training objective of stage 2 is
+to  minimize  the  weighted  sum  of task-specific losses. Here $\alpha_S$ and
+$\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
+
+\begin{align}
+  \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K
+  \label{eq:two-stage_SFC_loss}
+\end{align}
+\vspace{-2em}
 
 
 \subsection{Joint-SFC}
