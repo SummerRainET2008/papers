@@ -111,10 +111,7 @@ is the average of the F1 score of each class with weighting depending on the
 numbers in each class.} as the main evaluation measure for all experiments in
 Table \ref{tbe:table2} and Table \ref{tbe:addtional ner experiments}.
 
-\subsubsection*{Are multi-task and joint training working?} 
-First, we compare the four SFC variants shown in Table \ref{tbe:table2} to analyze the improvement
-brought by multi-task and joint-model structure. 
-
+\subsubsection*{Multi-task and joint training} 
 \begin{table}
   \begin{centering}
     \scalebox{0.65}{
@@ -173,23 +170,16 @@ brought by multi-task and joint-model structure.
   \label{tbe:top1_5_accuracy}
 \end{table}
 
-Comparing with training 2-stage SFC with multi-task, training with only task
-1, namely the sentence pair similarity model, degrades by 0.8 percent
-point on average, and training with only task 2, namely the top-K based
-classification task, degrades by 0.45 percent point on average. These
-degradation indicates multi-task training in 2-stage SFC is helpful for the
-system performance. Besides, task 2 plays a relatively more important role in
-multi-task learning, and this aligns with their optimal weight settings.
+Comparing with training 2-stage SFC with multi-task Table \ref{tbe:table2}, training with only task 1, namely the sentence pair similarity model, degrades by 0.8 percentage point on average, and training with only task 2, namely the top-K based classification task, degrades by 0.45 percentage point on average. 
+These degradation indicates multi-task training in 2-stage SFC is helpful for the system performance. Besides, task 2 plays a relatively more important role in multi-task learning, and this aligns with their optimal weight settings.
 
-Joint-SFC consistently outperforms 2-stage SFC with multi-task training 
-on 5 diverse datasets by 0.95 percents on average. 
-This observation supports the idea that the joint model
-structure can alleviate the limitation brought by the lack of interaction
-between two stages. In following analysis, we will focus on the comparison
-between joint-SFC and the other baseline models.
+Joint-SFC consistently outperforms 2-stage SFC with multi-task training on 5 diverse datasets by 0.95 percentage point on average. 
+Though a joint model structure may bring extra complexity to the system, it does alleviate the error propagation from the first stage and improves the final performance.
 
-\subsubsection*{Is the fusion of classification and similarity models
-helpful?} We compare joint-SFC with classification, similarity and NER joint model based baselines respectively.
+In following analysis, we will focus on the comparison between joint-SFC and the other baseline models.
+
+\subsubsection*{Fusion of classification and similarity models} 
+%We compare joint-SFC with classification, similarity and NER joint model based baselines respectively.
 
 \begin{table}
   \begin{centering}
@@ -212,58 +202,46 @@ helpful?} We compare joint-SFC with classification, similarity and NER joint mod
     }
   \end{centering}
   \caption{
-    We show the performances of SFC from different settings of
-    hyperparameters, $K$ denoting the candidate class number from stage 1,
+    We show the performances of SFC from different settings of hyperparameters, $K$ denoting the candidate class number from stage 1,
     $P$ denoting the number of sampled sentence pair in stage 2. 
   }
   \label{tbe:table3}
 \end{table}
 
-Regarding the classification models, joint-SFC
-outperforms RoBERTa-large based, the strongest among all baselines, 
-by 2.04 percent points on average F1 score over 5 datasets. 
-Especially, ALBERT.xxlarge based is rather unstable in this scenario. Thus, 
-we did multiple run with different settings and report the best ones here. 
-Comparatively, RoBERTa based is the most stable and has the best performance 
-n almost all experiment settings.
+Regarding the classification models, joint-SFC outperforms RoBERTa-large based, the strongest among all baselines, by 2.04 percentage points on average F1 score over 5 datasets. 
+Especially, ALBERT.xxlarge based is rather unstable in this short sentence task. 
+Thus, we run multiple times with different settings and report the best ones here. 
+Comparatively, RoBERTa based is the most stable and has the best performance almost all experiment settings.
 
-Regarding the similarity model, as analyzed above, we only choose the
-RoBERTa-large based implementation as our baseline. Joint-SFC achieves more improvement of
-7.09 percent points on average F1 score. 
+Regarding the similarity model, as analyzed above, we only choose the RoBERTa-large based implementation as our baseline. 
+Joint-SFC achieves more improvement of 7.09 percentage points on average F1 score. 
+This is also understandable, since RoBERTa-large based similarity model does not and also can not train towards the task specific goal.
 
-As for the intent classification and NER joint model, we choose the state-of-the-art RoBERTa-large model with NER loss as our strongest baseline. For ablation study, we did experiments on joint-SFC model with and without NER loss respectively. From Table \ref{tbe:addtional ner experiments}, we can see that our joint-SFC without NER loss still outperforms RoBERTa with NER loss baseline by 0.86 percent points on average. This indicates that the fusion of classification and similarity can even works better than fusing with additional NER information under few-shot chatbot scenario. Moreover, after adding NER loss to joint-SFC, it achieves further improvement by 1.66 percent points over RoBERTa with NER loss baseline. Especially for FRAMES dataset, which is a much more difficult task in comparison with ATIS, our joint-SFC with NER loss achieves a bigger improvement of 2.8 percent points on average. In this way, we show the compatibility of our joint-SFC model with extra semantic information, as well as the stable outstanding performance of joint-SFC when facing hard tasks with few training data.
+The above analysis illustrates that suitable fusing these two kinds of models can take their advantages.
 
-The above analysis illustrates that suitable fusing these two kinds of models
-can take their advantages.
+\subsubsection*{Joint-SFC improves stage 1?}
+We explore the quality of predicted candidate labels in stage 1 from 2-stage SFC and joint-SFC respectively. 
+We should note that 2-stage SFC does not optimize the stage 1 model, namely a RoBERTa based classification model.
 
-\subsubsection*{Does joint-SFC improve the classification in stage 1?}
-We compare the top-1 prediction and top-5 candidate labels in stage 1 from
-2-stage SFC and joint-SFC in Table \ref{tbe:top1_5_accuracy}. We should note
-that 2-stage SFC does not optimize the stage 1 model, which is a RoBERTa
-based classification model.
+From Table \ref{tbe:top1_5_accuracy}, the joint training does not improve the top-1 classification accuracy in stage 1, yet it improves the top-5 accuracy.
+The reason is that, a classification model inherently optimizes the objective loss, 0-1 error of top-1 here; the sentence pair similarity model in joint-SFC poses more positive effect in optimizing the candidate labels.
 
-The joint training does not improve the classification performance in stage 1,
-measured by top-1 accuracy. However, it improves the quality of top-5
-candidate class labels, which can further improve the effect of sentence pair
-similarity training. The reason is that, a classification model
-inherently optimizes the objective loss, 0-1 error of top-1 here; the sentence
-pair similarity model in the joint-SFC poses more positive effect in optimizing the 
-candidate labels.
+\subsubsection*{Supportive of extra NER loss}
+Many previous work shows joint training with a NER loss improves the intent classification task as well, observed again in our baselines and SFCs in Table \ref{tbe:addtional ner experiments}.
+We choose the state-of-the-art RoBERTa-large model with NER loss as a strong baseline. 
 
+We can see that our joint-SFC without NER loss still outperforms RoBERTa with NER loss baseline by 0.86 percentage points on average. 
+This indicates that the fusion of classification and similarity models can even works better than fusing with additional NER information under few-shot chatbot scenario. 
 
-\subsubsection*{How does training sample size influence SFC?} 
-We analyze the overall improvement trend of joint-SFC under various few-shot
-settings, and show results in Fig. \ref{fig:trend}.
+Moreover, the adding NER loss to joint-SFC further achieves improvement of 1.66 percentage points over RoBERTa with NER loss baseline. 
+Especially on FRAMES dataset, which is a much more difficult task in comparison with ATIS based on performance of all systems on it, our joint-SFC with NER loss achieves a bigger improvement of 2.8 percentage points on average. 
 
-Our main focus is to study chatbot building in common situation during real-world
-application where only a few sample sentences are available for each class.
-The experimental results for the 3 diverse intent detection datasets
-(ClINC150, BANKING77, HWU64) under few-shot settings, 5 to 50 samples per
-class, indicate that our proposed joint-SFC can achieve 2.47 percents average
-improvement over one of the most powerful baseline models, which is
-RoBERTa-large classification model. Moreover, the improvement in F1 score
-becomes more and more prominent with the decrease of data sample number per
-class.
+\subsubsection*{Different training sample size} 
+We analyze the overall improvement trend of joint-SFC under various few-shot settings, and show results in Fig. \ref{fig:trend}.
+
+Our main focus is on studying chatbot construction in real world applications, where each class has only a small number of example sentences.
+The experimental results for the 3 diverse intent detection datasets (ClINC150, BANKING77, HWU64) under few-shot settings, 5 to 50 samples per class, indicate that our proposed joint-SFC can achieve average 2.47 percentage points improvement over one of the most powerful baseline models, which is RoBERTa-large classification model. 
+Moreover, the improvement in F1 score becomes more and more prominent with the decrease of data sample number per class.
 
 \begin{figure}[t]
   \begin{centering}
@@ -271,45 +249,26 @@ class.
     \par
   \end{centering}
   \caption{
-    Improvements from Joint SFC over RoBERTa based classification with
-    different size of training data.
+    Improvements from joint SFC over RoBERTa based classification with different training size.
   }
   \label{fig:trend}
 \end{figure}
 
-Especially, in the most extreme few-shot setting with only 5 training samples
-per class our joint-SFC achieves 4.97 percent points improvements on average
-over RoBERTa-large classification model. This observation indicates that SFC
-is especially well-performed when being applied during the initial stage of
-building task-specific chatbot system, where the amount of data sample for
-each class label is extremely scarce.
+Especially, in the most extreme setting with only 5 training samples per class, joint-SFC achieves 4.97 percentage points improvements on average over RoBERTa-large classification model. 
+Joint SFC is a better choice applied into the early stage of building a task-specific chatbot system, since label data is extremely scarce.
 
-Furthermore, our proposed joint SFC can also achieve 2.04 percents average
-improvement over RoBERTa-large classification model on all the data settings
-including the ones with large scale, 30 to 50 samples per class. This
-indicates that joint-SFC can still steadily outperforms pretrained model based
-baseline even if the data size grows bigger. However, the improvement is still
-more prominent when the data is scarce, which makes SFC an excellent model for
-low-resource chatbot scenario.
+Furthermore, joint SFC also achieves average 2.04 percentage points improvement over RoBERTa-large classification model on all the data settings. 
+However, the improvement is still more prominent when the data is scarce, which makes SFC an excellent model for low-resource chatbot scenario.
 
-\subsubsection*{How does joint-SFC relate to the label embedding based LEAM?}
-LEAM performs consistently better than TextCNN by a large margin in all
-datasets. TextCNN is practically efficiently in task-specific chat
-applications, and LEAM shows its power in modeling labeling information.
+\subsubsection*{Relation to the label embedding based LEAM}
+LEAM shows its superiority over TextCNN in all datasets in our experiments, by modeling labeling information.
 
-LEAM does not perform as well as SFCs, since the first intuitive reason is it
-does not use pretrained model as encoding module; and another critical reason
-is in task-specific chat applications, it is common to have many intents
-that are close to some others with a minor difference, and it is hard and even
-impossible to name each intent with a short clear name. One candidate
-solution is setting a most standard sample as the label of that class. When
-using non-pretrained models base LEAM, this is applicable. Yet when using
-pretrained model based, as the all labels can be hundreds of thousands, then
-this can not be accommodated in a poplar 32 G Tesla V100 GPU. Actually, joint
-SFC can be kind of understood as a generalization form of LEAM. In the
-scenario when there is no clear class label, the relationship between a sample
-and a class label is implicitly encoded as that between a sample and another
-sample from the same class, and this turns into a sentence pair similarity
-model.
+LEAM does not perform as well as SFCs, since the first intuitive reason is it does not use a pretrained model as its input encoding module; 
+another critical reason is in task-specific chat applications, it is common to have many similar intents, and it becomes hard and even impossible to name each intent with a short clear name to feed into LEAM model.
+One candidate solution is setting a most standard sample as the label of the class. 
+When using non-pretrained models base LEAM, this is applicable. 
+Yet when using a pretrained model based, as all labels can be hundreds of thousands, then the training can not be accommodated in a poplar 32 G Tesla V100 GPU. 
 
+Actually, joint SFC can be kind of understood as a generalization form of LEAM. 
+When there is no clear class labels, the relationship between a sample and a class label is implicitly encoded as that between a sample and another sample from the same class, and this turns into a sentence pair similarity model.  
 
