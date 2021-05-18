@@ -93,7 +93,7 @@ The third one, \emph{pretrained model based similarity model}.
 As RoBERTa is empirically found more effective than other pretrained models in the short text classification task in our experiments, we choose RoBERTa-large based implementation.
 In inference, we use an elastic search to find a set of potential candidate labels for the similarity model, to guarantee a reasonable running time.
 
-The fouth one, \emph{pretrained model based joint text classification and NER model}. 
+The fourth one, \emph{pretrained model based joint text classification and NER model}. 
 We choose the work from \cite{chen2019bert} as our baseline system, which utilizes a strong RoBERTa-large model to jointly train two losses.
 Our SFC framework is also conveniently supportive of extra NER loss that in stage 1 a fourth task with a NER loss is trivially derived based on the output states from a pretrained model.
 
@@ -102,8 +102,6 @@ Especially, the similarity model baseline and all similarity layers in SFCs use 
 This is also one of merits in SFC, as it support adopting out-of-domain data in comparison to a classification based model.
 
 Our SFC implementations include three 2-stage SFCs using task 1 and 2 with ablation in Table \ref{tbe:table2}; one joint SFC trained on all three tasks in Table \ref{tbe:table2}; one joint SFC with an additional fourth NER task in Table \ref{tbe:addtional ner experiments}. 
-
-All setting details can be found in the appendix due to the space limitation.
 
 \subsection{Result Analysis}
 We report the F1 score \footnote{In the multi-class and multi-label case, this
@@ -262,13 +260,13 @@ However, the improvement is still more prominent when the data is scarce, which 
 
 \subsection{Settings of hyperparameters} 
 In Table \ref{tbe:table3}, we explore the influence from hyperparameters on ITG and Amazon-670K datasets. 
-We control the total number of sampled sentence pairs to about 50 to 60, and obatin about five combinations of hyperparameters. 
+We control the total number of sampled sentence pairs to about 50 to 60, and obtain about five combinations of hyperparameters. 
 
 We find that the best setting of hyperparameters is different with different datasets. 
 The class label number of ITG and Amazon-670k are similar in our experiments, around 250. 
 However the number of data points in ITG is approximately 2 times as many as that in Amazon-670k.
 Therefore, the setting of $K=5$ and $P=10$ is good enough for ITG since most of the classes contains over 10 data points. 
-However, in Amazon-670k, the data per each class is scarce, and, we may need more candidate classes to sample enough effective sentence pairs for the stage 2 traininig of SFC. 
+However, in Amazon-670k, the data per each class is scarce, and, we may need more candidate classes to sample enough effective sentence pairs for the stage 2 training of SFC. 
 Thus, the setting of $K=10$ and $P=5$ becomes a good choice. 
 
 However, despite the effect on evaluation performance brought by different settings of hyperparameters, joint SFC still steadily outperforms two-stage SFC by 0.41 percent points in overall average F1 score on ITG and Amazon-670k datasets.

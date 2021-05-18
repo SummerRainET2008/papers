@@ -199,7 +199,7 @@ $\alpha_K$ are weights of task 1 and task 2 respectively.
 \subsection{Joint SFC}
 In 2-stage SFC, two stages are separate that there is no deep interaction with each other during training. 
 In this case, the performance of stage 1 may limit the model potential in stage 2; 
-meanwhile, stage 2 also cannot loop feedback back to stage 1 in trainig for improvement. 
+meanwhile, stage 2 also cannot loop feedback back to stage 1 in training for improvement. 
 Therefore, we propose to jointly train all stages, shown in Fig. \ref{fig:framework}.
 
 In joint SFC, a classification model is placed in stage 1 to dynamically provide top-K candidate class labels for the sentence-pair similarity model in stage 2 through a top-K pooling layer.
