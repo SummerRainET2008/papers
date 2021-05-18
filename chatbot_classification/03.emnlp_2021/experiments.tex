@@ -105,6 +105,29 @@ Our SFC implementations include three 2-stage SFCs using task 1 and 2 with ablat
 
 All setting details can be found in the appendix due to the space limitation.
 
+\subsection{Settings  of  hyperparameters} 
+In  Table \ref{tbe:table3}, we explore the influence from hyperparameters, which
+are  the  number  of  candidate  class  labels $K$ in stage 1, and the number of
+sampled  sentence  pairs  for  each class $P$ in stage 2, on ITG and Amazon-670K
+datasets.  As we control the total number of sampled sentence pairs to about 50 to 60, we
+roughly obatin five combinations of hyperparameters.  
+
+We find  that the best setting of hyperparameters is different from datasets
+of  different  data  size.  The  class label number of ITG and Amazon-670k are
+similar  in  our  experimental setting, which is around 250. However the total
+amount of data points of ITG is approximately 2 times larger than Amazon-670k.
+Therefore,  the  setting of $K=5$ and $P=10$ is good enough for ITG since most
+of  the  classes  contains  over 10 data points. However, for Amazon-670k, the
+amount  of  data  sample  for  each  class  is  scarce, thus, we may need more
+candidate  classes to sample enough effective sentence pairs for sentence-pair
+model  layer  of  SFC.  In this way, the setting of $K=10$ and $P=5$ becomes a
+good choice. 
+
+However,  in  spite of the effect on evaluation performance brought by different
+settings  of hyperparameters, joint-SFC still steadily outperforms two-stage SFC
+by  0.41  percent  points  in  overall  average  F1 score on ITG and Amazon-670k
+datasets.
+
 \subsection{Result Analysis}
 We report the F1 score \footnote{In the multi-class and multi-label case, this
 is the average of the F1 score of each class with weighting depending on the
