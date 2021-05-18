@@ -1,126 +1,64 @@
 \section{Methodology}
-In  this section, we describe our proposed SFC method, which includes the basic 2-stage SFC and its more compact version joint-SFC.
+In this section, we describe our proposed SFC method, which includes a basic 2-stage SFC implementation and a more compact version called joint SFC.
 
 \subsection{2-stage SFC}
 
-It consists of the following  two  independent stages  in  charge of different  jobs. 
+We first introduce this most intuitive implementation.
+The outputs of the first stage are fed into the second stage, yet its parameters can not be tuned based on feedback of the second stage.
 
-\subsubsection*{
-  Stage 1: classification model for providing top-K candidate class labels
-} 
-We  can  use any auxiliary text classification model or tool,
-such as Term Frequency-Inverse Document Frequency (TF-IDF)retrieval, to
-provide  top-K  most  related  class  labels. These selected class labels will
-later  be  used to sample sentence pairs of both positive and negative
-samples  for  stage  2. 
+\subsubsection*{Stage 1: top-K candidate class labels generation} 
+Any model that generates top-K most related class labels can be adopted in stage 1, such as classification models, term frequency-inverse document Frequency (TF-IDF) based retrieval models.
+Due to the excellent performance of RoBERTa in practice, we use RoBERTa to construct a classification model in this stage. 
 
-In  this  work,  we  choose pretrained models to fine tune on our data.
-Due to the excellent performance of RoBERTa in this task, compared to other pretrained
-models, we use RoBERTa as the encoder of classification model in our setting.
-
-Given   a   data   point   $x_{i}$  with  class  label  $y_{i}$  from  dataset
-$\mathcal{D}$, we take the final hidden state $h_{i}$ of the first token [CLS]
-encoded  by  RoBERTa  as the representation for the whole sequence of $x_{i}$.
-Then  a linear layer is followed to output probabilistic distribution of class
-labels,  $softmax(W^Ch_{i}+b^C)=softmax({\Phi}^C_{i})$,  where $W^C$ and $b^C$
-are  trainable  parameters.  Then, the loss in stage 1 classification model is
-shown in Equ. \ref{eq:classification_loss},
+Suppose we have a training dataset $\mathcal{D}=\{x_{i},y_{i}\}_{i=1}^{N}$, in which $x_{i}$ is the user input query and $y_{i}$ is a single class label in $\{1, \ldots, J\}$. 
+Given $x_i$, we take the final hidden state $h_i$ of the first token [CLS] encoded by RoBERTa as the representation for the whole sequence of $x_i$.
+A linear layer is followed to output unnormalized probabilistic distribution of class labels, ${\Phi}_i^C=W^C h_i + b^C$, where $W^C$ and $b^C$ are class label related trainable parameters. 
+Then, the loss in stage 1 classification model is shown in Equ. \ref{eq:classification_loss},
 
 \vspace{-2em}
 \begin{equation}
   \begin{aligned}
-    \mathcal{L}^{C}&=\frac{1}{N}\sum_{i=1}^{N}-log(\frac{exp(\varPhi_{i,y_{i}}^C)}{\sum_{j=1}^{C}exp(\varPhi_{i,j}^C)}) \\
+    \mathcal{L}^{C}&=\frac{1}{N} \sum_{i=1}^{N}-log(\frac{exp(\varPhi_{i,y_{i}}^C)}{\sum_{j=1}^{J}exp(\varPhi_{i,j}^C)}) \\
     \label{eq:classification_loss}
   \end{aligned}
 \end{equation}
 \vspace{-2.5em}
 
-\subsubsection*{
-  Stage 2: sentence-pair similarity model based classification with multi-task
-  learning
-}
-We  continue choosing RoBERTa as the main module in this stage that identifies
-the class label with strongest semantic similarity to the user input sentence.
+\subsubsection*{Stage 2: sentence-pair similarity model based multi-task learning}
+We continue choosing RoBERTa to construct main modules in this stage.
 
-Suppose  we have a training dataset $\mathcal{D}=\{x_{i},y_{i}\}_{i=1}^{N}$ of
-$N$  data  points,  in  which $x_{i}$ is the user input query and $y_{i}$ is a
-single  class label from a class label set of $C$ classes in total. We 
-generate            a sentence            pair            dataset
-$\mathcal{D'}=\{[(x,x')_{j},l_{j}]\}_{j=1}^{M}$ from $\mathcal{D}$,   where   $(x,   x')_{j}$  is
-a pair of two history queries \footnote{For simplicity, we use query
-to denote a user's question or a response.}, and $l_{j}\in\{0, 1\}$ denotes the
-similarity label that only the ones from the same class label are considered
-similar. The size of $\mathcal{D'}$  would be up to $O(N^2)$ if no any
-sampling strategy is used.  This is quite time-consuming  for the  training
-in stage 2 because $N$ can be several hundreds or thousands even under 
-few shot setting in task-specific chatbot scenario. 
+We generate a sentence pair dataset $\mathcal{D'}=\{[(x,x')_{j},l_{j}]\}_{j=1}^{M}$ from $\mathcal{D}$, where $(x, x')_{j}$ is a pair of two history queries \footnote{For simplicity, we use query to denote a user's question or a response.}, and $l_{j}\in\{0, 1\}$ denotes the similarity that only the pair from the same class label is considered similar. 
+The size of $\mathcal{D'}$ would be up to $N^2$ without a sampling strategy. 
+This is prohibitively large and time-consuming for model training in stage 2, because $N$ can be several hundreds or thousands even under few shot setting in our scenario. 
 
-Therefore,  we  adopt  the idea of adversarial negative sampling strategy from
-the  work  \cite{bamler2020extreme}.  The  key  idea is to train with negative
-samples  that  are hard to be distinguished from positive samples. Now suppose
-we  have  a  user  input query $x_{i}$ and top-K most related class labels set
-$\mathcal{C'}=\{c'_{1},  \dots,  c'_{K}\}$ provided by auxiliary model or tool
-in  stage  1, where $K$ is a hyperparameter to control candidate class number,
-we  apply  the  adversarial  negative sampling strategy into our sentence pair
-sampling process by the following two steps:
+Therefore, we adopt the idea of adversarial negative sampling strategy from the work \cite{bamler2020extreme}. 
+The key idea is to train with negative samples that are hard to be distinguished from positive samples. 
+Now suppose we have a user input query $x_{i}$ and top-$K$ most related class label set $\mathcal{C'}=\{c'_{1}, \dots, c'_{K}\}$ from stage 1, where $K$ is a hyperparameter, we apply the adversarial negative sampling strategy into our sentence pair sampling in two steps:
 
-The  first step is \emph{positive sentence pair sampling}. During the training
-process,  we  first make sure the ground truth class label $y_{i}$ for $x_{i}$
-is  within  the  candidate  class  label  set  $\mathcal{C'}$. If $y_{i}\notin
-\mathcal{C'}$,  we  manually  add  $y_{i}$  into  $\mathcal{C'}$  by replacing
-$c'_{K}$  with  $y_{i}$, since $c'_{K}$ is the least promising candidate label
-according  to  the  auxiliary  model  in stage 1. Afterwards, we will randomly
-sample  $P$ sentences $\{x'_{1}, \dots, x'_{P}\}$ with the same class label as
-$y_{i}$  from  dataset  $\mathcal{D}$  to  form the set of sentence pairs with
-positive  label  $\mathcal{P'}_{i}=\{[(x_{i},  x'_{1}),  1],  \dots,  [(x_{i},
-x'_{P}),  1]\}$,  where $P$ is also a hyperparameter set to control the number
-of sentences we should sample from each class.
+The first step is \emph{positive sentence pair sampling}. 
+In training, we make sure the ground truth class label $y_{i}$ of $x_{i}$ exists in the candidate class label set $\mathcal{C'}$. 
+Otherwise, we have it substitute for the least relevant class label $c'_{K}$. 
+Then, we randomly sample $P$ sentences $\{x'_{1}, \dots, x'_{P}\}$ with the same class label as $y_{i}$ from dataset $\mathcal{D}$ to form the set of sentence pairs with positive label $\mathcal{P'}_{i}=\{[(x_{i}, x'_{1}), 1], \dots, [(x_{i}, x'_{P}), 1]\}$, where $P$ is also a hyperparameter. 
 
-The  second  step  is  \emph{negative sentence pair sampling}: As for negative
-sentence  pairs,  we will also randomly sample $P$ sentences for each class in
-the negative candidate class label set $\mathcal{C'}\backslash \{y_{i}\}$. The
-class  labels  in  $\mathcal{C'}\backslash  \{y_{i}\}$  are  the  set  of most
-confusing  class  labels comparing to the ground truth ${y_{i}}$, so we assume
-that  the  sentence  pairs  with  negative  label  grouped by user input query
-$x_{i}$  and sentences with class labels in $\mathcal{C'}\backslash \{y_{i}\}$
-are  strong  adversarial  negative  samples for sentence-pair similarity model
-that  can  help  enhance  the training speed and performance. According to the
-same  method  as  positive  sentence  pair  sampling, we can obtain the set of
-sentence  pairs  with  negative label as $\mathcal{N'}_{i}=\{[(x_{i}, x'_{1}),
-0], ..., [(x_{i}, x'_{P\cdot K}), 0]\}$
+The second step is \emph{negative sentence pair sampling}.
+We also randomly sample $P$ sentences for each class in the negative candidate class label set $\mathcal{C'}\backslash \{y_{i}\}$, which is the more confusing to the expected class label compared to those out of top-$K$ candidate set.
+The resulting sentence pairs are strong adversarial negative samples for sentence-pair similarity model, and they significantly enhance the training speed and performance. 
+We denote them as $\mathcal{N'}_{i}=\{[(x_{i}, x'_{1}), 0], ..., [(x_{i}, x'_{P\cdot K}), 0]\}$
 
-In  this way, we generate the sentence pair dataset $\mathcal{D'}$ for stage 2
-based  on  the  top-K  class  label  set $\mathcal{C'}$ provided by stage 1 as
-$\mathcal{D'}=\{\mathcal{P'}_{i}\cup  \mathcal{N'}_{i}\}_{i=1}^{N}$,  in which
-we have $M=N\cdot K\cdot P$ data points of sentence pairs in total.
+In this way, we generate the sentence pair dataset $\mathcal{D'}$ for stage 2, based on the top-K class label set $\mathcal{C'}$ from by stage 1, as $\mathcal{D'}=\{\mathcal{P'}_{i}\cup \mathcal{N'}_{i}\}_{i=1}^{N}$, and its size is $M=N\times K\times P$.
 
-Before starting to fine-tune our sentence-pair model on task-specific dataset,
-we  first  fine-tune  RoBERTa on Quora dataset  \cite{iyer2017first}, which
-contains  404,290  potential  duplicate question pairs, for transfer learning.
-This  is  also  the  merit of similarity based model, as labeled task-specific
-classification  data  is  hard  to  acquire,  yet  general sentence pairs with
-similar semantics can be much easier to acquire.
+As analyzed before, one advantage of similarity based model is its potential to use out-of-domain data. We take this advantage and use extra Quora dataset \cite{iyer2017first} to enhance performance of both baseline and our SFCs.
 
 \subsubsection*{Multi-task based training}
-We   continue  to  do  multi-task  training  on  sentence-pair  dataset
-$\mathcal{D'}$ sampled from the top-K candidate class labels provided by stage
-1. In stage 2, we have two tasks tuning our system.
+We have our stage 2 model train on two tasks in the framework of multi-task training. 
 
 The first task is \emph{regular sentence-pair similarity task}.
-For  sentence  pair semantic similarity task, given a data point $(x, x')_{i}$
-with       similarity       label       $l_{i}$       from       data      set
-$\mathcal{D'}=\{[(x,x')_{i},l_{i}]\}_{i=1}^{M}$,   Roberta   takes  the  final
-hidden  state  $h_{i}$  of the first token [CLS] as the representation for the
-sequence of packed sentence pair $(x, x')_{i}$. Let's suppose we have a linear
-layer  as  ${\Phi}^S_{i}=W^Sh_{i}+b^S$,  where  $W^S$  and $b^S$ are trainable
-parameters,  and  the probability score for $(x, x')_{i}$ can be calculated as
-$p^S_{i}=softmax({\Phi}^S_{i})$.
+For sentence pair semantic similarity task, given a data point $(x, x')_{i}$ with similarity label $l_{i}$ from data set $\mathcal{D'}$, Roberta takes the concatenation of $x, x'$ and outputs hidden state $h_{i}$ of the first token [CLS] as its representation.
+A linear layer is followed as ${\Phi}^S_{i}=W^Sh_{i}+b^S$ to generate unnormalized probabilities, where $W^S$ and $b^S$ are trainable parameters. 
 
-Due  to  the  fact that sentence pairs within the same class is much fewer than
-that from  different  classes,  the  dataset  $\mathcal{D'}$  is
-quite imbalanced.  Therefore, we will accommodate a weight variable $w^S = [K-1, 1]$
-to  the  loss  to eliminate the bias brought by data imbalance, shown in Equ.
-\ref{eq:similarity_loss}.
+We note that the dataset $\mathcal{D'}$ is unbalanced, as negative samples are $K - 1$ times as many as positive samples.
+Therefore, we add a weight $w^S \in \{K-1, 1\} $ to the loss of positive and negative samples respectively to eliminate the bias, shown in Equ. \ref{eq:similarity_loss}.
+This weighting strategy is quite effective in practice. 
 
 \vspace{-1.5em}
 \begin{equation}
@@ -131,26 +69,17 @@ to  the  loss  to eliminate the bias brought by data imbalance, shown in Equ.
 \end{equation}
 \vspace{-2em}
 
-The  second  task  is  \emph{classification  on  top-K classes}. As minimizing
-similarity  loss  is  not  our  final goal in the intent classification, we
-bring  back  classification  loss again. In this task, the network is based on
-sentence  pair  similarity  modules.  The  only  difference  is  that we add a
-task-specific  average  pooling  layer,  shown  in Fig. \ref{fig:framework} to
-accomplish the classification task based on sentence-pair model.
+The second task is \emph{classification on top-K classes}. 
+As minimizing similarity loss is not our final goal of the chatbot application, we bring back classification loss again. 
+In this task, the network structure is based on sentence pair similarity modules. 
+We then add a task-specific average pooling layer, shown in Fig. \ref{fig:framework} to accomplish the classification task based on sentence-pair model.
 
-We  already  know  that the size of ${\Phi}^S$ in task 1 is $M\times 2=(N\cdot
-K\cdot  P)\times  2$, where $N$ is the total number of data points in original
-training  data $\mathcal{D}$, $K$ is a hyperparameter that controls the number
-of   candidate   class  labels  provided  by  stage  1,  and  $P$  is  also  a
-hyperparameter that controls the number of sentences we should randomly sample
-from each candidate class labels. Now, for the average pooling layer, we first
-reshape  ${\Phi}^S$  into  the  size  of $N\times K\times P\times 2$, and then
-split  it  into  ${\Phi}^{K,pos}$  and ${\Phi}^{K,neg}$, and both of them will
-have  the  size  of  $N\times  K\times  P$.  In this way, ${\Phi}^{K,pos}$ can
-represent  the  level  of  similarity  for each sentence pair, and in the mean
-time,  ${\Phi}^{K,neg}$  can  represent  the  level  of dissimilarity for each
-sentence  pair. Then, we can do average pooling for each candidate class among
-the  top-K  classes  as  shown  in  Equ.  \ref{eq:average  pooling}.
+The size of ${\Phi}^S$ in task 1, namely unnormalized probabilistic distribution, is $2 \times M$, as $M$ sentence pairs corresponds two class labels.
+Further, it equals $(N\cdot K\cdot P)\times 2$, where $N$ is the total number of data points in original training data $\mathcal{D}$, $K$ is a hyperparameter that controls the number
+of candidate class labels provided by stage 1, and $P$ is also a hyperparameter that controls the number of sentences we should randomly sample from each candidate class labels. 
+Now, for the average pooling layer, we first reshape ${\Phi}^S$ into the size of $N\times K\times P\times 2$, and then split it into ${\Phi}^{K,pos}$ and ${\Phi}^{K,neg}$, and both of them will have the size of $N\times K\times P$. 
+In this way, ${\Phi}^{K,pos}$ represents the level of similarity for each sentence pair, and ${\Phi}^{K,neg}$ represents the level of dissimilarity for each sentence pair. 
+Then, we can do average pooling for each candidate class among the top-K classes as shown in Equ. \ref{eq:average pooling}.
 
 \vspace{-2em}
 \begin{align}
@@ -159,13 +88,13 @@ the  top-K  classes  as  shown  in  Equ.  \ref{eq:average  pooling}.
   \label{eq:average pooling}
 \end{align}
 
-With  the  average pooling result ${\xi}^{K,pos}$ and ${\xi}^{K,neg}$, we also
-generate   a   top-K   class   label   $l^{K}_i\in   [1,\dots,K]$   for   each
+With the average pooling result ${\xi}^{K,pos}$ and ${\xi}^{K,neg}$, we also
+generate a top-K class label $l^{K}_i\in [1,\dots,K]$ for each
 ${\xi}^{K,pos}_{i}$ and ${\xi}^{K,neg}_{i}$. The loss for top-K classification
 task is shown in Equ. \ref{eq:top-k_classification_loss}. In Equ. \ref{eq: pos
-top-k   loss}   and   Equ.   \ref{eq:   neg   top-k   loss},  the  first  term
-$\xi_{i,l^{K}_{i}}^{K,pos}$  and  $\xi_{i,l^{K}_{i}}^{K,neg}$  encourage  high
-level  of  similarity  and  low  level  of dissimilarity for prediction of the
+top-k loss} and Equ. \ref{eq: neg top-k loss}, the first term
+$\xi_{i,l^{K}_{i}}^{K,pos}$ and $\xi_{i,l^{K}_{i}}^{K,neg}$ encourage high
+level of similarity and low level of dissimilarity for prediction of the
 correct label $l^{K}_i$ within the top-K candidate classes.
 
 \begin{table*}
@@ -224,12 +153,12 @@ correct label $l^{K}_i$ within the top-K candidate classes.
     \par
   \end{centering}
   \caption{
-    F1 scores  on  five  task-specific  datasets for text classification in chatbot
+    F1 scores on five task-specific datasets for text classification in chatbot
     under low resource. For ITG, we keep the full dataset. For Amazon-670k, we
-    randomly  sampled  250  classes  with  training sample numbers within 5-15
-    samples  per  class.  For  CLINC150,  BANKING77,  HWU64, we set up various
-    few-shot  settings  (5/10/15/20/30/50 samples per class) while keeping the
-    test  set to be fixed. The highest scores among all the baseline models and SFC variants for each data setting are both marked
+    randomly sampled 250 classes with training sample numbers within 5-15
+    samples per class. For CLINC150, BANKING77, HWU64, we set up various
+    few-shot settings (5/10/15/20/30/50 samples per class) while keeping the
+    test set to be fixed. The highest scores among all the baseline models and SFC variants for each data setting are both marked
     in bold.
   }
   \label{tbe:table2}
@@ -256,10 +185,10 @@ where
 \end{equation}
 \vspace{-1.25em}
 
-Finally,  the  overall  loss  function for multi-task learning in stage 2 is
+Finally, the overall loss function for multi-task learning in stage 2 is
 shown in Equ. \ref{eq:two-stage_SFC_loss}. The training objective of stage 2 is
-to  minimize  the  weighted  sum  of task-specific losses. Here $\alpha_S$ and
-$\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
+to minimize the weighted sum of task-specific losses. Here $\alpha_S$ and
+$\alpha_K$ are weights of task 1 and task 2 respectively.
 
 \begin{align}
   \mathcal{L} = \alpha_S \mathcal{L}^S + \alpha_K \mathcal{L}^K
@@ -268,29 +197,29 @@ $\alpha_K$  are  weights  of  task  1  and  task  2  respectively.
 \vspace{-2em}
 
 
-\subsection{Joint-SFC}
-In  2-stage  SFC,  Stage  1  and  stage 2 are separate that there is no deep
-interaction  with each other during training. In this case, the performance of
-stage  1  may  limit  the potential of stage 2; meanwhile, stage 2 also cannot
-give  training feedback back to stage 1 for fine-tuning. Therefore, to further
-improve  the  overall performance of SFC, we proposed a joint model structure,
+\subsection{Joint SFC}
+In 2-stage SFC, Stage 1 and stage 2 are separate that there is no deep
+interaction with each other during training. In this case, the performance of
+stage 1 may limit the potential of stage 2; meanwhile, stage 2 also cannot
+give training feedback back to stage 1 for fine-tuning. Therefore, to further
+improve the overall performance of SFC, we proposed a joint model structure,
 shown in Fig. \ref{fig:framework}.
 
-In  joint-SFC,  classification  model is being placed in lower layer level to
-dynamically  provide  top-K  candidate  class  labels  for  the  sentence-pair
-similarity  model  placed in higher layer level through a top-K pooling layer.
-In  this way, classification model and similarity model can be merged into one
-single  joint-model  for  multi-task training with sentence pairs sampled from
-varying  candidate  class  labels,  thus  avoiding the limitation brought by 2
+In joint-SFC, classification model is being placed in lower layer level to
+dynamically provide top-K candidate class labels for the sentence-pair
+similarity model placed in higher layer level through a top-K pooling layer.
+In this way, classification model and similarity model can be merged into one
+single joint-model for multi-task training with sentence pairs sampled from
+varying candidate class labels, thus avoiding the limitation brought by 2
 separate stage structure.
 
-There  are 3 tasks in total during the training process of joint-SFC, shown in
+There are 3 tasks in total during the training process of joint-SFC, shown in
 Fig. \ref{fig:framework}, and the overall loss is also the weighted sum of all
-the   task-specific  losses,  shown  in  Equ.  \ref{eq:joint_SFC_loss}.  Here,
-$\alpha_S$,  $\alpha_K$  and  $\alpha_C$  represent  the  weights  for  task 1
-sentence-pair  similarity  in  Equ.  \ref{eq:similarity_loss},  task  2  top-K
-classification  in Equ. \ref{eq:top-k_classification_loss}, and task 3 general
-single       sentence       classification      respectively      in      Equ.
+the task-specific losses, shown in Equ. \ref{eq:joint_SFC_loss}. Here,
+$\alpha_S$, $\alpha_K$ and $\alpha_C$ represent the weights for task 1
+sentence-pair similarity in Equ. \ref{eq:similarity_loss}, task 2 top-K
+classification in Equ. \ref{eq:top-k_classification_loss}, and task 3 general
+single sentence classification respectively in Equ.
 \ref{eq:classification_loss}.
 
 \vspace{-1.5em}

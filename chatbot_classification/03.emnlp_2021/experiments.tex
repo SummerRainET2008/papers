@@ -98,7 +98,7 @@ We choose the work from \cite{chen2019bert} as our baseline system, which utiliz
 Our SFC framework is also conveniently supportive of extra NER loss that in stage 1 a fourth task with a NER loss is trivially derived based on the output states from a pretrained model.
 
 All pretrained model baselines are fine-tuned on our datasets.
-Especially, the similarity model baseline and all similarity layers in SFCs use extra Quora dataset \cite{iyer2017first} to enhance system performance. 
+Especially, the similarity model baseline and all similarity layers in SFCs use extra Quora dataset \cite{iyer2017first} \footnote{which contains 404,290 potential duplicate question pairs} to enhance system performance. 
 This is also one of merits in SFC, as it support adopting out-of-domain data in comparison to a classification based model.
 
 Our SFC implementations include three 2-stage SFCs using task 1 and 2 with ablation in Table \ref{tbe:table2}; one joint-SFC trained on all three tasks in Table \ref{tbe:table2}; one joint-SFC with an additional fourth NER task in Table \ref{tbe:addtional ner experiments}. 
