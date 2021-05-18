@@ -74,9 +74,8 @@ As minimizing similarity loss is not our final goal of the chatbot application, 
 In this task, the network structure is based on sentence pair similarity modules. 
 We then add a task-specific average pooling layer, shown in Fig. \ref{fig:framework} to accomplish the classification task based on sentence-pair model.
 
-The size of ${\Phi}^S$ in task 1, namely unnormalized probabilistic distribution, is $2 \times M$, as $M$ sentence pairs corresponds two class labels.
-Further, it equals $(N\cdot K\cdot P)\times 2$, where $N$ is the total number of data points in original training data $\mathcal{D}$, $K$ is a hyperparameter that controls the number
-of candidate class labels provided by stage 1, and $P$ is also a hyperparameter that controls the number of sentences we should randomly sample from each candidate class labels. 
+The size of ${\Phi}^S$ in task 1, namely unnormalized probabilistic distribution, is $2 \times M$, as one sentence pair correspond to two class labels.
+Further, it equals $(N\cdot K\cdot P)\times 2$, where $N$ is the size of original training data $\mathcal{D}$, $K$ the number of candidate class labels from stage 1, and $P$ is the number of sentences randomly sampled from each candidate class label. 
 Now, for the average pooling layer, we first reshape ${\Phi}^S$ into the size of $N\times K\times P\times 2$, and then split it into ${\Phi}^{K,pos}$ and ${\Phi}^{K,neg}$, and both of them will have the size of $N\times K\times P$. 
 In this way, ${\Phi}^{K,pos}$ represents the level of similarity for each sentence pair, and ${\Phi}^{K,neg}$ represents the level of dissimilarity for each sentence pair. 
 Then, we can do average pooling for each candidate class among the top-K classes as shown in Equ. \ref{eq:average pooling}.
@@ -145,7 +144,7 @@ correct label $l^{K}_i$ within the top-K candidate classes.
         2-stage SFC & \multirow{2}*{$0.9167$} & \multirow{2}*{$0.9456$} & \multirow{2}*{$0.9571$} & \multirow{2}*{$0.9638$} & \multirow{2}*{$0.9658$} & \multirow{2}*{$0.9753$} & \multirow{2}*{$0.8135$} & \multirow{2}*{$0.8854$} & \multirow{2}*{$0.8931$} & \multirow{2}*{$0.9192$} & \multirow{2}*{$0.9257$} & \multirow{2}*{$0.9339$} & \multirow{2}*{$0.6525$} & \multirow{2}*{$0.7092$} & \multirow{2}*{$0.7168$} & \multirow{2}*{$0.7476$} & \multirow{2}*{$0.7519$} & \multirow{2}*{$0.7696$} & \multirow{2}*{$\textbf{0.8124}$} & \multirow{2}*{$0.7364$}\tabularnewline
         (task1 + task2) & & & & & & & & & & & & & & & & & & & &\tabularnewline
         \hline
-        \multirow{2}*{Joint-SFC} & \multirow{2}*{$\textbf{0.9231}$} & \multirow{2}*{$\textbf{0.9560}$} & \multirow{2}*{$\textbf{0.9644}$} & \multirow{2}*{$\textbf{0.9669}$} & \multirow{2}*{$\textbf{0.9712}$} & \multirow{2}*{$\textbf{0.9821}$} & \multirow{2}*{$\textbf{0.8270}$} & \multirow{2}*{$\textbf{0.9069}$} & \multirow{2}*{$\textbf{0.9103}$} & \multirow{2}*{$\textbf{0.9209}$} & \multirow{2}*{$\textbf{0.9323}$} & \multirow{2}*{$\textbf{0.9463}$} & \multirow{2}*{$\textbf{0.6697}$} & \multirow{2}*{$\textbf{0.7211}$} & \multirow{2}*{$\textbf{0.7254}$} & \multirow{2}*{$\textbf{0.7497}$} & \multirow{2}*{$\textbf{0.7593}$} & \multirow{2}*{$\textbf{0.7772}$} & \multirow{2}*{$0.8114$} & \multirow{2}*{$\textbf{0.7445}$}\tabularnewline
+        \multirow{2}*{Joint SFC} & \multirow{2}*{$\textbf{0.9231}$} & \multirow{2}*{$\textbf{0.9560}$} & \multirow{2}*{$\textbf{0.9644}$} & \multirow{2}*{$\textbf{0.9669}$} & \multirow{2}*{$\textbf{0.9712}$} & \multirow{2}*{$\textbf{0.9821}$} & \multirow{2}*{$\textbf{0.8270}$} & \multirow{2}*{$\textbf{0.9069}$} & \multirow{2}*{$\textbf{0.9103}$} & \multirow{2}*{$\textbf{0.9209}$} & \multirow{2}*{$\textbf{0.9323}$} & \multirow{2}*{$\textbf{0.9463}$} & \multirow{2}*{$\textbf{0.6697}$} & \multirow{2}*{$\textbf{0.7211}$} & \multirow{2}*{$\textbf{0.7254}$} & \multirow{2}*{$\textbf{0.7497}$} & \multirow{2}*{$\textbf{0.7593}$} & \multirow{2}*{$\textbf{0.7772}$} & \multirow{2}*{$0.8114$} & \multirow{2}*{$\textbf{0.7445}$}\tabularnewline
         & & & & & & & & & & & & & & & & & & & &\tabularnewline
         \hline
       \end{tabular}
@@ -198,29 +197,17 @@ $\alpha_K$ are weights of task 1 and task 2 respectively.
 
 
 \subsection{Joint SFC}
-In 2-stage SFC, Stage 1 and stage 2 are separate that there is no deep
-interaction with each other during training. In this case, the performance of
-stage 1 may limit the potential of stage 2; meanwhile, stage 2 also cannot
-give training feedback back to stage 1 for fine-tuning. Therefore, to further
-improve the overall performance of SFC, we proposed a joint model structure,
-shown in Fig. \ref{fig:framework}.
+In 2-stage SFC, two stages are separate that there is no deep interaction with each other during training. 
+In this case, the performance of stage 1 may limit the model potential in stage 2; 
+meanwhile, stage 2 also cannot loop feedback back to stage 1 in trainig for improvement. 
+Therefore, we propose to jointly train all stages, shown in Fig. \ref{fig:framework}.
 
-In joint-SFC, classification model is being placed in lower layer level to
-dynamically provide top-K candidate class labels for the sentence-pair
-similarity model placed in higher layer level through a top-K pooling layer.
-In this way, classification model and similarity model can be merged into one
-single joint-model for multi-task training with sentence pairs sampled from
-varying candidate class labels, thus avoiding the limitation brought by 2
-separate stage structure.
+In joint SFC, a classification model is placed in stage 1 to dynamically provide top-K candidate class labels for the sentence-pair similarity model in stage 2 through a top-K pooling layer.
+In this way, classification model and similarity model can be merged into one single model for multi-task training with sentence pairs sampled from varying candidate class labels.
 
-There are 3 tasks in total during the training process of joint-SFC, shown in
-Fig. \ref{fig:framework}, and the overall loss is also the weighted sum of all
-the task-specific losses, shown in Equ. \ref{eq:joint_SFC_loss}. Here,
-$\alpha_S$, $\alpha_K$ and $\alpha_C$ represent the weights for task 1
-sentence-pair similarity in Equ. \ref{eq:similarity_loss}, task 2 top-K
-classification in Equ. \ref{eq:top-k_classification_loss}, and task 3 general
-single sentence classification respectively in Equ.
-\ref{eq:classification_loss}.
+There are 3 tasks in total during the training of joint SFC, shown in Fig. \ref{fig:framework}. 
+The overall loss is a linear combination of them, shown in Equ. \ref{eq:joint_SFC_loss}. 
+Here, $\alpha_S$, $\alpha_K$ and $\alpha_C$ represent the weights for task 1 sentence-pair similarity in Equ. \ref{eq:similarity_loss}, task 2 top-K classification in Equ. \ref{eq:top-k_classification_loss}, and task 3 general single sentence classification respectively in Equ.  \ref{eq:classification_loss}.
 
 \vspace{-1.5em}
 \begin{align}

@@ -34,7 +34,7 @@
 
 \subsection{Datasets}
 Our experiments aim to study the short text classification in the low-resource environment popular in the task-specific conversational chatbot application.
-The datasets adopted in our experiments, showed in \ref{tbe:dataset statistic} \footnote{All settings of six public datasets would be released to github soon.}, typically contain comparatively large number of class labels, ranging from several dozens to hundreds, and each class label is associated with a handful of labeled queries with each query being usually one sentence. 
+The datasets adopted in our experiments, showed in Table \ref{tbe:dataset statistic} \footnote{All settings of six public datasets would be released to github soon.}, typically contain comparatively large number of class labels, ranging from several dozens to hundreds, and each class label is associated with a handful of labeled queries with each query being usually one sentence. 
 
 \emph{ITG}, is a proprietary FAQ dataset from real-world
 chatbot project, which is composed of question and answer pairs about online
@@ -101,32 +101,9 @@ All pretrained model baselines are fine-tuned on our datasets.
 Especially, the similarity model baseline and all similarity layers in SFCs use extra Quora dataset \cite{iyer2017first} \footnote{which contains 404,290 potential duplicate question pairs} to enhance system performance. 
 This is also one of merits in SFC, as it support adopting out-of-domain data in comparison to a classification based model.
 
-Our SFC implementations include three 2-stage SFCs using task 1 and 2 with ablation in Table \ref{tbe:table2}; one joint-SFC trained on all three tasks in Table \ref{tbe:table2}; one joint-SFC with an additional fourth NER task in Table \ref{tbe:addtional ner experiments}. 
+Our SFC implementations include three 2-stage SFCs using task 1 and 2 with ablation in Table \ref{tbe:table2}; one joint SFC trained on all three tasks in Table \ref{tbe:table2}; one joint SFC with an additional fourth NER task in Table \ref{tbe:addtional ner experiments}. 
 
 All setting details can be found in the appendix due to the space limitation.
-
-\subsection{Settings  of  hyperparameters} 
-In  Table \ref{tbe:table3}, we explore the influence from hyperparameters, which
-are  the  number  of  candidate  class  labels $K$ in stage 1, and the number of
-sampled  sentence  pairs  for  each class $P$ in stage 2, on ITG and Amazon-670K
-datasets.  As we control the total number of sampled sentence pairs to about 50 to 60, we
-roughly obatin five combinations of hyperparameters.  
-
-We find  that the best setting of hyperparameters is different from datasets
-of  different  data  size.  The  class label number of ITG and Amazon-670k are
-similar  in  our  experimental setting, which is around 250. However the total
-amount of data points of ITG is approximately 2 times larger than Amazon-670k.
-Therefore,  the  setting of $K=5$ and $P=10$ is good enough for ITG since most
-of  the  classes  contains  over 10 data points. However, for Amazon-670k, the
-amount  of  data  sample  for  each  class  is  scarce, thus, we may need more
-candidate  classes to sample enough effective sentence pairs for sentence-pair
-model  layer  of  SFC.  In this way, the setting of $K=10$ and $P=5$ becomes a
-good choice. 
-
-However,  in  spite of the effect on evaluation performance brought by different
-settings  of hyperparameters, joint-SFC still steadily outperforms two-stage SFC
-by  0.41  percent  points  in  overall  average  F1 score on ITG and Amazon-670k
-datasets.
 
 \subsection{Result Analysis}
 We report the F1 score \footnote{In the multi-class and multi-label case, this
@@ -152,13 +129,13 @@ Table \ref{tbe:table2} and Table \ref{tbe:addtional ner experiments}.
         (classification & & & & & & \tabularnewline
         w/ NER) & & & & & & \tabularnewline
         \hline
-        Joint-SFC & \multirow{2}*{${0.3843}$} &
+        Joint SFC & \multirow{2}*{${0.3843}$} &
         \multirow{2}*{${0.4130}$} & \multirow{2}*{${0.4390}$} &
         \multirow{2}*{${0.9618}$} & \multirow{2}*{${0.9761}$} & 
         \multirow{2}*{${0.9825}$}\tabularnewline
         (w/o NER) & & & & & & \tabularnewline
         \hline
-        Joint-SFC & \multirow{2}*{$\textbf{0.3925}$} &
+        Joint SFC & \multirow{2}*{$\textbf{0.3925}$} &
         \multirow{2}*{$\textbf{0.4420}$} & \multirow{2}*{$\textbf{0.4456}$} &
         \multirow{2}*{$\textbf{0.9639}$} & \multirow{2}*{$\textbf{0.9784}$} & 
         \multirow{2}*{${0.9826}$}\tabularnewline
@@ -180,7 +157,7 @@ Table \ref{tbe:table2} and Table \ref{tbe:addtional ner experiments}.
     \scalebox{0.85}{
       \begin{tabular}{|c|c|c|c|}
         \hline
-        F1 score & 2-stage SFC & joint-SFC & Gap \tabularnewline
+        F1 score & 2-stage SFC & joint SFC & Gap \tabularnewline
         \hline
         top-1 accuracy & \textbf{81.50} & 81.07 & -0.47 \tabularnewline
         top-5 accuracy & 94.01 & \textbf{94.30} & +0.29 \tabularnewline
@@ -196,13 +173,13 @@ Table \ref{tbe:table2} and Table \ref{tbe:addtional ner experiments}.
 Comparing with training 2-stage SFC with multi-task Table \ref{tbe:table2}, training with only task 1, namely the sentence pair similarity model, degrades by 0.8 percentage point on average, and training with only task 2, namely the top-K based classification task, degrades by 0.45 percentage point on average. 
 These degradation indicates multi-task training in 2-stage SFC is helpful for the system performance. Besides, task 2 plays a relatively more important role in multi-task learning, and this aligns with their optimal weight settings.
 
-Joint-SFC consistently outperforms 2-stage SFC with multi-task training on 5 diverse datasets by 0.95 percentage point on average. 
+Joint SFC consistently outperforms 2-stage SFC with multi-task training on 5 diverse datasets by 0.95 percentage point on average. 
 Though a joint model structure may bring extra complexity to the system, it does alleviate the error propagation from the first stage and improves the final performance.
 
-In following analysis, we will focus on the comparison between joint-SFC and the other baseline models.
+In following analysis, we will focus on the comparison between joint SFC and the other baseline models.
 
 \subsubsection*{Fusion of classification and similarity models} 
-%We compare joint-SFC with classification, similarity and NER joint model based baselines respectively.
+%We compare joint SFC with classification, similarity and NER joint model based baselines respectively.
 
 \begin{table}
   \begin{centering}
@@ -214,56 +191,56 @@ In following analysis, we will focus on the comparison between joint-SFC and the
         \hline
         \multicolumn{1}{|c|}{\multirow{2}*{ITG}}& 2-stage SFC & $0.8034$ & $0.8124$ & $0.8008$ & $0.7967$ & $0.7934$\tabularnewline
         \cline{2-7}
-        \multicolumn{1}{|c|}{} & joint-SFC & $0.7986$ & $0.8114$ & $0.8010$ & $0.7972$ & $0.7918$\tabularnewline
+        \multicolumn{1}{|c|}{} & joint SFC & $0.7986$ & $0.8114$ & $0.8010$ & $0.7972$ & $0.7918$\tabularnewline
         \hline
         \multicolumn{1}{|c|}{\multirow{2}*{Amazon-670k}}& 2-stage SFC & $0.7278$ & $0.7364$ & $0.7366$ & $0.7328$ & $0.7204$\tabularnewline
         \cline{2-7}
-        \multicolumn{1}{|c|}{} & joint-SFC & $0.7334$ & $0.7445$ & $0.7516$ & $0.7344$ & $0.7373$\tabularnewline
+        \multicolumn{1}{|c|}{} & joint SFC & $0.7334$ & $0.7445$ & $0.7516$ & $0.7344$ & $0.7373$\tabularnewline
         \hline
       \end{tabular}
       \par
     }
   \end{centering}
   \caption{
-    We show the performances of SFC from different settings of hyperparameters, $K$ denoting the candidate class number from stage 1,
+    The performances of SFC from different settings of hyperparameters, $K$ denoting the candidate class number from stage 1,
     $P$ denoting the number of sampled sentence pair in stage 2. 
   }
   \label{tbe:table3}
 \end{table}
 
-Regarding the classification models, joint-SFC outperforms RoBERTa-large based, the strongest among all baselines, by 2.04 percentage points on average F1 score over 5 datasets. 
+Regarding the classification models, joint SFC outperforms RoBERTa-large based, the strongest among all baselines, by 2.04 percentage points on average F1 score over 5 datasets. 
 Especially, ALBERT.xxlarge based is rather unstable in this short sentence task. 
 Thus, we run multiple times with different settings and report the best ones here. 
 Comparatively, RoBERTa based is the most stable and has the best performance almost all experiment settings.
 
 Regarding the similarity model, as analyzed above, we only choose the RoBERTa-large based implementation as our baseline. 
-Joint-SFC achieves more improvement of 7.09 percentage points on average F1 score. 
+Joint SFC achieves more improvement of 7.09 percentage points on average F1 score. 
 This is also understandable, since RoBERTa-large based similarity model does not and also can not train towards the task specific goal.
 
 The above analysis illustrates that suitable fusing these two kinds of models can take their advantages.
 
-\subsubsection*{Joint-SFC improves stage 1?}
-We explore the quality of predicted candidate labels in stage 1 from 2-stage SFC and joint-SFC respectively. 
+\subsubsection*{Joint SFC improves stage 1?}
+We explore the quality of predicted candidate labels in stage 1 from 2-stage SFC and joint SFC respectively. 
 We should note that 2-stage SFC does not optimize the stage 1 model, namely a RoBERTa based classification model.
 
 From Table \ref{tbe:top1_5_accuracy}, the joint training does not improve the top-1 classification accuracy in stage 1, yet it improves the top-5 accuracy.
-The reason is that, a classification model inherently optimizes the objective loss, 0-1 error of top-1 here; the sentence pair similarity model in joint-SFC poses more positive effect in optimizing the candidate labels.
+The reason is that, a classification model inherently optimizes the objective loss, 0-1 error of top-1 here; the sentence pair similarity model in joint SFC poses more positive effect in optimizing the candidate labels.
 
-\subsubsection*{Supportive of extra NER loss}
+\subsubsection*{Supportive of extra NER task}
 Many previous work shows joint training with a NER loss improves the intent classification task as well, observed again in our baselines and SFCs in Table \ref{tbe:addtional ner experiments}.
 We choose the state-of-the-art RoBERTa-large model with NER loss as a strong baseline. 
 
-We can see that our joint-SFC without NER loss still outperforms RoBERTa with NER loss baseline by 0.86 percentage points on average. 
+We can see that our joint SFC without NER loss still outperforms RoBERTa with NER loss baseline by 0.86 percentage points on average. 
 This indicates that the fusion of classification and similarity models can even works better than fusing with additional NER information under few-shot chatbot scenario. 
 
-Moreover, the adding NER loss to joint-SFC further achieves improvement of 1.66 percentage points over RoBERTa with NER loss baseline. 
-Especially on FRAMES dataset, which is a much more difficult task in comparison with ATIS based on performance of all systems on it, our joint-SFC with NER loss achieves a bigger improvement of 2.8 percentage points on average. 
+Moreover, the adding NER loss to joint SFC further achieves improvement of 1.66 percentage points over RoBERTa with NER loss baseline. 
+Especially on FRAMES dataset, which is a much more difficult task in comparison with ATIS based on performance of all systems on it, our joint SFC with NER loss achieves a bigger improvement of 2.8 percentage points on average. 
 
 \subsubsection*{Different training sample size} 
-We analyze the overall improvement trend of joint-SFC under various few-shot settings, and show results in Fig. \ref{fig:trend}.
+We analyze the overall improvement trend of joint SFC under various few-shot settings, and show results in Fig. \ref{fig:trend}.
 
 Our main focus is on studying chatbot construction in real world applications, where each class has only a small number of example sentences.
-The experimental results for the 3 diverse intent detection datasets (ClINC150, BANKING77, HWU64) under few-shot settings, 5 to 50 samples per class, indicate that our proposed joint-SFC can achieve average 2.47 percentage points improvement over one of the most powerful baseline models, which is RoBERTa-large classification model. 
+The experimental results for the 3 diverse intent detection datasets (ClINC150, BANKING77, HWU64) under few-shot settings, 5 to 50 samples per class, indicate that our proposed joint SFC can achieve average 2.47 percentage points improvement over one of the most powerful baseline models, which is RoBERTa-large classification model. 
 Moreover, the improvement in F1 score becomes more and more prominent with the decrease of data sample number per class.
 
 \begin{figure}[t]
@@ -277,42 +254,34 @@ Moreover, the improvement in F1 score becomes more and more prominent with the d
   \label{fig:trend}
 \end{figure}
 
-Especially, in the most extreme setting with only 5 training samples per class, joint-SFC achieves 4.97 percentage points improvements on average over RoBERTa-large classification model. 
+Especially, in the most extreme setting with only 5 training samples per class, joint SFC achieves 4.97 percentage points improvements on average over RoBERTa-large classification model. 
 Joint SFC is a better choice applied into the early stage of building a task-specific chatbot system, since label data is extremely scarce.
 
 Furthermore, joint SFC also achieves average 2.04 percentage points improvement over RoBERTa-large classification model on all the data settings. 
 However, the improvement is still more prominent when the data is scarce, which makes SFC an excellent model for low-resource chatbot scenario.
 
+\subsection{Settings of hyperparameters} 
+In Table \ref{tbe:table3}, we explore the influence from hyperparameters on ITG and Amazon-670K datasets. 
+We control the total number of sampled sentence pairs to about 50 to 60, and obatin about five combinations of hyperparameters. 
 
-\subsection{Implementation Details}
-For  our  SFC  systems,  we  use RoBERTa-large as the pretrained model for both
-classification  task  and  sentence-pair similarity task. We fine-tune
-our  SFC  system  on  our datasets with max sequence length of 128,
-learning  rate  of 1.5e-5 for RoBERTa-large pretrained model and learning rate
-of  5e-4  for  task-specific  layer  with polynomial decay and Adam optimizer.
+We find that the best setting of hyperparameters is different with different datasets. 
+The class label number of ITG and Amazon-670k are similar in our experiments, around 250. 
+However the number of data points in ITG is approximately 2 times as many as that in Amazon-670k.
+Therefore, the setting of $K=5$ and $P=10$ is good enough for ITG since most of the classes contains over 10 data points. 
+However, in Amazon-670k, the data per each class is scarce, and, we may need more candidate classes to sample enough effective sentence pairs for the stage 2 traininig of SFC. 
+Thus, the setting of $K=10$ and $P=5$ becomes a good choice. 
 
-In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks
-are  set  as  $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting. The reason
-for  giving  task  2 relatively more weights is that according to the ablation
-experiments  we  did  in Section \ref{sec:exp}, task 2 contributes more to the
-overall  performance.  In  joint-SFC,  in  equ.  \ref{eq:joint_SFC_loss}, the
-weights  of  three  tasks  are  set  as  $\alpha_S=0.25$,  $\alpha_K=0.25$ and
-$\alpha_C=0.5$  in  our setting. Overall, the task weights are less sensitive
-in joint-SFC than in two-stage SFC.
+However, despite the effect on evaluation performance brought by different settings of hyperparameters, joint SFC still steadily outperforms two-stage SFC by 0.41 percent points in overall average F1 score on ITG and Amazon-670k datasets.
 
-For  the  experiments  in  Table  \ref{tbe:table2},  we  empirically  set  the
-hyperparameter  to  be  $K=5$  and  $P=10$  for  all  SFC  variants.  In Table
-\ref{tbe:table3},  we  conduct extensive experiments to see the performance of
-SFC system under various hyperparameter settings.
+For the experiments in Table \ref{tbe:table2}, we empirically set the hyperparameter to be $K=5$ and $P=10$ for all SFC variants. 
 
-As for the training time, in our settings, our joint-SFC model needs about 14
-hours to reach convergence using a single Nvidia RTX8000 GPU. In comparison, the classification baseline model needs about 5 hours and the similarity baseline model
-needs about 12 hours, which indicates that our joint-SFC model spends less training
-time than the summation of two baseline models due to faster convergence. 
+\subsection{Other settings}
+We fine-tune all SFC systems with the maximum sequence length of 128, learning rate of 1.5e-5 for RoBERTa-large pretrained model and 5e-4 for task-specific layer with a linear decay, and use Adam optimizer.
 
-As for the inference time, the classification model baseline is about 0.2 ms;
-the similarity model baseline is about 0.5 ms and our joint-SFC model takes only 0.6 ms.
-Actually both the similarity model baseline and our joint-SFC can be GPU
-parallelized in the similarity computation, if we need pretty fast response time
-in a real product.
+In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks are set as $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting. 
+In joint SFC, in equ. \ref{eq:joint_SFC_loss}, the weights of three tasks are set as $\alpha_S=0.25$, $\alpha_K=0.25$ and $\alpha_C=0.5$. 
+Overall, the task weights are less sensitive in joint SFC than in two-stage SFC.
+
+As for the training time, in our settings, our joint SFC model needs about 14 hours to reach convergence using a single Nvidia RTX8000 GPU. 
+In comparison, the classification baseline model needs about 5 hours and the similarity baseline model needs about 12 hours.
 
