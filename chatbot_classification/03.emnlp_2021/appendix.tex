@@ -20,35 +20,16 @@ For  example,  If  both  the  city and date information are
 recognized,  then  they  are good indicators that this query might be booking an
 ticket. 
 
-\subsection{Implementation Details}
-For  our  SFC  systems,  we  use RoBERTa-large as the pretrained model for both
-classification  task  and  sentence-pair similarity task. We fine-tune
-our  SFC  system  on  our datasets with max sequence length of 128,
-learning  rate  of 1.5e-5 for RoBERTa-large pretrained model and learning rate
-of  5e-4  for  task-specific  layer  with polynomial decay and Adam optimizer.
+\subsection*{Relation to the label embedding based LEAM}
+LEAM shows its superiority over TextCNN in all datasets in our experiments, by modeling labeling information.
 
-In two-stage SFC, in equ. \ref{eq:two-stage_SFC_loss} the weights of two tasks
-are  set  as  $\alpha_S=0.125$ and $\alpha_K=0.875$ in our setting. The reason
-for  giving  task  2 relatively more weights is that according to the ablation
-experiments  we  did  in Section \ref{sec:exp}, task 2 contributes more to the
-overall  performance.  In  joint-SFC,  in  equ.  \ref{eq:joint_SFC_loss}, the
-weights  of  three  tasks  are  set  as  $\alpha_S=0.25$,  $\alpha_K=0.25$ and
-$\alpha_C=0.5$  in  our setting. Overall, the task weights are less sensitive
-in joint-SFC than in two-stage SFC.
+LEAM does not perform as well as SFCs, since the first intuitive reason is it does not use a pretrained model as its input encoding module; 
+another critical reason is in task-specific chat applications, it is common to have many similar intents, and it becomes hard and even impossible to name each intent with a short clear name to feed into LEAM model.
+One candidate solution is setting a most standard sample as the label of the class. 
+When using non-pretrained models base LEAM, this is applicable. 
+Yet when using a pretrained model based, as all labels can be hundreds of thousands, then the training can not be accommodated in a poplar 32 G Tesla V100 GPU. 
 
-For  the  experiments  in  Table  \ref{tbe:table2},  we  empirically  set  the
-hyperparameter  to  be  $K=5$  and  $P=10$  for  all  SFC  variants.  In Table
-\ref{tbe:table3},  we  conduct extensive experiments to see the performance of
-SFC system under various hyperparameter settings.
+Actually, joint SFC can be kind of understood as a generalization form of LEAM. 
+When there is no clear class labels, the relationship between a sample and a class label is implicitly encoded as that between a sample and another sample from the same class, and this turns into a sentence pair similarity model.  
 
-As for the training time, in our settings, our joint-SFC model needs about 14
-hours to reach convergence using a single Nvidia RTX8000 GPU. In comparison, the classification baseline model needs about 5 hours and the similarity baseline model
-needs about 12 hours, which indicates that our joint-SFC model spends less training
-time than the summation of two baseline models due to faster convergence. 
-
-As for the inference time, the classification model baseline is about 0.2 ms;
-the similarity model baseline is about 0.5 ms and our joint-SFC model takes only 0.6 ms.
-Actually both the similarity model baseline and our joint-SFC can be GPU
-parallelized in the similarity computation, if we need pretty fast response time
-in a real product.
 
