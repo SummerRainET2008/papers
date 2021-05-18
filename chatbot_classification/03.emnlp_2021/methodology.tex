@@ -195,7 +195,6 @@ $\alpha_K$ are weights of task 1 and task 2 respectively.
 \end{align}
 \vspace{-2em}
 
-
 \subsection{Joint SFC}
 In 2-stage SFC, two stages are separate that there is no deep interaction with each other during training. 
 In this case, the performance of stage 1 may limit the model potential in stage 2; 
@@ -215,3 +214,6 @@ Here, $\alpha_S$, $\alpha_K$ and $\alpha_C$ represent the weights for task 1 sen
   \label{eq:joint_SFC_loss}
 \end{align}
 \vspace{-1.5em}
+
+Likewise, our SFC can be strengthened by adding more beneficial tasks, such as an extra NER task based on the output states of a query from a pretrained model in stage 1. 
+We do not pay much attention on details of these straightforward extensions, but on the whole network structure and training.

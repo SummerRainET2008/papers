@@ -95,7 +95,6 @@ In inference, we use an elastic search to find a set of potential candidate labe
 
 The fourth one, \emph{pretrained model based joint text classification and NER model}. 
 We choose the work from \cite{chen2019bert} as our baseline system, which utilizes a strong RoBERTa-large model to jointly train two losses.
-Our SFC framework is also conveniently supportive of extra NER loss that in stage 1 a fourth task with a NER loss is trivially derived based on the output states from a pretrained model.
 
 All pretrained model baselines are fine-tuned on our datasets.
 Especially, the similarity model baseline and all similarity layers in SFCs use extra Quora dataset \cite{iyer2017first} \footnote{which contains 404,290 potential duplicate question pairs} to enhance system performance. 
@@ -225,14 +224,14 @@ From Table \ref{tbe:top1_5_accuracy}, the joint training does not improve the to
 The reason is that, a classification model inherently optimizes the objective loss, 0-1 error of top-1 here; the sentence pair similarity model in joint SFC poses more positive effect in optimizing the candidate labels.
 
 \subsubsection*{Supportive of extra NER task}
-Many previous work shows joint training with a NER loss improves the intent classification task as well, observed again in our baselines and SFCs in Table \ref{tbe:addtional ner experiments}.
-We choose the state-of-the-art RoBERTa-large model with NER loss as a strong baseline. 
+Many previous work shows joint training with a NER task improves the intent classification task as well, observed again in our baselines and SFCs in Table \ref{tbe:addtional ner experiments}.
+Our SFC systems set the weight of the fourth NER task as 0.25 throughout this part. 
 
-We can see that our joint SFC without NER loss still outperforms RoBERTa with NER loss baseline by 0.86 percentage points on average. 
+We can see that our joint SFC without a NER task still outperforms RoBERTa baseline with a NER task by 0.86 percentage points on average. 
 This indicates that the fusion of classification and similarity models can even works better than fusing with additional NER information under few-shot chatbot scenario. 
 
-Moreover, the adding NER loss to joint SFC further achieves improvement of 1.66 percentage points over RoBERTa with NER loss baseline. 
-Especially on FRAMES dataset, which is a much more difficult task in comparison with ATIS based on performance of all systems on it, our joint SFC with NER loss achieves a bigger improvement of 2.8 percentage points on average. 
+Moreover, the adding NER task to joint SFC further achieves improvement of 1.66 percentage points over RoBERTa baseline with a NER task. 
+Especially on FRAMES dataset, which is a much more difficult task in comparison with ATIS based on performance of all systems on it, our joint SFC with a NER task achieves a bigger improvement of 2.8 percentage points on average. 
 
 \subsubsection*{Different training sample size} 
 We analyze the overall improvement trend of joint SFC under various few-shot settings, and show results in Fig. \ref{fig:trend}.

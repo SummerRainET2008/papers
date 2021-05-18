@@ -27,15 +27,17 @@ The associated label of the most similar historical text is returned as the labe
 A popular and effective methodology is adopting pretrained models to model the similarity calculation as a binary classification problem.
 
 Despite plenty of success of these two methodologies, they still have some limitations in this task especially when data is insufficient.
+
 Regarding the \emph{text classification model}, it learns a function that directly maps an input query into its expected label.
-Its training requires data in the form of a pair of a query and a task dependent label. 
-It is quite hard to adopt labeled data from other domains, as their label definitions are often incompatible to each other. 
-Though we can use some data augmentation methods to alleviate the paucity of data, e.g., translation based paraphrasing methods, the resulting benefit is still limited because of the data being homogeneous, in the case that our labeled data is very insufficient.
+The training requires data in the form of a pair of a query and a task dependent label. 
+Yet it is quite hard to adopt existent labeled data from other domains, since their label definitions are often incompatible to each other. 
+Though we can use some data augmentation methods to alleviate the paucity of data, e.g., translation based paraphrasing methods, the resulting benefit is still limited because of the data being homogeneous, in the cases that labeled data is rather insufficient.
+
 Regarding the \emph{similarity model}, the foremost advantage is it does not pose any restriction on the label definition of user intents, but aims to learn a function that measure how similar of two sentences are. 
-Then in the intent detection task, we are only concerned which labeled query is the most similar one to the current input, and then use its label as the output.
+Then in the intent detection task, we are only concerned which labeled query is the most similar to the current input, and then use its label as the output.
 This results in a possibility that even though the labeled data in current domain is scarce, we may borrow additional data from another domain to help enhance the similarity model to make a better intent prediction.
-Nevertheless, just as every coin has two sides, the high flexibility of similarity model leads to its worse performance compared to a classification model, because its training loss differs from a classification loss corresponding to the intent detection goal.
-More, it requires an auxiliary model to narrow down candidate labeled queries to speed up the calculation, which makes it slow in the speed and tricky in the auxiliary model selection. 
+Nevertheless, just as every coin has two sides, the high flexibility of similarity model leads to its worse performance compared to a classification model, as it is not trained towards the goal in the intent detection task which is actually a 0-1 loss minimization.
+More, it requires an auxiliary model to narrow down candidate class labels to speed up the similarity calculation next step, and this auxiliary model should be of a good balance in precision and recall. 
 
 The above limitations motivate us to propose a system that may take both the high performance from a classification model and the ability of supporting out-of-domain data from a similarity model.
 We call our system as SFC, short for similarity model fused with classification model, shown in Fig. \ref{fig:framework}. 
